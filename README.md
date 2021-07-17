@@ -50,7 +50,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         BillingEasy.setDebug(true);
-        BillingEasy.addProductConfig("id", ProductType.TYPE_INAPP_CONSUMABLE);
+        BillingEasy.addProductConfig("商品code", ProductType.TYPE_INAPP_CONSUMABLE);
         billingEasy.onCreate();
     }
 
