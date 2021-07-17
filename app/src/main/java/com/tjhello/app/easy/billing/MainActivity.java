@@ -41,8 +41,9 @@ public class MainActivity extends AppCompatActivity {
 
         //BillingEasy
         BillingEasy.setDebug(true);
-        BillingEasy.addProductConfig("love_poly_noads", ProductType.TYPE_INAPP_CONSUMABLE);
-        BillingEasy.addProductConfig("love_poly_tips", ProductType.TYPE_INAPP_CONSUMABLE);
+        BillingEasy.addProductConfig("商品code", ProductType.TYPE_INAPP_CONSUMABLE);
+        BillingEasy.addProductConfig("商品code", ProductType.TYPE_INAPP_NON_CONSUMABLE);
+        BillingEasy.addProductConfig("商品code", ProductType.TYPE_SUBS);
         billingEasy.onCreate();
 
         //ui初始化
@@ -111,7 +112,7 @@ public class MainActivity extends AppCompatActivity {
             if(result.isSuccess){
                 for (PurchaseInfo purchaseInfo : purchaseInfoList) {
                     if(purchaseInfo.isValid()){
-
+                        //有效商品
                     }
                 }
             }
