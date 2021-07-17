@@ -1,0 +1,6 @@
+-keep class com.tjhello.lib.billing.base.anno.**{*;}
+-keep class com.tjhello.lib.billing.base.imp.**{*;}
+-keep class com.tjhello.lib.billing.base.info.**{*;}
+-keep class com.tjhello.lib.billing.base.listener.**{*;}
+-keep class com.tjhello.lib.billing.base.handler.**{public *;}
+-keep class com.tjhello.lib.billing.base.utils.**{*;}

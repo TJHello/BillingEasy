@@ -1,0 +1,6 @@
+rootProject.name = "BillingEasy"
+include ':app'
+include ':GoogleBillingLib'
+include ':BaseBilling'
+include ':KotlinLib'
+include ':JavaLib'

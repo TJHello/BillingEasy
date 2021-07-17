@@ -1,0 +1,1 @@
+-keep com.android.billingclient.api.**{*;}
