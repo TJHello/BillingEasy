@@ -399,6 +399,15 @@ public class GoogleBillingHandler extends BillingHandler {
                 info.setPurchaseTime(purchase.getPurchaseTime());
                 info.setBaseObj(purchase);
 
+                List<String> typeList = new ArrayList<>();
+                for (String sku : purchase.getSkus()) {
+                    ProductConfig config = findProductInfo(sku);
+                    if(config!=null){
+                        typeList.add(config.getType());
+                    }
+                }
+                info.setTypeList(typeList);
+
                 PurchaseHistoryInfo.GoogleBillingPurchaseHistory googleBillingPurchaseHistory = info.new GoogleBillingPurchaseHistory();
                 googleBillingPurchaseHistory.setDeveloperPayload(purchase.getDeveloperPayload());
                 googleBillingPurchaseHistory.setOriginalJson(purchase.getOriginalJson());
@@ -425,7 +434,16 @@ public class GoogleBillingHandler extends BillingHandler {
             info.setOrderId(purchase.getOrderId());
             info.setPurchaseToken(purchase.getPurchaseToken());
             info.setBaseObj(purchase);
-            info.setPurchaseState(purchase.getPurchaseState());
+
+            List<String> typeList = new ArrayList<>();
+            for (String sku : purchase.getSkus()) {
+                ProductConfig config = findProductInfo(sku);
+                if(config!=null){
+                    typeList.add(config.getType());
+                }
+            }
+            info.setTypeList(typeList);
+
             info.setValid(purchase.getPurchaseState()== Purchase.PurchaseState.PURCHASED);
 
             PurchaseInfo.GoogleBillingPurchase googleBillingPurchase = info.new GoogleBillingPurchase();

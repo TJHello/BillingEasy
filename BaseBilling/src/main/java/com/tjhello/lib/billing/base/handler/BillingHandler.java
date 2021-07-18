@@ -75,7 +75,7 @@ public abstract class BillingHandler implements BillingHandlerImp {
     }
 
     @Nullable
-    protected ProductConfig findProductInfo(@NonNull String productCode){
+    protected static ProductConfig findProductInfo(@NonNull String productCode){
         for (ProductConfig config : productConfigList) {
             if(config.getCode().equals(productCode)){
                 return config;

@@ -6,7 +6,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.tjhello.lib.billing.base.anno.ProductType;
-import com.tjhello.lib.billing.base.imp.BillingEasyImp;
+import com.tjhello.easy.billing.java.imp.BillingEasyImp;
 import com.tjhello.lib.billing.base.info.BillingEasyResult;
 import com.tjhello.lib.billing.base.info.ProductConfig;
 import com.tjhello.lib.billing.base.info.ProductInfo;
@@ -65,6 +65,7 @@ public class BillingEasy implements BillingEasyImp {
                 throw new Exception("productCode不能为空");
             } catch (Exception e) {
                 e.printStackTrace();
+                BillingEasyLog.e(e.getMessage());
             }
         }
         ProductConfig config = new ProductConfig();
@@ -144,14 +145,24 @@ public class BillingEasy implements BillingEasyImp {
     }
 
     @Override
-    public void consume(@NonNull String purchaseCode) {
-        billingManager.consume(purchaseCode,null);
+    public void consume(@NonNull String purchaseToken) {
+        billingManager.consume(purchaseToken,null);
     }
 
 
     @Override
-    public void consume(@NonNull String purchaseCode, @Nullable EasyCallBack<String> callback) {
-        billingManager.consume(purchaseCode,callback);
+    public void consume(@NonNull String purchaseToken, @Nullable EasyCallBack<String> callback) {
+        billingManager.consume(purchaseToken,callback);
+    }
+
+    @Override
+    public void acknowledge(@NonNull String purchaseToken) {
+        billingManager.acknowledge(purchaseToken,null);
+    }
+
+    @Override
+    public void acknowledge(@NonNull String purchaseToken, @Nullable EasyCallBack<String> callBack) {
+        billingManager.acknowledge(purchaseToken,callBack);
     }
 
 

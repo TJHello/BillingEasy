@@ -3,7 +3,7 @@ plugins {
     id 'maven'
 }
 
-ext.ver = '1.4.0.0-t01'
+ext.ver = '1.4.0.0-t02'
 ext.verCode = 1400
 ext.GROUP_ID = 'com.TJHello.lib.billing'
 ext.POM_ARTIFACT_ID = 'google'
@@ -51,7 +51,7 @@ dependencies {
     implementation 'androidx.appcompat:appcompat:1.3.0'
 
 //    implementation project(':BaseBilling')
-    implementation 'com.TJHello.lib.billing:base:0.1-t01'
+    implementation 'com.TJHello.lib.billing:base:0.1-t02'
 
     //内购
     api 'com.android.billingclient:billing:4.0.0'

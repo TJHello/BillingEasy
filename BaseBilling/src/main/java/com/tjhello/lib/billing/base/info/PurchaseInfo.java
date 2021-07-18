@@ -1,14 +1,16 @@
 package com.tjhello.lib.billing.base.info;
 
+import androidx.annotation.Nullable;
+
 import java.util.List;
 
 public class PurchaseInfo {
 
     boolean isValid = false;
     List<String> codeList ;
+    List<String> typeList ;
     String orderId ;
     String purchaseToken ;
-    int purchaseState ;
     GoogleBillingPurchase googleBillingPurchase;
     Object baseObj;
 
@@ -163,19 +165,31 @@ public class PurchaseInfo {
         this.baseObj = baseObj;
     }
 
-    public int getPurchaseState() {
-        return purchaseState;
-    }
-
-    public void setPurchaseState(int purchaseState) {
-        this.purchaseState = purchaseState;
-    }
-
     public boolean isValid() {
         return isValid;
     }
 
     public void setValid(boolean valid) {
         isValid = valid;
+    }
+
+    public List<String> getTypeList() {
+        return typeList;
+    }
+
+    public void setTypeList(List<String> typeList) {
+        this.typeList = typeList;
+    }
+
+    @Nullable
+    public String getFirstCode(){
+        if(codeList.isEmpty()) return null;
+        return codeList.get(0);
+    }
+
+    @Nullable
+    public String getFirstType(){
+        if(typeList.isEmpty()) return null;
+        return typeList.get(0);
     }
 }

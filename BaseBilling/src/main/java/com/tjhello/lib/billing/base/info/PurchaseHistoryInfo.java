@@ -1,5 +1,7 @@
 package com.tjhello.lib.billing.base.info;
 
+import androidx.annotation.Nullable;
+
 import java.util.List;
 
 public class PurchaseHistoryInfo {
@@ -7,6 +9,7 @@ public class PurchaseHistoryInfo {
     List<String> codeList ;
     String purchaseToken ;
     long purchaseTime ;
+    List<String> typeList ;
     Object baseObj;
     String json ;
 
@@ -125,4 +128,25 @@ public class PurchaseHistoryInfo {
     public void setJson(String json) {
         this.json = json;
     }
+
+    public List<String> getTypeList() {
+        return typeList;
+    }
+
+    public void setTypeList(List<String> typeList) {
+        this.typeList = typeList;
+    }
+
+    @Nullable
+    public String getFirstCode(){
+        if(codeList.isEmpty()) return null;
+        return codeList.get(0);
+    }
+
+    @Nullable
+    public String getFirstType(){
+        if(typeList.isEmpty()) return null;
+        return typeList.get(0);
+    }
+
 }

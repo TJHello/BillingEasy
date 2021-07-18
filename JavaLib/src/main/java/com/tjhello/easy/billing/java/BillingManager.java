@@ -7,7 +7,7 @@ import androidx.annotation.Nullable;
 
 import com.tjhello.lib.billing.base.anno.ProductType;
 import com.tjhello.lib.billing.base.handler.BillingHandler;
-import com.tjhello.lib.billing.base.imp.BillingManagerImp;
+import com.tjhello.easy.billing.java.imp.BillingManagerImp;
 import com.tjhello.lib.billing.base.info.BillingEasyResult;
 import com.tjhello.lib.billing.base.info.ProductConfig;
 import com.tjhello.lib.billing.base.info.ProductInfo;

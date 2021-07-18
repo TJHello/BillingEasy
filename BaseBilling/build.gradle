@@ -3,7 +3,7 @@ plugins {
     id 'maven'
 }
 
-ext.ver = '0.1-t01'
+ext.ver = '0.1-t02'
 ext.verCode = 1
 ext.GROUP_ID = 'com.TJHello.lib.billing'
 ext.POM_ARTIFACT_ID = 'base'

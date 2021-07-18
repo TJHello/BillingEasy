@@ -16,7 +16,6 @@ import com.tjhello.lib.billing.base.info.ProductInfo;
 import com.tjhello.lib.billing.base.info.PurchaseHistoryInfo;
 import com.tjhello.lib.billing.base.info.PurchaseInfo;
 import com.tjhello.lib.billing.base.listener.BillingEasyListener;
-import com.tjhello.lib.billing.base.listener.EasyCallBack;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -101,18 +100,29 @@ public class MainActivity extends AppCompatActivity {
             log("购买商品:"+result.isSuccess);
             StringBuilder tempBuilder = new StringBuilder();
             for (PurchaseInfo info : purchaseInfoList) {
-                String details = String.format(Locale.getDefault(),"%s,%s:%s\n",
-                        Arrays.toString(info.getCodeList().toArray()),info.getPurchaseState(),info.getOrderId());
+                String details = String.format(Locale.getDefault(),"%s:%s\n",
+                        Arrays.toString(info.getCodeList().toArray()),info.getOrderId());
                 tempBuilder.append(details);
             }
             if(!tempBuilder.toString().isEmpty()){
                 log(tempBuilder.toString());
             }
 
+            //判断示例
             if(result.isSuccess){
                 for (PurchaseInfo purchaseInfo : purchaseInfoList) {
                     if(purchaseInfo.isValid()){
                         //有效商品
+                        String type = purchaseInfo.getFirstType();
+                        if(type!=null){
+                            if(type.equals(ProductType.TYPE_INAPP_CONSUMABLE)){
+                                //可消耗商品，则消耗
+                                billingEasy.consume(purchaseInfo.getPurchaseToken());
+                            }else if(type.equals(ProductType.TYPE_INAPP_NON_CONSUMABLE)){
+                                //不可消耗商品，则确认购买
+                                billingEasy.acknowledge(purchaseInfo.getPurchaseToken());
+                            }
+                        }
                     }
                 }
             }
@@ -123,8 +133,8 @@ public class MainActivity extends AppCompatActivity {
             log("查询有效订单:"+result.isSuccess);
             StringBuilder tempBuilder = new StringBuilder();
             for (PurchaseInfo info : purchaseInfoList) {
-                String details = String.format(Locale.getDefault(),"%s,%s:%s\n",
-                        Arrays.toString(info.getCodeList().toArray()),info.getPurchaseState(),info.getOrderId());
+                String details = String.format(Locale.getDefault(),"%s:%s\n",
+                        Arrays.toString(info.getCodeList().toArray()),info.getOrderId());
                 tempBuilder.append(details);
             }
             if(!tempBuilder.toString().isEmpty()){
