@@ -3,8 +3,8 @@ plugins {
     id 'maven'
 }
 
-ext.ver = '0.1-t02'
-ext.verCode = 1
+ext.ver = "${BASE_VERSION_NAME}"
+ext.verCode = BASE_VERSION_CODE
 ext.GROUP_ID = 'com.TJHello.lib.billing'
 ext.POM_ARTIFACT_ID = 'base'
 
@@ -17,6 +17,16 @@ uploadArchives {
             pom.version = ver
         }
     }
+}
+tasks.withType(JavaCompile) {
+    options.encoding = "UTF-8"
+}
+task sourcesJar(type: Jar) {
+    getArchiveClassifier().set('sources')
+    from android.sourceSets.main.java.source
+}
+artifacts {
+    archives sourcesJar
 }
 
 android {

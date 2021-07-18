@@ -85,7 +85,7 @@ public class BillingManager implements BillingManagerImp {
     @Override
     public void purchase(@NonNull Activity activity, @NonNull String productCode, @Nullable EasyCallBack<List<PurchaseInfo>> callBack) {
         if(billingHandler.connection(new ConnectionBillingEasyListener())){
-            ProductConfig config = BillingEasy.findProductConfig(productCode);
+            ProductConfig config = findProductConfig(productCode);
             if(config!=null){
                 addEasyCallback(callBack);
                 billingHandler.purchase(activity,productCode,billingHandler.getProductType(config.getType()));
@@ -153,7 +153,7 @@ public class BillingManager implements BillingManagerImp {
 
     private static List<String> getProductCodeList(@ProductType String type){
         List<String> list = new ArrayList<>();
-        for (ProductConfig productConfig : BillingEasy.getAllProductConfig()) {
+        for (ProductConfig productConfig : productConfigList) {
             if(productConfig.getType().equals(type)){
                 list.add(productConfig.getCode());
             }
@@ -322,5 +322,16 @@ public class BillingManager implements BillingManagerImp {
             }
         }
         return list;
+    }
+
+    @Nullable
+    public static ProductConfig findProductConfig(@NonNull String productCode){
+        for(int i=0;i< productConfigList.size();i++){
+            ProductConfig config = productConfigList.get(i);
+            if(config.getCode().equals(productCode)){
+                return config;
+            }
+        }
+        return null;
     }
 }

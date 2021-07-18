@@ -28,7 +28,7 @@ allprojects {
 
 ```
 
-- ### Step2 配置build.gradle(app)
+- ### Step2 配置-build.gradle(app)
 
 ```groovy
 
@@ -41,8 +41,8 @@ android{
 }
 
 dependencies {
-    implementation 'com.TJHello.easy:BillingEasy:0.1.1-t02'//BillingEasy
-    implementation 'com.TJHello.lib.billing:google:1.4.0.0-t02'//Google内购
+    implementation 'com.TJHello.easy:BillingEasy:0.1.1-t03'//BillingEasy
+    implementation 'com.TJHello.lib.billing:google:1.4.0.0-t03'//Google内购
     //华为等这版本跑通了再加
 }
 

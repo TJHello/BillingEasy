@@ -45,7 +45,6 @@ public class BillingEasy implements BillingEasyImp {
     private static final BillingManager billingManager = new BillingManager();
 
     private static final CopyOnWriteArrayList<BillingEasy> billingEasyList = new CopyOnWriteArrayList<>();
-    private static final CopyOnWriteArrayList<ProductConfig> productConfigList = new CopyOnWriteArrayList<>();
     //创建一个实例
     @NonNull
     public static BillingEasy newInstance(@NonNull Activity activity){
@@ -71,23 +70,7 @@ public class BillingEasy implements BillingEasyImp {
         ProductConfig config = new ProductConfig();
         config.setCode(productCode);
         config.setType(productType);
-        productConfigList.add(config);
-    }
-
-    @Nullable
-    public static ProductConfig findProductConfig(@NonNull String productCode){
-        for(int i=0;i< productConfigList.size();i++){
-            ProductConfig config = productConfigList.get(i);
-            if(config.getCode().equals(productCode)){
-                return config;
-            }
-        }
-        return null;
-    }
-
-    @NonNull
-    public static List<ProductConfig> getAllProductConfig(){
-        return productConfigList;
+        billingManager.addProductConfig(config);
     }
 
     public static void setDebug(boolean bool){
