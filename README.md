@@ -1,4 +1,4 @@
-# BillingEasy-0.1.1-t03
+# BillingEasy-0.1.1-t04
 
 **QQ交流群(425219113)**
 
@@ -41,8 +41,8 @@ android{
 }
 
 dependencies {
-    implementation 'com.TJHello.easy:BillingEasy:0.1.1-t03'//BillingEasy
-    implementation 'com.TJHello.lib.billing:google:1.4.0.0-t03'//Google内购
+    implementation 'com.TJHello.easy:BillingEasy:0.1.1-t04'//BillingEasy
+    implementation 'com.TJHello.lib.billing:google:1.4.0.0-t04'//Google内购
     //华为等这版本跑通了再加
 }
 

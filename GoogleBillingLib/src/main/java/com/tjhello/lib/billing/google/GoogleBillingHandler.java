@@ -30,11 +30,14 @@ import com.tjhello.lib.billing.base.info.ProductInfo;
 import com.tjhello.lib.billing.base.info.PurchaseInfo;
 import com.tjhello.lib.billing.base.info.PurchaseHistoryInfo;
 import com.tjhello.lib.billing.base.listener.BillingEasyListener;
+import com.tjhello.lib.billing.base.utils.BillingEasyLog;
 
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * BillingEasy
@@ -51,7 +54,8 @@ import java.util.List;
 public class GoogleBillingHandler extends BillingHandler {
 
     private BillingClient mBillingClient ;
-    private final PurchasesUpdatedListener mPurchasesListener = new MyPurchasesUpdatedListener(mBillingEasyListener);
+    private final PurchasesUpdatedListener mPurchasesListener = new MyPurchasesUpdatedListener();
+    private final static Map<String,SkuDetails> skuDetailsMap = new HashMap<>();
 
     public GoogleBillingHandler(BillingEasyListener mBillingEasyListener) {
         super(mBillingEasyListener);
@@ -59,9 +63,10 @@ public class GoogleBillingHandler extends BillingHandler {
 
     @Override
     public void onInit(@NonNull Activity activity) {
-        BillingClient.Builder mBuilder = BillingClient.newBuilder(activity);
-        mBuilder.enablePendingPurchases();
-        mBillingClient = mBuilder.setListener(mPurchasesListener).build();
+        BillingClient.Builder mBuilder = BillingClient.newBuilder(activity)
+                .enablePendingPurchases()
+                .setListener(mPurchasesListener);
+        mBillingClient = mBuilder.build();
     }
 
     @Override
@@ -80,23 +85,35 @@ public class GoogleBillingHandler extends BillingHandler {
                 .setSkusList(productCodeList)
                 .setType(type)
                 .build();
-        mBillingClient.querySkuDetailsAsync(params, new MySkuDetailsResponseListener(mBillingEasyListener));
+        mBillingClient.querySkuDetailsAsync(params, new MySkuDetailsResponseListener(listener));
     }
 
     @Override
     public void purchase(@NonNull Activity activity,@NonNull String productCode,@NonNull String type) {
-        SkuDetailsParams params = SkuDetailsParams.newBuilder()
-                .setSkusList(Collections.singletonList(productCode))
-                .setType(type)
-                .build();
-        mBillingClient.querySkuDetailsAsync(params, (billingResult, list) -> {
-            if(list!=null&&!list.isEmpty()){
+
+        if(skuDetailsMap.containsKey(productCode)){
+            SkuDetails skuDetails = skuDetailsMap.get(productCode);
+            if(skuDetails!=null){
                 BillingFlowParams flowParams = BillingFlowParams.newBuilder()
-                        .setSkuDetails(list.get(0))
+                        .setSkuDetails(skuDetails)
                         .build();
                 mBillingClient.launchBillingFlow(activity,flowParams);
             }
-        });
+        }
+//        SkuDetailsParams params = SkuDetailsParams.newBuilder()
+//                .setSkusList(Collections.singletonList(productCode))
+//                .setType(type)
+//                .build();
+//        mBillingClient.querySkuDetailsAsync(params, (billingResult, list) -> {
+//            if(billingResult.getResponseCode()== BillingClient.BillingResponseCode.OK&&list!=null&&!list.isEmpty()){
+//                BillingFlowParams flowParams = BillingFlowParams.newBuilder()
+//                        .setSkuDetails(list.get(0))
+//                        .build();
+//                mBillingClient.launchBillingFlow(activity,flowParams);
+//            }else{
+//                BillingEasyLog.e("[GoogleBilling]:获取商品详情失败:"+productCode+",code="+billingResult.getResponseCode()+",msg="+billingResult.getDebugMessage());
+//            }
+//        });
     }
 
     @Override
@@ -193,6 +210,12 @@ public class GoogleBillingHandler extends BillingHandler {
         @Override
         public void onSkuDetailsResponse(@NonNull BillingResult billingResult, @Nullable List<SkuDetails> list) {
             if(billingResult.getResponseCode()==BillingClient.BillingResponseCode.OK){
+                if(list!=null){
+                    for (SkuDetails skuDetails : list) {
+                        skuDetailsMap.put(skuDetails.getSku(),skuDetails);
+                    }
+                }
+
                 mListener.onQueryProduct(BillingEasyResult.build(true,
                         BillingClient.BillingResponseCode.OK,billingResult.getDebugMessage(),billingResult),toProductInfo(list));
                 mBillingEasyListener.onQueryProduct(BillingEasyResult.build(true,
@@ -246,26 +269,14 @@ public class GoogleBillingHandler extends BillingHandler {
 
     private class MyPurchasesUpdatedListener implements PurchasesUpdatedListener{
 
-        private final BillingEasyListener listener;
-
-        public MyPurchasesUpdatedListener(BillingEasyListener listener) {
-            this.listener = listener;
-        }
 
         @Override
         public void onPurchasesUpdated(@NonNull BillingResult billingResult, @Nullable List<Purchase> list) {
             if(billingResult.getResponseCode()==BillingClient.BillingResponseCode.OK){
-                listener.onPurchases(
-                        BillingEasyResult.build(true,BillingClient.BillingResponseCode.OK,billingResult.getDebugMessage(),billingResult),
-                        toPurchaseInfo(list));
                 mBillingEasyListener.onPurchases(
                         BillingEasyResult.build(true,BillingClient.BillingResponseCode.OK,billingResult.getDebugMessage(),billingResult),
                         toPurchaseInfo(list));
             }else{
-                listener.onPurchases(
-                        BillingEasyResult.build(false,billingResult.getResponseCode(),billingResult.getDebugMessage(),billingResult),
-                        toPurchaseInfo(list)
-                );
                 mBillingEasyListener.onPurchases(
                         BillingEasyResult.build(false,billingResult.getResponseCode(),billingResult.getDebugMessage(),billingResult),
                         toPurchaseInfo(list)

@@ -35,9 +35,11 @@ public class BillingEasy implements BillingEasyImp {
 
     private final Activity mActivity ;
     private final MyBillingEasyListener myBillingEasyListener = new MyBillingEasyListener();
+    private static String ACTIVITY_TAG ;
     private BillingEasy(@NonNull Activity activity){
         this.mActivity = activity;
         billingManager.addListener(myBillingEasyListener);
+        ACTIVITY_TAG = activity.getClass().getSimpleName();
     }
 
     //region============================静态方法============================
@@ -185,12 +187,12 @@ public class BillingEasy implements BillingEasyImp {
 
         @Override
         public void onConnection(@NonNull BillingEasyResult result) {
-            BillingEasyLog.i("[onConnection]:"+result.isSuccess+":"+result.responseCode+","+result.responseMsg);
+            BillingEasyLog.logResult(ACTIVITY_TAG,"onConnection",result);
         }
 
         @Override
         public void onDisconnected() {
-            BillingEasyLog.i("[onDisconnected]");
+            BillingEasyLog.i("["+ACTIVITY_TAG+"][onDisconnected]");
         }
 
         @Override
@@ -198,7 +200,9 @@ public class BillingEasy implements BillingEasyImp {
             for (BillingEasyListener listener : listenerList) {
                 listener.onQueryProduct(result,productInfoList);
             }
-            BillingEasyLog.i("[onQueryProduct]:"+result.isSuccess+":"+result.responseCode+","+result.responseMsg);
+            if(!listenerList.isEmpty()){
+                BillingEasyLog.logProduct(ACTIVITY_TAG,"onQueryProduct",result,productInfoList);
+            }
         }
 
         @Override
@@ -206,7 +210,9 @@ public class BillingEasy implements BillingEasyImp {
             for (BillingEasyListener listener : listenerList) {
                 listener.onPurchases(result,purchaseInfoList);
             }
-            BillingEasyLog.i("[onPurchases]:"+result.isSuccess+":"+result.responseCode+","+result.responseMsg);
+            if(!listenerList.isEmpty()){
+                BillingEasyLog.logPurchase(ACTIVITY_TAG,"onPurchases",result,purchaseInfoList);
+            }
         }
 
         @Override
@@ -214,7 +220,9 @@ public class BillingEasy implements BillingEasyImp {
             for (BillingEasyListener listener : listenerList) {
                 listener.onConsume(result,purchaseToken);
             }
-            BillingEasyLog.i("[onConsume]:"+result.isSuccess+":"+result.responseCode+","+result.responseMsg);
+            if(!listenerList.isEmpty()){
+                BillingEasyLog.logResult(ACTIVITY_TAG,"onConsume",result,purchaseToken);
+            }
         }
 
         @Override
@@ -222,7 +230,9 @@ public class BillingEasy implements BillingEasyImp {
             for (BillingEasyListener listener : listenerList) {
                 listener.onAcknowledge(result,purchaseToken);
             }
-            BillingEasyLog.i("[onAcknowledge]:"+result.isSuccess+":"+result.responseCode+","+result.responseMsg);
+            if(!listenerList.isEmpty()){
+                BillingEasyLog.logResult(ACTIVITY_TAG,"onAcknowledge",result,purchaseToken);
+            }
         }
 
         @Override
@@ -230,7 +240,9 @@ public class BillingEasy implements BillingEasyImp {
             for (BillingEasyListener listener : listenerList) {
                 listener.onQueryOrder(result,purchaseInfoList);
             }
-            BillingEasyLog.i("[onQueryOrder]:"+result.isSuccess+":"+result.responseCode+","+result.responseMsg);
+            if(!listenerList.isEmpty()){
+                BillingEasyLog.logPurchase(ACTIVITY_TAG,"onQueryOrder",result,purchaseInfoList);
+            }
         }
 
         @Override
@@ -238,7 +250,9 @@ public class BillingEasy implements BillingEasyImp {
             for (BillingEasyListener listener : listenerList) {
                 listener.onQueryOrderHistory(result,purchaseInfoList);
             }
-            BillingEasyLog.i("[onQueryOrderHistory]:"+result.isSuccess+":"+result.responseCode+","+result.responseMsg);
+            if(!listenerList.isEmpty()){
+                BillingEasyLog.logPurchaseHistory(ACTIVITY_TAG,"onQueryOrderHistory",result,purchaseInfoList);
+            }
         }
     }
 

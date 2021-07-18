@@ -40,6 +40,7 @@ public class MainActivity extends AppCompatActivity {
 
         //BillingEasy
         BillingEasy.setDebug(true);
+        //修改成自己的商品code(GP在这里设置消耗与非消耗，不会影响内购，只是用于自己判断而已)
         BillingEasy.addProductConfig("商品code", ProductType.TYPE_INAPP_CONSUMABLE);
         BillingEasy.addProductConfig("商品code", ProductType.TYPE_INAPP_NON_CONSUMABLE);
         BillingEasy.addProductConfig("商品code", ProductType.TYPE_SUBS);
@@ -47,9 +48,7 @@ public class MainActivity extends AppCompatActivity {
 
         //ui初始化
         tvLog = this.findViewById(R.id.tvLog);
-        this.findViewById(R.id.tvLogClean).setOnClickListener(view -> {
-            tvLog.setText(null);
-        });
+        this.findViewById(R.id.tvLogClean).setOnClickListener(view -> tvLog.setText(null));
 
         this.findViewById(R.id.ivHelp).setOnClickListener(view->{
             Intent intent = new Intent();
@@ -58,6 +57,8 @@ public class MainActivity extends AppCompatActivity {
             intent.setData(uri);
             startActivity(intent);
         });
+        this.findViewById(R.id.btNext).setOnClickListener(view->
+                startActivity(new Intent(this,NextActivity.class)));
     }
 
     @Override
@@ -66,7 +67,9 @@ public class MainActivity extends AppCompatActivity {
         billingEasy.onDestroy();
     }
 
-    @SuppressWarnings("InnerClassMayBeStatic")
+    /**
+     * 以下接口可视需要，选择实现(JAVA8特性)
+      */
     private class MyBillingEasyListener implements BillingEasyListener{
 
         @Override

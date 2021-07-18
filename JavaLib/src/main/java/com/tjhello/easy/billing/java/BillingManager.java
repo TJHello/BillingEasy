@@ -77,9 +77,9 @@ public class BillingManager implements BillingManagerImp {
         List<String> list2 = getProductCodeList(ProductType.TYPE_INAPP_NON_CONSUMABLE);
         List<String> list3 = getProductCodeList(ProductType.TYPE_SUBS);
         ProductBillingEasyListener listener = new ProductBillingEasyListener(callBack);
-        billingHandler.queryProduct(list1,ProductType.TYPE_INAPP_CONSUMABLE,listener);
-        billingHandler.queryProduct(list2,ProductType.TYPE_INAPP_NON_CONSUMABLE,listener);
-        billingHandler.queryProduct(list3,ProductType.TYPE_SUBS,listener);
+        billingHandler.queryProduct(list1,billingHandler.getProductType(ProductType.TYPE_INAPP_CONSUMABLE),listener);
+        billingHandler.queryProduct(list2,billingHandler.getProductType(ProductType.TYPE_INAPP_NON_CONSUMABLE),listener);
+        billingHandler.queryProduct(list3,billingHandler.getProductType(ProductType.TYPE_SUBS),listener);
     }
 
     @Override
@@ -162,6 +162,7 @@ public class BillingManager implements BillingManagerImp {
     }
 
     private static class ProductBillingEasyListener implements BillingEasyListener{
+        @Nullable
         private final EasyCallBack<List<ProductInfo>> productCallback ;
 
         public ProductBillingEasyListener(@Nullable EasyCallBack<List<ProductInfo>> productCallback) {
@@ -170,7 +171,7 @@ public class BillingManager implements BillingManagerImp {
 
         @Override
         public void onQueryProduct(@NonNull BillingEasyResult result, @NonNull List<ProductInfo> productInfoList) {
-            assert productCallback != null;
+            if(productCallback==null) return;
             productCallback.callback(result,productInfoList);
         }
     }
@@ -194,19 +195,22 @@ public class BillingManager implements BillingManagerImp {
     }
 
     private static class PurchaseTokenBillingEasyListener implements BillingEasyListener{
-
+        @Nullable
         private final EasyCallBack<String> purchaseCallback ;
-        public PurchaseTokenBillingEasyListener(EasyCallBack<String> purchaseCallback) {
+
+        public PurchaseTokenBillingEasyListener(@Nullable EasyCallBack<String> purchaseCallback) {
             this.purchaseCallback = purchaseCallback;
         }
 
         @Override
         public void onConsume(@NonNull BillingEasyResult result, @NonNull String purchaseToken) {
+            if(purchaseCallback==null) return;
             purchaseCallback.callback(result,purchaseToken);
         }
 
         @Override
         public void onAcknowledge(@NonNull BillingEasyResult result, @NonNull String purchaseToken) {
+            if(purchaseCallback==null) return;
             purchaseCallback.callback(result,purchaseToken);
         }
 
@@ -214,14 +218,16 @@ public class BillingManager implements BillingManagerImp {
 
     private static class PurchaseHistoryBillingEasyListener implements BillingEasyListener{
 
+        @Nullable
         private final EasyCallBack<List<PurchaseHistoryInfo>> callback ;
 
-        public PurchaseHistoryBillingEasyListener(EasyCallBack<List<PurchaseHistoryInfo>> callback) {
+        public PurchaseHistoryBillingEasyListener(@Nullable EasyCallBack<List<PurchaseHistoryInfo>> callback) {
             this.callback = callback;
         }
 
         @Override
         public void onQueryOrderHistory(@NonNull BillingEasyResult result, @NonNull List<PurchaseHistoryInfo> purchaseInfoList) {
+            if(callback==null) return;
             callback.callback(result,purchaseInfoList);
         }
     }
@@ -301,7 +307,8 @@ public class BillingManager implements BillingManagerImp {
         }
     }
 
-    private static void addEasyCallback(EasyCallBack<List<PurchaseInfo>> callback){
+    private static void addEasyCallback(@Nullable EasyCallBack<List<PurchaseInfo>> callback){
+        if(callback==null) return;
         purchaseEasyCallBackList.add(callback);
     }
 

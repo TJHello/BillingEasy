@@ -17,6 +17,6 @@ import com.tjhello.lib.billing.base.info.BillingEasyResult;
  */
 public interface EasyCallBack<T> {
 
-    void callback(@NonNull BillingEasyResult result,@NonNull T info);
+    void callback(@NonNull BillingEasyResult result,@NonNull T t);
 
 }

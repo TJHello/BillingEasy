@@ -1,1 +1,1 @@
--keep com.android.billingclient.api.**{*;}
+-keep class com.android.billingclient.api.**{*;}
