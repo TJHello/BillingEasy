@@ -150,7 +150,7 @@ public class MainActivity extends AppCompatActivity {
 ```java
 
 //添加一个商品信息(必须)
-BillingEasy.addProductConfig("商品code", ProductType.TYPE_INAPP_CONSUMABLE);
+BillingEasy.addProductConfig( ProductType.TYPE_INAPP_CONSUMABLE,"商品code","商品code");
 
 //查询商品信息
 billingEasy.queryProduct();
