@@ -3,6 +3,7 @@ package com.tjhello.lib.billing.base.utils;
 import android.util.Log;
 
 import com.tjhello.lib.billing.base.info.BillingEasyResult;
+import com.tjhello.lib.billing.base.info.ProductConfig;
 import com.tjhello.lib.billing.base.info.ProductInfo;
 import com.tjhello.lib.billing.base.info.PurchaseHistoryInfo;
 import com.tjhello.lib.billing.base.info.PurchaseInfo;
@@ -47,7 +48,9 @@ public class BillingEasyLog {
             StringBuilder builder = new StringBuilder();
             builder.append("[").append(activityName).append("]").append("[").append(methodName).append("]:true\n");
             for (PurchaseInfo info : list) {
-                builder.append("{codeList=").append(Arrays.toString(info.getCodeList().toArray())).append("}\n");
+                for (ProductConfig productConfig : info.getProductList()) {
+                    builder.append("{codeList=").append(productConfig.getCode()).append("}\n");
+                }
             }
             i(builder.toString());
         }else{
@@ -61,7 +64,9 @@ public class BillingEasyLog {
             StringBuilder builder = new StringBuilder();
             builder.append("[").append(activityName).append("]").append("[").append(methodName).append("]:true\n");
             for (PurchaseHistoryInfo info : list) {
-                builder.append("{codeList=").append(Arrays.toString(info.getCodeList().toArray())).append("}\n");
+                for (ProductConfig productConfig : info.getProductList()) {
+                    builder.append("{codeList=").append(productConfig.getCode()).append("}\n");
+                }
             }
             i(builder.toString());
         }else{

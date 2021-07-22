@@ -12,6 +12,7 @@ import android.widget.TextView;
 import com.tjhello.easy.billing.java.BillingEasy;
 import com.tjhello.lib.billing.base.anno.ProductType;
 import com.tjhello.lib.billing.base.info.BillingEasyResult;
+import com.tjhello.lib.billing.base.info.ProductConfig;
 import com.tjhello.lib.billing.base.info.ProductInfo;
 import com.tjhello.lib.billing.base.info.PurchaseHistoryInfo;
 import com.tjhello.lib.billing.base.info.PurchaseInfo;
@@ -31,7 +32,14 @@ public class MainActivity extends AppCompatActivity {
     private final BillingEasy billingEasy = BillingEasy.newInstance(this)
             .addListener(new MyBillingEasyListener());
 
+    //内购-消耗型商品-商品code
+    private final static String[] INAPP_CONSUMABLE_CODE_ARRAY = new String[]{"商品code"};
+    //内购-非消耗型商品-商品code
+    private final static String[] INAPP_NON_CONSUMABLE_CODE_ARRAY = new String[]{"商品code"};
+    //订阅-商品code
+    private final static String[] SUBS_CODE_ARRAY = new String[]{"商品code"};
     private TextView tvLog ;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,9 +49,9 @@ public class MainActivity extends AppCompatActivity {
         //BillingEasy
         BillingEasy.setDebug(true);
         //修改成自己的商品code(GP在这里设置消耗与非消耗，不会影响内购，只是用于自己判断而已)
-        BillingEasy.addProductConfig("商品code", ProductType.TYPE_INAPP_CONSUMABLE);
-        BillingEasy.addProductConfig("商品code", ProductType.TYPE_INAPP_NON_CONSUMABLE);
-        BillingEasy.addProductConfig("商品code", ProductType.TYPE_SUBS);
+        BillingEasy.addProductConfig(ProductType.TYPE_INAPP_CONSUMABLE,INAPP_CONSUMABLE_CODE_ARRAY);
+        BillingEasy.addProductConfig(ProductType.TYPE_INAPP_NON_CONSUMABLE,INAPP_NON_CONSUMABLE_CODE_ARRAY);
+        BillingEasy.addProductConfig(ProductType.TYPE_SUBS,SUBS_CODE_ARRAY);
         billingEasy.onCreate();
 
         //ui初始化
@@ -86,6 +94,10 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public void onQueryProduct(@NonNull BillingEasyResult result, @NonNull List<ProductInfo> productInfoList) {
+            //获取商品信息回调
+
+
+            //日志输出代码
             log("查询商品信息:"+result.isSuccess);
             StringBuilder tempBuilder = new StringBuilder();
             for (ProductInfo info : productInfoList) {
@@ -100,45 +112,38 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public void onPurchases(@NonNull BillingEasyResult result, @NonNull List<PurchaseInfo> purchaseInfoList) {
+            //处理订单
+            utilPurchase(result,purchaseInfoList);
+
+            //日志输出代码
             log("购买商品:"+result.isSuccess);
             StringBuilder tempBuilder = new StringBuilder();
             for (PurchaseInfo info : purchaseInfoList) {
-                String details = String.format(Locale.getDefault(),"%s:%s\n",
-                        Arrays.toString(info.getCodeList().toArray()),info.getOrderId());
-                tempBuilder.append(details);
+                for (ProductConfig productConfig : info.getProductList()) {
+                    String details = String.format(Locale.getDefault(),"%s:%s\n",
+                            productConfig.getCode(),info.getOrderId());
+                    tempBuilder.append(details);
+                }
             }
             if(!tempBuilder.toString().isEmpty()){
                 log(tempBuilder.toString());
-            }
-
-            //判断示例
-            if(result.isSuccess){
-                for (PurchaseInfo purchaseInfo : purchaseInfoList) {
-                    if(purchaseInfo.isValid()){
-                        //有效商品
-                        String type = purchaseInfo.getFirstType();
-                        if(type!=null){
-                            if(type.equals(ProductType.TYPE_INAPP_CONSUMABLE)){
-                                //可消耗商品，则消耗
-                                billingEasy.consume(purchaseInfo.getPurchaseToken());
-                            }else if(type.equals(ProductType.TYPE_INAPP_NON_CONSUMABLE)){
-                                //不可消耗商品，则确认购买
-                                billingEasy.acknowledge(purchaseInfo.getPurchaseToken());
-                            }
-                        }
-                    }
-                }
             }
         }
 
         @Override
         public void onQueryOrder(@NonNull BillingEasyResult result, @NonNull List<PurchaseInfo> purchaseInfoList) {
+            //处理订单
+            utilPurchase(result,purchaseInfoList);
+
+            //日志输出代码
             log("查询有效订单:"+result.isSuccess);
             StringBuilder tempBuilder = new StringBuilder();
             for (PurchaseInfo info : purchaseInfoList) {
-                String details = String.format(Locale.getDefault(),"%s:%s\n",
-                        Arrays.toString(info.getCodeList().toArray()),info.getOrderId());
-                tempBuilder.append(details);
+                for (ProductConfig productConfig : info.getProductList()) {
+                    String details = String.format(Locale.getDefault(),"%s:%s\n",
+                            productConfig.getCode(),info.getOrderId());
+                    tempBuilder.append(details);
+                }
             }
             if(!tempBuilder.toString().isEmpty()){
                 log(tempBuilder.toString());
@@ -147,19 +152,75 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public void onQueryOrderHistory(@NonNull BillingEasyResult result, @NonNull List<PurchaseHistoryInfo> purchaseInfoList) {
+            //获取历史订单回调
+
+            //日志输出代码
             log("查询历史订单:"+result.isSuccess);
             StringBuilder tempBuilder = new StringBuilder();
             for (PurchaseHistoryInfo info : purchaseInfoList) {
-                String details = String.format(Locale.getDefault(),"%s:%s\n",
-                        Arrays.toString(info.getCodeList().toArray()),info.getPurchaseToken());
-                tempBuilder.append(details);
+                for (ProductConfig productConfig : info.getProductList()) {
+                    String details = String.format(Locale.getDefault(),"%s:%s\n",
+                            productConfig.getCode(),info.getPurchaseToken());
+                    tempBuilder.append(details);
+                }
             }
             if(!tempBuilder.toString().isEmpty()){
                 log(tempBuilder.toString());
             }
         }
+
+        /**
+         * 处理订单,自动消耗或自动确认购买
+         * @param purchaseInfoList 商品列表
+         */
+        private void utilPurchase(BillingEasyResult billingEasyResult,List<PurchaseInfo> purchaseInfoList){
+            //判断购买成功
+            if(billingEasyResult.isSuccess){
+                for (PurchaseInfo purchaseInfo : purchaseInfoList) {
+                    //判断商品是否有效
+                    if(purchaseInfo.isValid()){
+                        for (ProductConfig productConfig : purchaseInfo.getProductList()) {
+                            //判断商品类型
+                            String type = productConfig.getType();
+                            if(type!=null){
+                                switch (type){
+                                    //内购商品-可消耗
+                                    case ProductType.TYPE_INAPP_CONSUMABLE:{
+                                        //消耗商品(消耗包括确认购买)
+                                        billingEasy.consume(purchaseInfo.getPurchaseToken());
+                                    }break;
+                                    //内购商品-非消耗||订阅商品
+                                    case ProductType.TYPE_INAPP_NON_CONSUMABLE:
+                                    case ProductType.TYPE_SUBS: {
+                                        //判断是否已经确认购买
+                                        if(!purchaseInfo.isAcknowledged()){
+                                            //确认购买
+                                            billingEasy.acknowledge(purchaseInfo.getPurchaseToken());
+                                        }
+
+                                    }break;
+                                }
+                            }
+//                            //或者
+//                            if(productConfig.canConsume()){
+//                                //消耗商品
+//                                billingEasy.consume(purchaseInfo.getPurchaseToken());
+//                            }else{
+//                                //确认购买
+//                                if(!purchaseInfo.isAcknowledged()){
+//                                    billingEasy.acknowledge(purchaseInfo.getPurchaseToken());
+//                                }
+//                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 
+
+
+    //region==============================关系不大的方法
     private final StringBuffer logBuffer = new StringBuffer();
     private void log(String msg){
         handler.post(() -> {
@@ -168,11 +229,11 @@ public class MainActivity extends AppCompatActivity {
             tvLog.setText(logBuffer.toString());
         });
     }
-
     private String getTime(){
         Date dt = new Date();
         SimpleDateFormat sdf = (SimpleDateFormat)DateFormat.getInstance();
         sdf.applyPattern("HH:mm:ss.SSS");
         return sdf.format(dt);
     }
+    //endregion
 }

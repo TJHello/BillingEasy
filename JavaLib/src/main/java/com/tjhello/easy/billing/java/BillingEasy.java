@@ -57,24 +57,30 @@ public class BillingEasy implements BillingEasyImp {
 
     /**
      * 添加商品配置
-     * @param productCode 商品Code
      * @param productType 商品类型 @ProductType
+     * @param productCodeArray 商品codeArray
      */
-    public static void addProductConfig(@NonNull String productCode,@NonNull @ProductType String productType) {
-        if(productCode.isEmpty()) {
-            try {
-                throw new Exception("productCode不能为空");
-            } catch (Exception e) {
-                e.printStackTrace();
-                BillingEasyLog.e(e.getMessage());
+    public static void addProductConfig(@NonNull @ProductType String productType,@NonNull String... productCodeArray) {
+        for (String productCode : productCodeArray) {
+            if(productCode.isEmpty()) {
+                try {
+                    throw new Exception("productCode不能为空");
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    BillingEasyLog.e(e.getMessage());
+                }
             }
+            ProductConfig config = new ProductConfig();
+            config.setCode(productCode);
+            config.setType(productType);
+            billingManager.addProductConfig(config);
         }
-        ProductConfig config = new ProductConfig();
-        config.setCode(productCode);
-        config.setType(productType);
-        billingManager.addProductConfig(config);
     }
 
+    /**
+     * 是否开启日志
+     * @param bool true|false
+     */
     public static void setDebug(boolean bool){
         BillingEasyLog.setDebug(bool);
     }
@@ -133,7 +139,6 @@ public class BillingEasy implements BillingEasyImp {
     public void consume(@NonNull String purchaseToken) {
         billingManager.consume(purchaseToken,null);
     }
-
 
     @Override
     public void consume(@NonNull String purchaseToken, @Nullable EasyCallBack<String> callback) {

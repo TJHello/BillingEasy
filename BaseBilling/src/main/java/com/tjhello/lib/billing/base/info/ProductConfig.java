@@ -24,4 +24,9 @@ public class ProductConfig {
     public void setType(String type) {
         this.type = type;
     }
+
+    public boolean canConsume(){
+        return type.equals(ProductType.TYPE_INAPP_CONSUMABLE);
+    }
+
 }

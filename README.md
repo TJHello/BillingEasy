@@ -1,4 +1,4 @@
-# BillingEasy-0.1.1-t04
+# BillingEasy-0.1.1-t05
 
 **QQ交流群(425219113)**
 
@@ -41,14 +41,14 @@ android{
 }
 
 dependencies {
-    implementation 'com.TJHello.easy:BillingEasy:0.1.1-t04'//BillingEasy
-    implementation 'com.TJHello.lib.billing:google:1.4.0.0-t04'//Google内购
+    implementation 'com.TJHello.easy:BillingEasy:0.1.1-t05'//BillingEasy
+    implementation 'com.TJHello.publicLib.billing:google:1.4.0.0-t05'//Google内购
     //华为等这版本跑通了再加
 }
 
 ```
 
-- ### Step3 代码示例(以下接口只要支持了JAVA8，都是可选实现)
+- ### Step3 代码示例([MainActivity](https://gitee.com/TJHello/BillingEasy/blob/master/app/src/main/java/com/tjhello/app/easy/billing/MainActivity.java))
 ```java
 public class MainActivity extends AppCompatActivity {
 
@@ -68,6 +68,7 @@ public class MainActivity extends AppCompatActivity {
         billingEasy.onDestroy();
     }
 
+    //以下接口只要支持了JAVA8，都是可选实现
     private class MyBillingEasyListener implements BillingEasyListener{
         @Override
         public void onConnection(@NonNull BillingEasyResult result) {
@@ -90,21 +91,43 @@ public class MainActivity extends AppCompatActivity {
             //购买商品，判断示例
             if(result.isSuccess){
                 for (PurchaseInfo purchaseInfo : purchaseInfoList) {
+                    //判断商品是否有效
                     if(purchaseInfo.isValid()){
-                        //有效商品
-                        String type = purchaseInfo.getFirstType();
-                        if(type!=null){
-                            if(type.equals(ProductType.TYPE_INAPP_CONSUMABLE)){
-                                //可消耗商品，则消耗
-                                billingEasy.consume(purchaseInfo.getPurchaseToken());
-                            }else if(type.equals(ProductType.TYPE_INAPP_NON_CONSUMABLE)){
-                                //不可消耗商品，则确认购买
-                                billingEasy.acknowledge(purchaseInfo.getPurchaseToken());
+                        for (ProductConfig productConfig : purchaseInfo.getProductList()) {
+                            //判断商品类型
+                            String type = productConfig.getType();
+                            if(type!=null){
+                                switch (type){
+                                    //内购商品-可消耗
+                                    case ProductType.TYPE_INAPP_CONSUMABLE:{
+                                        //消耗商品(消耗包括确认购买)
+                                        billingEasy.consume(purchaseInfo.getPurchaseToken());
+                                    }break;
+                                    //内购商品-非消耗||订阅商品
+                                    case ProductType.TYPE_INAPP_NON_CONSUMABLE:
+                                    case ProductType.TYPE_SUBS: {
+                                        //判断是否已经确认购买
+                                        if(!purchaseInfo.isAcknowledged()){
+                                            //确认购买
+                                            billingEasy.acknowledge(purchaseInfo.getPurchaseToken());
+                                        }
+                                    }break;
+                                }
                             }
+//                            //或者
+//                            if(productConfig.canConsume()){
+//                                //消耗商品
+//                                billingEasy.consume(purchaseInfo.getPurchaseToken());
+//                            }else{
+//                                //确认购买
+//                                if(!purchaseInfo.isAcknowledged()){
+//                                    billingEasy.acknowledge(purchaseInfo.getPurchaseToken());
+//                                }
+//                            }
                         }
                     }
                 }
-             }
+            }
         }
 
         @Override

@@ -5,7 +5,7 @@ plugins {
 
 ext.ver = "${BASE_VERSION_NAME}"
 ext.verCode = BASE_VERSION_CODE
-ext.GROUP_ID = 'com.TJHello.lib.billing'
+ext.GROUP_ID = 'com.TJHello.publicLib.billing'
 ext.POM_ARTIFACT_ID = 'base'
 
 uploadArchives {

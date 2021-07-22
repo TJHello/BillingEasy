@@ -2,10 +2,13 @@ package com.tjhello.lib.billing.base.info;
 
 import androidx.annotation.Nullable;
 
+import com.tjhello.lib.billing.base.anno.ProductType;
+
 public class ProductInfo {
 
     String code ;
     String price ;
+    @ProductType
     String type ;
     String json ;
 

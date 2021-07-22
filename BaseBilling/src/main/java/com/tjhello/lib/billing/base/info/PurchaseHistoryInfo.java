@@ -2,14 +2,14 @@ package com.tjhello.lib.billing.base.info;
 
 import androidx.annotation.Nullable;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class PurchaseHistoryInfo {
 
-    List<String> codeList ;
+    final List<ProductConfig> productList = new ArrayList<>();
     String purchaseToken ;
     long purchaseTime ;
-    List<String> typeList ;
     Object baseObj;
     String json ;
 
@@ -89,14 +89,6 @@ public class PurchaseHistoryInfo {
         }
     }
 
-    public List<String> getCodeList() {
-        return codeList;
-    }
-
-    public void setCodeList(List<String> codeList) {
-        this.codeList = codeList;
-    }
-
     public String getPurchaseToken() {
         return purchaseToken;
     }
@@ -129,24 +121,13 @@ public class PurchaseHistoryInfo {
         this.json = json;
     }
 
-    public List<String> getTypeList() {
-        return typeList;
+    public void addProduct(ProductConfig productConfig){
+        productList.add(productConfig);
     }
 
-    public void setTypeList(List<String> typeList) {
-        this.typeList = typeList;
+    public List<ProductConfig> getProductList(){
+        return productList;
     }
 
-    @Nullable
-    public String getFirstCode(){
-        if(codeList.isEmpty()) return null;
-        return codeList.get(0);
-    }
-
-    @Nullable
-    public String getFirstType(){
-        if(typeList.isEmpty()) return null;
-        return typeList.get(0);
-    }
 
 }

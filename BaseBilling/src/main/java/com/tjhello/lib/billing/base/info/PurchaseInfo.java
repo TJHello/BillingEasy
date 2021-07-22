@@ -1,17 +1,17 @@
 package com.tjhello.lib.billing.base.info;
 
-import androidx.annotation.Nullable;
-
+import java.util.ArrayList;
 import java.util.List;
 
 public class PurchaseInfo {
 
     boolean isValid = false;
-    List<String> codeList ;
-    List<String> typeList ;
+    final List<ProductConfig> productList = new ArrayList<>();
     String orderId ;
     String purchaseToken ;
     GoogleBillingPurchase googleBillingPurchase;
+    private boolean isAcknowledged = false;
+    private boolean isAutoRenewing = false;
     Object baseObj;
 
     public class GoogleBillingPurchase{
@@ -133,13 +133,6 @@ public class PurchaseInfo {
         this.googleBillingPurchase = googleBillingPurchase;
     }
 
-    public List<String> getCodeList() {
-        return codeList;
-    }
-
-    public void setCodeList(List<String> codeList) {
-        this.codeList = codeList;
-    }
 
     public String getOrderId() {
         return orderId;
@@ -173,23 +166,27 @@ public class PurchaseInfo {
         isValid = valid;
     }
 
-    public List<String> getTypeList() {
-        return typeList;
+    public void addProduct(ProductConfig productConfig){
+        productList.add(productConfig);
     }
 
-    public void setTypeList(List<String> typeList) {
-        this.typeList = typeList;
+    public List<ProductConfig> getProductList(){
+        return productList;
     }
 
-    @Nullable
-    public String getFirstCode(){
-        if(codeList.isEmpty()) return null;
-        return codeList.get(0);
+    public void setAcknowledged(boolean isAcknowledged){
+        this.isAcknowledged = isAcknowledged;
     }
 
-    @Nullable
-    public String getFirstType(){
-        if(typeList.isEmpty()) return null;
-        return typeList.get(0);
+    public boolean isAcknowledged(){
+        return isAcknowledged;
+    }
+
+    public boolean isAutoRenewing(){
+        return isAutoRenewing;
+    }
+
+    public void setAutoRenewing(boolean isAutoRenewing){
+        this.isAutoRenewing = isAutoRenewing;
     }
 }

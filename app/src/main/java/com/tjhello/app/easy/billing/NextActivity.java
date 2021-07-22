@@ -9,6 +9,7 @@ import androidx.appcompat.widget.AppCompatButton;
 import com.tjhello.easy.billing.java.BillingEasy;
 import com.tjhello.lib.billing.base.anno.ProductType;
 import com.tjhello.lib.billing.base.info.BillingEasyResult;
+import com.tjhello.lib.billing.base.info.ProductConfig;
 import com.tjhello.lib.billing.base.info.ProductInfo;
 import com.tjhello.lib.billing.base.info.PurchaseInfo;
 
@@ -64,27 +65,48 @@ public class NextActivity extends AppCompatActivity {
         billingEasy.onDestroy();
     }
 
+    /**
+     * 处理订单,自动消耗或自动确认购买
+     * @param purchaseInfoList 商品列表
+     */
     private void utilPurchase(BillingEasyResult billingEasyResult,List<PurchaseInfo> purchaseInfoList){
+        //判断购买成功
         if(billingEasyResult.isSuccess){
             for (PurchaseInfo purchaseInfo : purchaseInfoList) {
+                //判断商品是否有效
                 if(purchaseInfo.isValid()){
-                    //消耗商品
-                    String type = purchaseInfo.getFirstType();
-                    if(type!=null){
-                        switch (type){
-                            case ProductType.TYPE_INAPP_CONSUMABLE:{
-                                billingEasy.consume(purchaseInfo.getPurchaseToken());
-                                //发放奖励
-                            }
-                            case ProductType.TYPE_INAPP_NON_CONSUMABLE:{
-                                billingEasy.acknowledge(purchaseInfo.getPurchaseToken());
-                                //发放奖励
-                            }
-                            case ProductType.TYPE_SUBS:{
-                                //订阅商品
-                                //发放奖励
+                    for (ProductConfig productConfig : purchaseInfo.getProductList()) {
+                        //判断商品类型
+                        String type = productConfig.getType();
+                        if(type!=null){
+                            switch (type){
+                                //内购商品-可消耗
+                                case ProductType.TYPE_INAPP_CONSUMABLE:{
+                                    //消耗商品(消耗包括确认购买)
+                                    billingEasy.consume(purchaseInfo.getPurchaseToken());
+                                }break;
+                                //内购商品-非消耗||订阅商品
+                                case ProductType.TYPE_INAPP_NON_CONSUMABLE:
+                                case ProductType.TYPE_SUBS: {
+                                    //判断是否已经确认购买
+                                    if(!purchaseInfo.isAcknowledged()){
+                                        //确认购买
+                                        billingEasy.acknowledge(purchaseInfo.getPurchaseToken());
+                                    }
+
+                                }break;
                             }
                         }
+//                            //或者
+//                            if(productConfig.canConsume()){
+//                                //消耗商品
+//                                billingEasy.consume(purchaseInfo.getPurchaseToken());
+//                            }else{
+//                                //确认购买
+//                                if(!purchaseInfo.isAcknowledged()){
+//                                    billingEasy.acknowledge(purchaseInfo.getPurchaseToken());
+//                                }
+//                            }
                     }
                 }
             }
