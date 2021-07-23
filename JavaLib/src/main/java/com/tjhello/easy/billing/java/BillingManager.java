@@ -177,19 +177,22 @@ public class BillingManager implements BillingManagerImp {
     }
 
     private static class PurchaseBillingEasyListener implements BillingEasyListener{
+        @Nullable
         private final EasyCallBack<List<PurchaseInfo>> purchaseCallback ;
 
-        public PurchaseBillingEasyListener(EasyCallBack<List<PurchaseInfo>> purchaseCallback) {
+        public PurchaseBillingEasyListener(@Nullable EasyCallBack<List<PurchaseInfo>> purchaseCallback) {
             this.purchaseCallback = purchaseCallback;
         }
 
         @Override
         public void onPurchases(@NonNull BillingEasyResult result, @NonNull List<PurchaseInfo> purchaseInfoList) {
+            if(purchaseCallback==null) return;
             purchaseCallback.callback(result,purchaseInfoList);
         }
 
         @Override
         public void onQueryOrder(@NonNull BillingEasyResult result, @NonNull List<PurchaseInfo> purchaseInfoList) {
+            if(purchaseCallback==null) return;
             purchaseCallback.callback(result,purchaseInfoList);
         }
     }

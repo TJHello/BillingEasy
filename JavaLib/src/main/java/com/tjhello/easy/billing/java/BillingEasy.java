@@ -77,6 +77,18 @@ public class BillingEasy implements BillingEasyImp {
         }
     }
 
+    public static void addProductConfig(ProductConfig productConfig){
+        if(productConfig.getCode().isEmpty()){
+            try {
+                throw new Exception("productCode不能为空");
+            } catch (Exception e) {
+                e.printStackTrace();
+                BillingEasyLog.e(e.getMessage());
+            }
+        }
+        billingManager.addProductConfig(productConfig);
+    }
+
     /**
      * 是否开启日志
      * @param bool true|false

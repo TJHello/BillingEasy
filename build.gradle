@@ -25,13 +25,13 @@ if(os.contains("Windows")){
 
 //版本常量
 
-ext.BASE_VERSION_NAME = "0.1-t05"
+ext.BASE_VERSION_NAME = "0.1-t06"
 ext.BASE_VERSION_CODE = 1
 
-ext.BILLING_EASY_VERSION_NAME = "0.1.1-t05"
+ext.BILLING_EASY_VERSION_NAME = "0.1.1-t06"
 ext.BILLING_EASY_VERSION_CODE = 1
 
-ext.GOOGLE_BILLING_VERSION_NAME = "1.4.0.0-t05"
+ext.GOOGLE_BILLING_VERSION_NAME = "1.4.0.0-t06"
 ext.GOOGLE_BILLING_VERSION_CODE = 1400
 
 
@@ -39,9 +39,9 @@ allprojects {
     repositories {
         google()
         mavenCentral()
-        maven { url 'https://tjhello.gitee.io/publiclib/'}
+//        maven { url 'https://tjhello.gitee.io/publiclib/'}
 //        maven { url 'http://127.0.0.1'}
-//        maven { url 'http://127.0.0.1/maven'}
+        maven { url 'http://127.0.0.1/maven'}
     }
 }
 
