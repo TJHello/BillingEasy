@@ -39,8 +39,8 @@ allprojects {
     repositories {
         google()
         mavenCentral()
-//        maven { url 'https://tjhello.gitee.io/publiclib/'}
-//        maven { url 'http://127.0.0.1'}
+        maven { url 'https://tjhello.gitee.io/publiclib/'}
+        maven { url 'http://127.0.0.1'}
         maven { url 'http://127.0.0.1/maven'}
     }
 }
