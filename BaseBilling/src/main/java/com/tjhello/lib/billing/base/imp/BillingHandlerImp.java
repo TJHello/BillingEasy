@@ -6,6 +6,7 @@ import android.app.Activity;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.tjhello.lib.billing.base.anno.BillingName;
 import com.tjhello.lib.billing.base.listener.BillingEasyListener;
 
 import java.util.List;
@@ -29,4 +30,7 @@ public interface BillingHandlerImp {
     void queryOrderLocal(@NonNull List<String> typeList,@NonNull BillingEasyListener listener);
 
     void queryOrderHistory(@NonNull List<String> typeList,@NonNull BillingEasyListener listener);
+
+    @BillingName
+    String getBillingName();
 }

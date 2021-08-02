@@ -24,6 +24,7 @@ import com.android.billingclient.api.PurchasesUpdatedListener;
 import com.android.billingclient.api.SkuDetails;
 import com.android.billingclient.api.SkuDetailsParams;
 import com.android.billingclient.api.SkuDetailsResponseListener;
+import com.tjhello.lib.billing.base.anno.BillingName;
 import com.tjhello.lib.billing.base.anno.ProductType;
 import com.tjhello.lib.billing.base.handler.BillingHandler;
 import com.tjhello.lib.billing.base.info.BillingEasyResult;
@@ -177,6 +178,11 @@ public class GoogleBillingHandler extends BillingHandler {
         }
     }
 
+    @Override
+    @BillingName
+    public String getBillingName() {
+        return BillingName.GOOGLE;
+    }
 
     private class MyBillingClientStateListener implements BillingClientStateListener {
 
@@ -507,6 +513,7 @@ public class GoogleBillingHandler extends BillingHandler {
             default:return BillingClient.SkuType.SUBS;
         }
     }
+
 
 
 }

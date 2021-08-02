@@ -1,4 +1,4 @@
-# BillingEasy-0.1.1-t06
+# BillingEasy-0.1.1-t07
 
 **QQ交流群(425219113)**
 
@@ -41,8 +41,8 @@ android{
 }
 
 dependencies {
-    implementation 'com.TJHello.easy:BillingEasy:0.1.1-t06'//BillingEasy
-    implementation 'com.TJHello.publicLib.billing:google:1.4.0.0-t06'//Google内购
+    implementation 'com.TJHello.easy:BillingEasy:0.1.1-t07'//BillingEasy
+    implementation 'com.TJHello.publicLib.billing:google:1.4.0.0-t07'//Google内购
     //华为等这版本跑通了再加
 }
 
@@ -177,6 +177,23 @@ billingEasy.acknowledge("purchaseToken");
 
 1. 谷歌内购3.0.2以及以上版本要求谷歌商店在:25.8.21以上，已知21.24.18无法购买
 
+- ### 更新日志
+
+0.1.1-t07 2021/08/02
+```
+1.修复购买成功接口会多重复回调一次的bug。
+```
+
+
+0.1.1-t06
+```
+1.优化商品详情的查询逻辑，避免多余的结果回调。
+```
+
+0.1.1-t05
+```
+1.修复消耗商品没有传入callback会导致空指针报错的问题。
+```
 
 
 

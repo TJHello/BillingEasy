@@ -5,6 +5,7 @@ import android.app.Activity;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.tjhello.lib.billing.base.anno.BillingName;
 import com.tjhello.lib.billing.base.anno.ProductType;
 import com.tjhello.lib.billing.base.handler.BillingHandler;
 import com.tjhello.easy.billing.java.imp.BillingManagerImp;
@@ -77,10 +78,17 @@ public class BillingManager implements BillingManagerImp {
         List<String> list2 = getProductCodeList(ProductType.TYPE_INAPP_NON_CONSUMABLE);
         List<String> list3 = getProductCodeList(ProductType.TYPE_SUBS);
         ProductBillingEasyListener listener = new ProductBillingEasyListener(callBack);
-        billingHandler.queryProduct(list1,billingHandler.getProductType(ProductType.TYPE_INAPP_CONSUMABLE),listener);
-        billingHandler.queryProduct(list2,billingHandler.getProductType(ProductType.TYPE_INAPP_NON_CONSUMABLE),listener);
-        billingHandler.queryProduct(list3,billingHandler.getProductType(ProductType.TYPE_SUBS),listener);
+        if(billingHandler.getBillingName().equals(BillingName.GOOGLE)){
+            list1.addAll(list2);
+            billingHandler.queryProduct(list1,billingHandler.getProductType(ProductType.TYPE_INAPP_CONSUMABLE),listener);
+            billingHandler.queryProduct(list3,billingHandler.getProductType(ProductType.TYPE_SUBS),listener);
+        }else{
+            billingHandler.queryProduct(list1,billingHandler.getProductType(ProductType.TYPE_INAPP_CONSUMABLE),listener);
+            billingHandler.queryProduct(list2,billingHandler.getProductType(ProductType.TYPE_INAPP_NON_CONSUMABLE),listener);
+            billingHandler.queryProduct(list3,billingHandler.getProductType(ProductType.TYPE_SUBS),listener);
+        }
     }
+
 
     @Override
     public void purchase(@NonNull Activity activity, @NonNull String productCode, @Nullable EasyCallBack<List<PurchaseInfo>> callBack) {
