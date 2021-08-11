@@ -50,7 +50,7 @@ dependencies {
     implementation ('com.TJHello.easy:BillingEasy:0.1.1-t07'){
         changing = true
     }
-    implementation ('com.TJHello.lib.billing:google:1.4.0.0-t07'){
+    implementation ('com.TJHello.publicLib.billing:google:1.4.0.0-t07'){
         changing = true
     }
 
