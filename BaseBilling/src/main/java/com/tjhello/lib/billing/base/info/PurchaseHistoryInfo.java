@@ -23,7 +23,7 @@ public class PurchaseHistoryInfo {
         this.googleBillingPurchaseHistory = googleBillingPurchaseHistory;
     }
 
-    public class GoogleBillingPurchaseHistory{
+    public static class GoogleBillingPurchaseHistory{
         String developerPayload;
         String originalJson ;
         long purchaseTime ;

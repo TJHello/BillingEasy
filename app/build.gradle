@@ -8,9 +8,11 @@ android {
     buildToolsVersion "30.0.3"
 
     defaultConfig {
-        applicationId "com.love.poly.puzzle.game"//com.tjhello.app.easy.billing
+        //这里记得改成自己的包名
+        applicationId "com.tjhello.app.easy.billing"
         minSdkVersion 16
         targetSdkVersion 30
+        //这里记得改成自己的版本号
         versionCode BILLING_EASY_VERSION_CODE
         versionName "${BILLING_EASY_VERSION_NAME}"
 
@@ -27,6 +29,8 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
+
+    //支持JAVA8
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8

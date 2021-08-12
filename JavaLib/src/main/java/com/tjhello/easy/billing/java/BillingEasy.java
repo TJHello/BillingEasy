@@ -46,19 +46,24 @@ public class BillingEasy implements BillingEasyImp {
 
     private static final BillingManager billingManager = new BillingManager();
 
-    private static final CopyOnWriteArrayList<BillingEasy> billingEasyList = new CopyOnWriteArrayList<>();
-    //创建一个实例
+//    private static final CopyOnWriteArrayList<BillingEasy> billingEasyList = new CopyOnWriteArrayList<>();
+
+    /**
+     * 创建一个新的实例(可以创建任意多个，但必须要调用{@link #onDestroy()}来回收资源，避免内存泄漏)
+     * @param activity Activity
+     * @return BillingEasy
+     */
     @NonNull
     public static BillingEasy newInstance(@NonNull Activity activity){
         BillingEasy billingEasy = new BillingEasy(activity);
-        billingEasyList.add(billingEasy);
+//        billingEasyList.add(billingEasy);
         return billingEasy;
     }
 
     /**
      * 添加商品配置
-     * @param productType 商品类型 @ProductType
-     * @param productCodeArray 商品codeArray
+     * @param productType 商品类型 {@link ProductType}
+     * @param productCodeArray 商品代码
      */
     public static void addProductConfig(@NonNull @ProductType String productType,@NonNull String... productCodeArray) {
         for (String productCode : productCodeArray) {
@@ -77,6 +82,10 @@ public class BillingEasy implements BillingEasyImp {
         }
     }
 
+    /**
+     * 添加一个商品配置
+     * @param productConfig {@link ProductConfig#build(String, String)}
+     */
     public static void addProductConfig(ProductConfig productConfig){
         if(productConfig.getCode().isEmpty()){
             try {
@@ -106,6 +115,11 @@ public class BillingEasy implements BillingEasyImp {
 
     //endregion
 
+    /**
+     * 添加一个万能监听器
+     * @param listener {@link BillingEasyListener}
+     * @return BillingEasy
+     */
     public BillingEasy addListener(@NonNull BillingEasyListener listener) {
         listenerList.add(listener);
         return this;
@@ -124,75 +138,129 @@ public class BillingEasy implements BillingEasyImp {
     public void onDestroy() {
         billingManager.removeListener(myBillingEasyListener);
         listenerList.clear();
-        billingEasyList.remove(this);
+//        billingEasyList.remove(this);
     }
 
+    /**
+     * 查询所有商品信息
+     */
     @Override
     public void queryProduct() {
         billingManager.queryProduct(null);
     }
 
+    /**
+     * 查询所有商品信息
+     * @param callBack 回调
+     */
     @Override
     public void queryProduct(EasyCallBack<List<ProductInfo>> callBack) {
         billingManager.queryProduct(callBack);
     }
 
+    /**
+     * 发起购买
+     * @param productCode 商品代码
+     */
     @Override
     public void purchase(@NonNull String productCode) {
         purchase(productCode,null);
     }
 
+    /**
+     * 发起购买
+     * @param productCode 商品代码
+     * @param callBack 回调
+     */
     @Override
     public void purchase(@NonNull String productCode,@Nullable EasyCallBack<List<PurchaseInfo>> callBack) {
         billingManager.purchase(mActivity,productCode,callBack);
     }
 
+    /**
+     * 消耗商品 (消耗商品的操作包含了确认购买)
+     * @param purchaseToken {@link PurchaseInfo#getPurchaseToken()}
+     */
     @Override
     public void consume(@NonNull String purchaseToken) {
         billingManager.consume(purchaseToken,null);
     }
 
+    /**
+     * 消耗商品 (消耗商品的操作包含了确认购买)
+     * @param purchaseToken {@link PurchaseInfo#getPurchaseToken()}
+     * @param callBack 回调
+     */
     @Override
-    public void consume(@NonNull String purchaseToken, @Nullable EasyCallBack<String> callback) {
-        billingManager.consume(purchaseToken,callback);
+    public void consume(@NonNull String purchaseToken, @Nullable EasyCallBack<String> callBack) {
+        billingManager.consume(purchaseToken,callBack);
     }
 
+    /**
+     * 确认购买 (消耗商品的操作包含了确认购买，不确认购买会导致退款)
+     * 确认购买前可以使用{@link PurchaseInfo#isAcknowledged()}方法来判断商品是否已经确认购买
+     * @param purchaseToken {@link PurchaseInfo#getPurchaseToken()}
+     */
     @Override
     public void acknowledge(@NonNull String purchaseToken) {
         billingManager.acknowledge(purchaseToken,null);
     }
 
+    /**
+     * 确认购买 (消耗商品的操作包含了确认购买，不确认购买会导致退款)
+     * 确认购买前可以使用{@link PurchaseInfo#isAcknowledged()}方法来判断商品是否已经确认购买
+     * @param purchaseToken {@link PurchaseInfo#getPurchaseToken()}
+     * @param callBack 回调
+     */
     @Override
     public void acknowledge(@NonNull String purchaseToken, @Nullable EasyCallBack<String> callBack) {
         billingManager.acknowledge(purchaseToken,callBack);
     }
 
 
+    /**
+     * 查询有效商品订单-在线或本地缓存
+     */
     @Override
     public void queryOrderAsync() {
         billingManager.queryOrderAsync(null);
     }
 
+    /**
+     * 查询有效商品订单-本地缓存
+     */
     @Override
     public void queryOrderLocal() {
         billingManager.queryOrderLocal(null);
     }
 
+    /**
+     * 查询历史订单
+     */
     @Override
     public void queryOrderHistory() {
         billingManager.queryOrderHistory(null);
     }
 
+    /**
+     * 查询有效商品订单-在线或本地缓存
+     */
     @Override
     public void queryOrderAsync(@Nullable EasyCallBack<List<PurchaseInfo>> callBack) {
         billingManager.queryOrderAsync(callBack);
     }
 
+    /**
+     * 查询有效商品订单-本地缓存
+     */
     @Override
     public void queryOrderLocal(@Nullable EasyCallBack<List<PurchaseInfo>> callBack) {
         billingManager.queryOrderLocal(callBack);
     }
 
+    /**
+     * 查询历史订单
+     */
     @Override
     public void queryOrderHistory(@Nullable EasyCallBack<List<PurchaseHistoryInfo>> callBack) {
         billingManager.queryOrderHistory(callBack);
@@ -202,16 +270,28 @@ public class BillingEasy implements BillingEasyImp {
 
     private class MyBillingEasyListener implements BillingEasyListener{
 
+        /**
+         * 连接内购服务结果
+         * @param result {@link BillingEasyResult}
+         */
         @Override
         public void onConnection(@NonNull BillingEasyResult result) {
             BillingEasyLog.logResult(ACTIVITY_TAG,"onConnection",result);
         }
 
+        /**
+         * 断开内购服务连接
+         */
         @Override
         public void onDisconnected() {
             BillingEasyLog.i("["+ACTIVITY_TAG+"][onDisconnected]");
         }
 
+        /**
+         * 查询商品信息回调
+         * @param result {@link BillingEasyResult}
+         * @param productInfoList 商品信息列表
+         */
         @Override
         public void onQueryProduct(@NonNull BillingEasyResult result, @NonNull List<ProductInfo> productInfoList) {
             for (BillingEasyListener listener : listenerList) {
@@ -222,6 +302,35 @@ public class BillingEasy implements BillingEasyImp {
             }
         }
 
+        /**
+         * 购买回调
+         *
+         * //判断购买是否成功
+         * if(result.isSuccess){
+         *     //有可能返回多个订单
+         *     for (PurchaseInfo purchaseInfo : purchaseInfoList) {
+         *          //判断商品订单是否有效
+         *          if(purchaseInfo.isValid()){
+         *              //获取商品配置列表
+         *              for (ProductConfig productConfig : purchaseInfo.getProductList()) {
+         *                  if(productConfig.canConsume()){
+         *                      //消耗商品
+         *                      billingEasy.consume(purchaseInfo.getPurchaseToken());
+         *                  }else{
+         *                      if(!purchaseInfo.isAcknowledged()){
+         *                          //确认购买
+         *                          billingEasy.acknowledge(purchaseInfo.getPurchaseToken());
+         *                      }
+         *                  }
+         *              }
+         *          }
+         *     }
+         * }
+         *
+         *
+         * @param result {@link BillingEasyResult}
+         * @param purchaseInfoList 订单信息列表
+         */
         @Override
         public void onPurchases(@NonNull BillingEasyResult result, @NonNull List<PurchaseInfo> purchaseInfoList) {
             for (BillingEasyListener listener : listenerList) {

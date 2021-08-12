@@ -14,7 +14,7 @@ public class PurchaseInfo {
     private boolean isAutoRenewing = false;
     Object baseObj;
 
-    public class GoogleBillingPurchase{
+    public static class GoogleBillingPurchase{
         String developerPayload;
         String orderId ;
         String originalJson ;

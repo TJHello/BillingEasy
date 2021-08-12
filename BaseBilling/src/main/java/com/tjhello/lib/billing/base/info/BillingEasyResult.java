@@ -4,14 +4,36 @@ import androidx.annotation.Nullable;
 
 public class BillingEasyResult {
 
+    /**
+     * 是否成功
+     */
     public boolean isSuccess = false;
 
+    /**
+     * 是否用户取消
+     */
+    public boolean isCancel = false;
+
+    /**
+     * 是否发生错误
+     */
+    public boolean isError = false;
+
+    /**
+     * 返回信息
+     */
     @Nullable
     public String responseMsg ;
 
+    /**
+     * 返回码
+     */
     @Nullable
     public String responseCode ;
 
+    /**
+     * 原始对象
+     */
     @Nullable
     public Object baseObj;
 
@@ -33,5 +55,7 @@ public class BillingEasyResult {
         result.baseObj = obj;
         return result;
     }
+
+
 
 }

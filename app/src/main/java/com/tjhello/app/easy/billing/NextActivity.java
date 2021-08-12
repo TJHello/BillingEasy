@@ -37,10 +37,9 @@ public class NextActivity extends AppCompatActivity {
                             btInapp.setText(String.format("发起内购:%s",productInfo.getPrice()));
                             break;
                         case ProductType.TYPE_SUBS:{
-                            btSubs.setText(String.format("发起内购:%s",productInfo.getPrice()));
+                            btSubs.setText(String.format("发起订阅:%s",productInfo.getPrice()));
                         }
                     }
-
                 }
             }
         });

@@ -14,10 +14,33 @@ public class ProductConfig {
     @ProductType
     private String type;
 
+    /**
+     * 构建一个商品配置-无属性
+     * @param type 商品类型 {@link ProductType}
+     * @param code 商品代码
+     * @return 商品配置
+     */
     public static ProductConfig build(@NonNull @ProductType String type, String code){
         ProductConfig config = new ProductConfig();
         config.setCode(code);
         config.setType(type);
+        return config;
+    }
+
+    /**
+     * 构建一个商品配置-有属性
+     * @param type 商品类型 {@link ProductType}
+     * @param code 商品代码
+     * @param attArray 商品属性 {@link #addAtt(String)}
+     * @return 商品配置
+     */
+    public static ProductConfig build(@NonNull @ProductType String type, String code,String ... attArray){
+        ProductConfig config = new ProductConfig();
+        config.setCode(code);
+        config.setType(type);
+        for (String s : attArray) {
+            config.addAtt(s);
+        }
         return config;
     }
 
@@ -43,6 +66,10 @@ public class ProductConfig {
         return type.equals(ProductType.TYPE_INAPP_CONSUMABLE);
     }
 
+    /**
+     * 添加一个商品属性，例如"noads"，这样后吗即可使用containsAtt("noads")来判断该商品是否拥有该属性。
+     * @param att 商品属性
+     */
     public ProductConfig addAtt(String att){
         if(!containsAtt(att)){
             attList.add(att);
@@ -54,6 +81,12 @@ public class ProductConfig {
         return new ArrayList<>(attList);
     }
 
+
+    /**
+     * 是否存在某商品属性
+     * @param att 商品属性
+     * @return true|false
+     */
     public boolean containsAtt(String att){
         return attList.contains(att);
     }

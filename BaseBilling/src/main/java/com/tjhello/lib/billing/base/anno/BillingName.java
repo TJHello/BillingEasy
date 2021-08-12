@@ -11,7 +11,7 @@ import java.lang.annotation.Target;
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.PARAMETER,ElementType.FIELD,ElementType.METHOD})
-@StringDef(value = {BillingName.GOOGLE,BillingName.HUAWEI})
+@StringDef(value = {BillingName.GOOGLE,BillingName.HUAWEI,BillingName.EMPTY})
 public @interface BillingName {
 
     public static final String GOOGLE = "GoogleBilling";

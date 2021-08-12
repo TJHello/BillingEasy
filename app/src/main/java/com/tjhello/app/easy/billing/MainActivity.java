@@ -29,8 +29,7 @@ public class MainActivity extends AppCompatActivity {
 
     private final Handler handler = new Handler();
 
-    private final BillingEasy billingEasy = BillingEasy.newInstance(this)
-            .addListener(new MyBillingEasyListener());
+    private final BillingEasy billingEasy = BillingEasy.newInstance(this);
 
     //内购-消耗型商品-商品code
     private final static String[] INAPP_CONSUMABLE_CODE_ARRAY = new String[]{"商品code"};
@@ -48,16 +47,18 @@ public class MainActivity extends AppCompatActivity {
 
         //BillingEasy
         BillingEasy.setDebug(true);
-        //修改成自己的商品code(GP在这里设置消耗与非消耗，不会影响内购，只是用于自己判断而已)
+        //这里修改成自己的商品code(GP在这里设置消耗与非消耗，不会影响内购，只是用于自己判断而已)
         BillingEasy.addProductConfig(ProductType.TYPE_INAPP_CONSUMABLE,INAPP_CONSUMABLE_CODE_ARRAY);
         BillingEasy.addProductConfig(ProductType.TYPE_INAPP_NON_CONSUMABLE,INAPP_NON_CONSUMABLE_CODE_ARRAY);
         BillingEasy.addProductConfig(ProductType.TYPE_SUBS,SUBS_CODE_ARRAY);
+
+        //添加监听器放到onCreate里更安全
+        billingEasy.addListener(new MyBillingEasyListener());
         billingEasy.onCreate();
 
         //ui初始化
         tvLog = this.findViewById(R.id.tvLog);
         this.findViewById(R.id.tvLogClean).setOnClickListener(view -> tvLog.setText(null));
-
         this.findViewById(R.id.ivHelp).setOnClickListener(view->{
             Intent intent = new Intent();
             Uri uri = Uri.parse("https://gitee.com/TJHello/BillingEasy");
@@ -82,6 +83,9 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public void onConnection(@NonNull BillingEasyResult result) {
+
+
+            //日志输出代码
             log("内购服务已连接:"+result.isSuccess
                     +":responseCode="+result.responseCode
                     +",responseMsg="+result.responseMsg);
@@ -112,8 +116,10 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public void onPurchases(@NonNull BillingEasyResult result, @NonNull List<PurchaseInfo> purchaseInfoList) {
-            //处理订单
+            //处理订单示例
             utilPurchase(result,purchaseInfoList);
+
+
 
             //日志输出代码
             log("购买商品:"+result.isSuccess);
@@ -132,8 +138,10 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public void onQueryOrder(@NonNull BillingEasyResult result, @NonNull List<PurchaseInfo> purchaseInfoList) {
-            //处理订单
+            //处理订单示例
             utilPurchase(result,purchaseInfoList);
+
+
 
             //日志输出代码
             log("查询有效订单:"+result.isSuccess);
@@ -153,6 +161,8 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onQueryOrderHistory(@NonNull BillingEasyResult result, @NonNull List<PurchaseHistoryInfo> purchaseInfoList) {
             //获取历史订单回调
+
+
 
             //日志输出代码
             log("查询历史订单:"+result.isSuccess);
