@@ -410,7 +410,7 @@ public class GoogleBillingHandler extends BillingHandler {
         BillingEasyResult result = BillingEasyResult.build(isSuccess,
                 billingResult.getResponseCode(),billingResult.getDebugMessage(),billingResult);
         result.isCancel = isCancel;
-        result.isSuccess = !isSuccess&&!isCancel;
+        result.isError = !isSuccess&&!isCancel;
         return result;
     }
 
