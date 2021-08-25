@@ -156,8 +156,10 @@ public class GoogleBillingHandler extends BillingHandler {
         for (String type : typeList) {
             Purchase.PurchasesResult purchasesResult = mBillingClient.queryPurchases(type);
             BillingResult billingResult = purchasesResult.getBillingResult();
-            listener.onQueryOrder(buildResult(billingResult), toPurchaseInfo(purchasesResult.getPurchasesList()));
-            mBillingEasyListener.onQueryOrder(buildResult(billingResult), toPurchaseInfo(purchasesResult.getPurchasesList()));
+            BillingEasyResult result = buildResult(billingResult);
+            List<PurchaseInfo> tempList = toPurchaseInfo(purchasesResult.getPurchasesList());
+            listener.onQueryOrder(result,tempList );
+            mBillingEasyListener.onQueryOrder(result, tempList);
         }
     }
 
@@ -186,8 +188,9 @@ public class GoogleBillingHandler extends BillingHandler {
         @Override
         public void onBillingSetupFinished(@NonNull BillingResult billingResult) {
             runMainThread(() -> {
-                mListener.onConnection(buildResult(billingResult));
-                mBillingEasyListener.onConnection(buildResult(billingResult));
+                BillingEasyResult result = buildResult(billingResult);
+                mListener.onConnection(result);
+                mBillingEasyListener.onConnection(result);
             });
         }
     }
@@ -202,10 +205,17 @@ public class GoogleBillingHandler extends BillingHandler {
         @Override
         public void onSkuDetailsResponse(@NonNull BillingResult billingResult, @Nullable List<SkuDetails> list) {
             runMainThread(() -> {
-                mListener.onQueryProduct(buildResult(billingResult),toProductInfo(list));
-                mBillingEasyListener.onQueryProduct(buildResult(billingResult),toProductInfo(list));
+                //存储SkuDetails缓存，用于发起购买的时候
+                if(list!=null&&!list.isEmpty()){
+                    for (SkuDetails skuDetails : list) {
+                        skuDetailsMap.put(skuDetails.getSku(),skuDetails);
+                    }
+                }
+                BillingEasyResult result = buildResult(billingResult);
+                List<ProductInfo> tempList = toProductInfo(list);
+                mListener.onQueryProduct(result,tempList);
+                mBillingEasyListener.onQueryProduct(result,tempList);
             });
-
         }
 
         private List<ProductInfo> toProductInfo(@Nullable List<SkuDetails> list){
@@ -269,8 +279,9 @@ public class GoogleBillingHandler extends BillingHandler {
         @Override
         public void onConsumeResponse(@NonNull BillingResult billingResult, @NonNull String purchaseToken) {
             runMainThread(() -> {
-                listener.onConsume(buildResult(billingResult),purchaseToken);
-                mBillingEasyListener.onConsume(buildResult(billingResult),purchaseToken);
+                BillingEasyResult result = buildResult(billingResult);
+                listener.onConsume(result,purchaseToken);
+                mBillingEasyListener.onConsume(result,purchaseToken);
             });
         }
     }
@@ -288,8 +299,9 @@ public class GoogleBillingHandler extends BillingHandler {
         @Override
         public void onAcknowledgePurchaseResponse(@NonNull BillingResult billingResult) {
             runMainThread(() -> {
-                listener.onAcknowledge(buildResult(billingResult),purchaseToken);
-                mBillingEasyListener.onAcknowledge(buildResult(billingResult),purchaseToken);
+                BillingEasyResult result = buildResult(billingResult);
+                listener.onAcknowledge(result,purchaseToken);
+                mBillingEasyListener.onAcknowledge(result,purchaseToken);
             });
         }
     }
@@ -305,8 +317,10 @@ public class GoogleBillingHandler extends BillingHandler {
         @Override
         public void onQueryPurchasesResponse(@NonNull BillingResult billingResult, @NonNull List<Purchase> list) {
             runMainThread(() -> {
-                listener.onQueryOrder(buildResult(billingResult),toPurchaseInfo(list));
-                mBillingEasyListener.onQueryOrder(buildResult(billingResult), toPurchaseInfo(list));
+                BillingEasyResult result = buildResult(billingResult);
+                List<PurchaseInfo> tempList = toPurchaseInfo(list);
+                listener.onQueryOrder(result,tempList);
+                mBillingEasyListener.onQueryOrder(result, tempList);
             });
         }
     }
@@ -322,8 +336,10 @@ public class GoogleBillingHandler extends BillingHandler {
         @Override
         public void onPurchaseHistoryResponse(@NonNull BillingResult billingResult, @Nullable List<PurchaseHistoryRecord> list) {
             runMainThread(() -> {
-                listener.onQueryOrderHistory(buildResult(billingResult), toPurchaseHistoryInfo(list));
-                mBillingEasyListener.onQueryOrderHistory(buildResult(billingResult), toPurchaseHistoryInfo(list));
+                BillingEasyResult result = buildResult(billingResult);
+                List<PurchaseHistoryInfo> tempList = toPurchaseHistoryInfo(list);
+                listener.onQueryOrderHistory(result, tempList);
+                mBillingEasyListener.onQueryOrderHistory(result, tempList);
             });
         }
 
@@ -410,7 +426,7 @@ public class GoogleBillingHandler extends BillingHandler {
         BillingEasyResult result = BillingEasyResult.build(isSuccess,
                 billingResult.getResponseCode(),billingResult.getDebugMessage(),billingResult);
         result.isCancel = isCancel;
-        result.isSuccess = !isSuccess&&!isCancel;
+        result.isError = !isSuccess&&!isCancel;
         return result;
     }
 
@@ -424,7 +440,5 @@ public class GoogleBillingHandler extends BillingHandler {
             default:return BillingClient.SkuType.SUBS;
         }
     }
-
-
 
 }
