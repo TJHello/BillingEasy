@@ -61,7 +61,7 @@ public class BillingEasy implements BillingEasyImp {
     }
 
     /**
-     * 添加商品配置
+     * 添加商品配置(自动去重)
      * @param productType 商品类型 {@link ProductType}
      * @param productCodeArray 商品代码
      */
@@ -83,7 +83,15 @@ public class BillingEasy implements BillingEasyImp {
     }
 
     /**
-     * 添加一个商品配置
+     * 清空商品配置
+     */
+    public static void cleanProductConfig(){
+        billingManager.cleanProductConfig();
+    }
+
+
+    /**
+     * 添加一个商品配置(自动去重)
      * @param productConfig {@link ProductConfig#build(String, String)}
      */
     public static void addProductConfig(ProductConfig productConfig){

@@ -19,6 +19,8 @@ public interface BillingManagerImp {
 
     void addProductConfig(@NonNull ProductConfig productConfig);
 
+    void cleanProductConfig();
+
     void onDestroy();
 
     void queryProduct(@Nullable EasyCallBack<List<ProductInfo>> callBack);

@@ -57,9 +57,20 @@ public class BillingManager implements BillingManagerImp {
 
     @Override
     public void addProductConfig(@NonNull ProductConfig productConfig) {
+        int size = productConfigList.size();
+        for(int i=size-1;i>=0;i--){
+            ProductConfig config = productConfigList.get(i);
+            if(config.getCode().equals(productConfig.getCode())){
+                productConfigList.remove(config);
+            }
+        }
         productConfigList.add(productConfig);
     }
 
+    @Override
+    public void cleanProductConfig() {
+        productConfigList.clear();
+    }
 
     @Override
     public void onDestroy() {
