@@ -1,6 +1,7 @@
 package com.tjhello.lib.billing.base.imp;
 
 import android.app.Activity;
+import android.content.Context;
 
 
 import androidx.annotation.NonNull;
@@ -13,7 +14,7 @@ import java.util.List;
 
 public interface BillingHandlerImp {
 
-    void onInit(@NonNull Activity activity);
+    void onInit(@NonNull Context context);
 
     boolean connection(@NonNull BillingEasyListener listener);
 

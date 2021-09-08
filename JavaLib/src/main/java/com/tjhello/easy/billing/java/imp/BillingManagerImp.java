@@ -1,6 +1,7 @@
 package com.tjhello.easy.billing.java.imp;
 
 import android.app.Activity;
+import android.content.Context;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -15,7 +16,7 @@ import java.util.List;
 
 public interface BillingManagerImp {
 
-    void onCreate(@NonNull Activity activity);
+    void init(@NonNull Context context);
 
     void addProductConfig(@NonNull ProductConfig productConfig);
 

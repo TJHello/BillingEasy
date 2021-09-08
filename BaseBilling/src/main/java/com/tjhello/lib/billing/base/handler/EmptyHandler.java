@@ -1,6 +1,7 @@
 package com.tjhello.lib.billing.base.handler;
 
 import android.app.Activity;
+import android.content.Context;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -37,7 +38,7 @@ public class EmptyHandler extends  BillingHandler {
     }
 
     @Override
-    public void onInit(@NonNull Activity activity) {
+    public void onInit(@NonNull Context context) {
 
     }
 

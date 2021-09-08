@@ -178,6 +178,17 @@ billingEasy.acknowledge("purchaseToken");
 1. 谷歌内购3.0.2以及以上版本要求谷歌商店的版本在:25.8.21以上，已知21.24.18无法购买，升级谷歌商店可到apkpure。
 
 - ### 更新日志
+0.1.1-t09 2021/09/08
+```
+1、添加BillingEasyStatic类，全静态操作
+2、去除BillingEasy和BillingManager的免混淆规则
+```
+
+0.1.1-t08 2021/08/25
+```
+1、添加商品配置自动去重功能
+2、添加cleanProductConfig接口，清除所有商品配置
+```
 
 0.1.1-t07 2021/08/02
 ```

@@ -139,7 +139,7 @@ public class BillingEasy implements BillingEasyImp {
 
     @Override
     public void onCreate() {
-        billingManager.onCreate(mActivity);
+        billingManager.init(mActivity);
     }
 
     @Override

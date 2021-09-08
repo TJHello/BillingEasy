@@ -20,4 +20,5 @@
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
 -keep class com.tjhello.easy.billing.java.BillingEasy{public *;}
+-keep class com.tjhello.easy.billing.java.BillingEasyStatic{public *;}
 -keep class com.tjhello.easy.billing.java.BillingManager{public *;}

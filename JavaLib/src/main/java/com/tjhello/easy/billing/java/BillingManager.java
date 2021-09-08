@@ -1,6 +1,7 @@
 package com.tjhello.easy.billing.java;
 
 import android.app.Activity;
+import android.content.Context;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -42,15 +43,16 @@ public class BillingManager implements BillingManagerImp {
     private static final CopyOnWriteArrayList<EasyCallBack<List<PurchaseInfo>>> purchaseEasyCallBackList = new CopyOnWriteArrayList<>();
     private static final CopyOnWriteArrayList<ProductConfig> productConfigList = new CopyOnWriteArrayList<>();
 
-    private boolean isFirstOnCreate = true;
+    private static boolean isFirstOnCreate = true;
+
     @Override
-    public void onCreate(@NonNull Activity activity) {
+    public void init(@NonNull Context context) {
         if(isFirstOnCreate){
             isFirstOnCreate = false;
             billingHandler = BillingHandler.createBillingHandler(mBillingEasyListener);
             billingHandler.setProductConfigList(productConfigList);
             BillingEasyLog.setVersionName(BuildConfig.VERSION_NAME);
-            billingHandler.onInit(activity);
+            billingHandler.onInit(context);
             billingHandler.connection(new ConnectionBillingEasyListener());
         }
     }
@@ -168,6 +170,10 @@ public class BillingManager implements BillingManagerImp {
 
     public void removeListener(@NonNull BillingEasyListener listener) {
         publicListenerList.remove(listener);
+    }
+
+    public void cleanListener(){
+        publicListenerList.clear();
     }
 
     private static List<String> getProductCodeList(@ProductType String type){

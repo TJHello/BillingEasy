@@ -1,6 +1,7 @@
 package com.tjhello.lib.billing.google;
 
 import android.app.Activity;
+import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
 
@@ -66,9 +67,9 @@ public class GoogleBillingHandler extends BillingHandler {
     }
 
     @Override
-    public void onInit(@NonNull Activity activity) {
+    public void onInit(@NonNull Context context) {
 
-        BillingClient.Builder mBuilder = BillingClient.newBuilder(activity)
+        BillingClient.Builder mBuilder = BillingClient.newBuilder(context)
                 .enablePendingPurchases()
                 .setListener(mPurchasesListener);
         mBillingClient = mBuilder.build();

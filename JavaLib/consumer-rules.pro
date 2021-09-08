@@ -1,3 +1,1 @@
--keep class com.tjhello.easy.billing.java.BillingEasy{public *;}
--keep class com.tjhello.easy.billing.java.BillingManager{public *;}
 -keep class com.tjhello.easy.billing.java.imp.**{*;}
