@@ -17,6 +17,7 @@ import java.util.List;
 public interface BillingManagerImp {
 
     void init(@NonNull Context context);
+    void init(@NonNull Context context,EasyCallBack<Boolean> callBack);
 
     void addProductConfig(@NonNull ProductConfig productConfig);
 

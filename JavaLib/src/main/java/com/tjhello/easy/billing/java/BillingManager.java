@@ -37,6 +37,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 public class BillingManager implements BillingManagerImp {
 
     private static final MyBillingEasyListener mBillingEasyListener = new MyBillingEasyListener();
+    @Nullable
     private static BillingHandler billingHandler;
     private static final CopyOnWriteArrayList<BillingEasyListener> publicListenerList = new CopyOnWriteArrayList<>();
 
@@ -47,13 +48,18 @@ public class BillingManager implements BillingManagerImp {
 
     @Override
     public void init(@NonNull Context context) {
+        init(context,null);
+    }
+
+    @Override
+    public void init(@NonNull Context context,@Nullable EasyCallBack<Boolean> callBack) {
         if(isFirstOnCreate){
             isFirstOnCreate = false;
             billingHandler = BillingHandler.createBillingHandler(mBillingEasyListener);
             billingHandler.setProductConfigList(productConfigList);
             BillingEasyLog.setVersionName(BuildConfig.VERSION_NAME);
             billingHandler.onInit(context);
-            billingHandler.connection(new ConnectionBillingEasyListener());
+            billingHandler.connection(new ConnectionBillingEasyListener(callBack));
         }
     }
 
@@ -63,15 +69,22 @@ public class BillingManager implements BillingManagerImp {
         for(int i=size-1;i>=0;i--){
             ProductConfig config = productConfigList.get(i);
             if(config.getCode().equals(productConfig.getCode())){
-                productConfigList.remove(config);
+                BillingEasyLog.e("请勿重复添加商品配置:"+config.getCode());
+                return ;
             }
         }
         productConfigList.add(productConfig);
+        if(billingHandler!=null){
+            billingHandler.addProductConfigList(productConfig);
+        }
     }
 
     @Override
     public void cleanProductConfig() {
         productConfigList.clear();
+        if(billingHandler!=null){
+            billingHandler.cleanProductConfigList();
+        }
     }
 
     @Override
@@ -81,12 +94,18 @@ public class BillingManager implements BillingManagerImp {
 
     @Override
     public void queryProduct(@Nullable EasyCallBack<List<ProductInfo>> callBack) {
+        if(billingHandler==null) {
+            BillingEasyLog.e("请先初始化SDK");
+        }
         if(billingHandler.connection(new ConnectionBillingEasyListener())){
             queryProductAll(callBack);
         }
     }
 
     private static void queryProductAll(@Nullable EasyCallBack<List<ProductInfo>> callBack){
+        if(billingHandler==null) {
+            BillingEasyLog.e("请先初始化SDK");
+        }
         List<String> list1 = getProductCodeList(ProductType.TYPE_INAPP_CONSUMABLE);
         List<String> list2 = getProductCodeList(ProductType.TYPE_INAPP_NON_CONSUMABLE);
         List<String> list3 = getProductCodeList(ProductType.TYPE_SUBS);
@@ -105,6 +124,9 @@ public class BillingManager implements BillingManagerImp {
 
     @Override
     public void purchase(@NonNull Activity activity, @NonNull String productCode, @Nullable EasyCallBack<List<PurchaseInfo>> callBack) {
+        if(billingHandler==null) {
+            BillingEasyLog.e("请先初始化SDK");
+        }
         if(billingHandler.connection(new ConnectionBillingEasyListener())){
             ProductConfig config = findProductConfig(productCode);
             if(config!=null){
@@ -116,6 +138,9 @@ public class BillingManager implements BillingManagerImp {
 
     @Override
     public void consume(@NonNull String purchaseToken, @Nullable EasyCallBack<String> callBack) {
+        if(billingHandler==null) {
+            BillingEasyLog.e("请先初始化SDK");
+        }
         if(billingHandler.connection(new ConnectionBillingEasyListener())){
             PurchaseTokenBillingEasyListener listener = new PurchaseTokenBillingEasyListener(callBack);
             billingHandler.consume(purchaseToken,listener);
@@ -124,6 +149,9 @@ public class BillingManager implements BillingManagerImp {
 
     @Override
     public void acknowledge(@NonNull String purchaseToken, @Nullable EasyCallBack<String> callBack) {
+        if(billingHandler==null) {
+            BillingEasyLog.e("请先初始化SDK");
+        }
         if(billingHandler.connection(new ConnectionBillingEasyListener())){
             PurchaseTokenBillingEasyListener listener = new PurchaseTokenBillingEasyListener(callBack);
             billingHandler.acknowledge(purchaseToken,listener);
@@ -132,12 +160,18 @@ public class BillingManager implements BillingManagerImp {
 
     @Override
     public void queryOrderAsync(@Nullable EasyCallBack<List<PurchaseInfo>> callBack) {
+        if(billingHandler==null) {
+            BillingEasyLog.e("请先初始化SDK");
+        }
         if(billingHandler.connection(new ConnectionBillingEasyListener())){
             queryOrderAsyncAll(callBack);
         }
     }
 
     private static void queryOrderAsyncAll(@Nullable EasyCallBack<List<PurchaseInfo>> callBack){
+        if(billingHandler==null) {
+            BillingEasyLog.e("请先初始化SDK");
+        }
         if(billingHandler.connection(new ConnectionBillingEasyListener())){
             PurchaseBillingEasyListener listener = new PurchaseBillingEasyListener(callBack);
             billingHandler.queryOrderAsync(getTypeListAll(),listener);
@@ -146,6 +180,9 @@ public class BillingManager implements BillingManagerImp {
 
     @Override
     public void queryOrderLocal( @Nullable EasyCallBack<List<PurchaseInfo>> callBack) {
+        if(billingHandler==null) {
+            BillingEasyLog.e("请先初始化SDK");
+        }
         if(billingHandler.connection(new ConnectionBillingEasyListener())){
             PurchaseBillingEasyListener listener = new PurchaseBillingEasyListener(callBack);
             billingHandler.queryOrderLocal(getTypeListAll(),listener);
@@ -154,12 +191,18 @@ public class BillingManager implements BillingManagerImp {
 
     @Override
     public void queryOrderHistory(@Nullable EasyCallBack<List<PurchaseHistoryInfo>> callBack) {
+        if(billingHandler==null) {
+            BillingEasyLog.e("请先初始化SDK");
+        }
         if(billingHandler.connection(new ConnectionBillingEasyListener())){
             queryOrderHistoryAll(callBack);
         }
     }
 
     private static void queryOrderHistoryAll(@Nullable EasyCallBack<List<PurchaseHistoryInfo>> callBack){
+        if(billingHandler==null) {
+            BillingEasyLog.e("请先初始化SDK");
+        }
         PurchaseHistoryBillingEasyListener listener = new PurchaseHistoryBillingEasyListener(callBack);
         billingHandler.queryOrderHistory(getTypeListAll(),listener);
     }
@@ -261,9 +304,21 @@ public class BillingManager implements BillingManagerImp {
     }
 
     private static class ConnectionBillingEasyListener implements BillingEasyListener{
+
+        @Nullable
+        private EasyCallBack<Boolean> callback;
+
+        public ConnectionBillingEasyListener(@Nullable EasyCallBack<Boolean> callback) {
+            this.callback = callback;
+        }
+
+        public ConnectionBillingEasyListener() {
+        }
+
         @Override
         public void onConnection(@NonNull BillingEasyResult result) {
-
+            if(callback==null) return;
+            callback.callback(result,result.isSuccess);
         }
     }
 
@@ -348,6 +403,7 @@ public class BillingManager implements BillingManagerImp {
         return getTypeList(ProductType.TYPE_INAPP_CONSUMABLE,ProductType.TYPE_INAPP_NON_CONSUMABLE,ProductType.TYPE_SUBS);
     }
 
+    @SuppressWarnings("ConstantConditions")
     private static List<String> getTypeList(String... types){
         List<String> list = new ArrayList<>();
         for (String type : types) {

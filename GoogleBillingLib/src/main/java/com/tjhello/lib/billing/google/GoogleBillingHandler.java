@@ -389,6 +389,8 @@ public class GoogleBillingHandler extends BillingHandler {
                 ProductConfig productConfig = findProductInfo(sku);
                 if(productConfig!=null){
                     info.addProduct(productConfig);
+                }else{
+                    BillingEasyLog.e("未找到该商品配置，请检查:"+sku);
                 }
             }
             info.setOrderId(purchase.getOrderId());
@@ -396,7 +398,7 @@ public class GoogleBillingHandler extends BillingHandler {
             info.setBaseObj(purchase);
             info.setAcknowledged(purchase.isAcknowledged());
             info.setAutoRenewing(purchase.isAutoRenewing());
-            info.setValid(purchase.getPurchaseState()== Purchase.PurchaseState.PURCHASED);
+            info.setValid(purchase.getPurchaseState() == Purchase.PurchaseState.PURCHASED);
 
             PurchaseInfo.GoogleBillingPurchase googleBillingPurchase = new PurchaseInfo.GoogleBillingPurchase();
             googleBillingPurchase.setDeveloperPayload(purchase.getDeveloperPayload());

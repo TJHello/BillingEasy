@@ -25,6 +25,10 @@ public class BillingEasyStatic {
         billingManager.init(context);
     }
 
+    public static void init(Context context,EasyCallBack<Boolean> callBack){
+        billingManager.init(context,callBack);
+    }
+
     /**
      * 添加商品配置(自动去重)
      * @param productType 商品类型 {@link ProductType}

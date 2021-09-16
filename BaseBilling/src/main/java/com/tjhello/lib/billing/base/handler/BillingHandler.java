@@ -74,6 +74,15 @@ public abstract class BillingHandler implements BillingHandlerImp {
         productConfigList.addAll(list);
     }
 
+    public void addProductConfigList(ProductConfig config){
+        productConfigList.add(config);
+    }
+
+    public void cleanProductConfigList(){
+        productConfigList.clear();
+    }
+
+
     @Nullable
     protected static ProductConfig findProductInfo(@NonNull String productCode){
         for (ProductConfig config : productConfigList) {
