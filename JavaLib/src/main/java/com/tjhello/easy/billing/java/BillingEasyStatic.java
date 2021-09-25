@@ -7,6 +7,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.tjhello.lib.billing.base.anno.ProductType;
+import com.tjhello.lib.billing.base.info.BillingEasyResult;
 import com.tjhello.lib.billing.base.info.ProductConfig;
 import com.tjhello.lib.billing.base.info.ProductInfo;
 import com.tjhello.lib.billing.base.info.PurchaseHistoryInfo;
@@ -21,12 +22,40 @@ public class BillingEasyStatic {
 
     private static final BillingManager billingManager = new BillingManager();
 
+    public static boolean isAutoConsume = false;//是否自动消耗商品
+    public static boolean isAutoAcknowledge = false;//是否自动确认购买
+
+    private static final int MAX_CONSUME_RETRY_NUM = 3;//最大消耗事变重试次数
+    private static final int MAX_ACKNOWLEDGE_RETRY_NUM = 3;//最大确认购买重试次数
+    private static int consumeRetryNum = 0;//消耗重试次数
+    private static int acknowledgeRetryNum = 0;//确认购买重试次数
+
+    static {
+        billingManager.addListener(new OnBillingListener());
+    }
+
     public static void init(Context context){
         billingManager.init(context);
     }
 
-    public static void init(Context context,EasyCallBack<Boolean> callBack){
+    public static void init(Context context, EasyCallBack<Boolean> callBack){
         billingManager.init(context,callBack);
+    }
+
+    /**
+     * 设置自动消耗商品
+     * @param bool bool
+     */
+    public static void setAutoConsume(boolean bool){
+        isAutoConsume = bool;
+    }
+
+    /**
+     * 设置自动确认购买
+     * @param bool bool
+     */
+    public static void setAutoAcknowledge(boolean bool){
+        isAutoAcknowledge = bool;
     }
 
     /**
@@ -34,7 +63,7 @@ public class BillingEasyStatic {
      * @param productType 商品类型 {@link ProductType}
      * @param productCodeArray 商品代码
      */
-    public static void addProductConfig(@NonNull @ProductType String productType,@NonNull String... productCodeArray) {
+    public static void addProductConfig(@NonNull @ProductType String productType, @NonNull String... productCodeArray) {
         for (String productCode : productCodeArray) {
             if(productCode.isEmpty()) {
                 try {
@@ -117,7 +146,7 @@ public class BillingEasyStatic {
      * 发起购买
      * @param productCode 商品代码
      */
-    public static void purchase(@NonNull Activity activity,@NonNull String productCode) {
+    public static void purchase(@NonNull Activity activity, @NonNull String productCode) {
         purchase(activity,productCode,null);
     }
 
@@ -207,6 +236,64 @@ public class BillingEasyStatic {
      */
     public static void queryOrderHistory(@Nullable EasyCallBack<List<PurchaseHistoryInfo>> callBack) {
         billingManager.queryOrderHistory(callBack);
+    }
+
+    private static class OnBillingListener implements BillingEasyListener{
+
+        @Override
+        public void onPurchases(@NonNull BillingEasyResult result, @NonNull List<PurchaseInfo> purchaseInfoList) {
+            utilsPurchase(purchaseInfoList);
+        }
+
+        @Override
+        public void onQueryOrder(@NonNull BillingEasyResult result, @NonNull List<PurchaseInfo> purchaseInfoList) {
+            utilsPurchase(purchaseInfoList);
+        }
+
+        @Override
+        public void onConsume(@NonNull BillingEasyResult result, @NonNull String purchaseToken) {
+            if(!result.isSuccess){
+                //重试
+                if(consumeRetryNum<MAX_CONSUME_RETRY_NUM){
+                    consumeRetryNum++;
+                    consume(purchaseToken);
+                }
+            }
+        }
+
+        @Override
+        public void onAcknowledge(@NonNull BillingEasyResult result, @NonNull String purchaseToken) {
+            if(!result.isSuccess){
+                //重试
+                if(acknowledgeRetryNum<MAX_ACKNOWLEDGE_RETRY_NUM){
+                    acknowledgeRetryNum++;
+                    acknowledge(purchaseToken);
+                }
+            }
+        }
+
+        private void utilsPurchase(List<PurchaseInfo> purchaseInfoList){
+            resetRetryNum();
+            for (PurchaseInfo purchaseInfo : purchaseInfoList) {
+                if(purchaseInfo.isValid()){
+                    for (ProductConfig productConfig : purchaseInfo.getProductList()) {
+                        if(productConfig.canConsume()){
+                            consume(purchaseInfo.getPurchaseToken());
+                        }else{
+                            if(!purchaseInfo.isAcknowledged()){
+                                acknowledge(purchaseInfo.getPurchaseToken());
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    //复位重试次数
+    private static void resetRetryNum(){
+        consumeRetryNum = 0;
+        acknowledgeRetryNum = 0;
     }
 
 }

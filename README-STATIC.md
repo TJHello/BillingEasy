@@ -14,8 +14,6 @@
 
 **(内测版本，未经测试，功能不全，尝鲜使用，目前还没有支持华为内购)**
 
-**([全静态操作尝试文档](https://gitee.com/TJHello/BillingEasy/blob/master/README-STATIC.md))**
-
 ---
 
 ### 使用步骤
@@ -43,40 +41,34 @@ android{
 }
 
 dependencies {
-    implementation 'com.TJHello.easy:BillingEasy:0.1.1-t07'//BillingEasy
-    implementation 'com.TJHello.publicLib.billing:google:1.4.0.0-t07'//Google内购
+    implementation 'com.TJHello.easy:BillingEasy:0.1.1-t10'//BillingEasy
+    implementation 'com.TJHello.publicLib.billing:google:1.4.0.0-t10'//Google内购
     //华为等这版本跑通了再加
 }
 
 ```
 
-- ### Step3 代码示例([MainActivity](https://gitee.com/TJHello/BillingEasy/blob/master/app/src/main/java/com/tjhello/app/easy/billing/MainActivity.java))
+- ### Step3 代码示例([MainActivity](https://gitee.com/TJHello/BillingEasy/blob/master/app/src/main/java/com/tjhello/app/easy/billing/v2/MainActivity.java))
 ```java
 public class MainActivity extends AppCompatActivity {
 
-    private final BillingEasy billingEasy = BillingEasy.newInstance(this)
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
-        //BillingEasyStatic的用法看v2/MainActivity
-
         BillingEasy.setDebug(true);
         BillingEasy.addProductConfig(ProductType.TYPE_INAPP_CONSUMABLE,"可消耗商品code","可消耗商品code");
         BillingEasy.addProductConfig(ProductType.TYPE_INAPP_NON_CONSUMABLE,"非消耗商品code","非消耗商品code");
         BillingEasy.addProductConfig(ProductType.TYPE_SUBS,"订阅商品code","订阅商品code");
-        billing.addListener(new MyBillingEasyListener());//添加完整监听器
-        billingEasy.onCreate();
+        BillingEasy.addListener(new MyBillingEasyListener());//添加完整监听器
+        BillingEasy.init(this.getApplicationContext())
 
         //查询商品信息-两种用法
-        billingEasy.queryProduct()
-        billingEasy.queryProduct((billingEasyResult, productInfoList) -> {
+        BillingEasy.queryProduct()
+        BillingEasy.queryProduct((billingEasyResult, productInfoList) -> {
 
         });
         //发起购买-两种用法
-        billingEasy.purchase("商品code")
-        billingEasy.purchase("商品code", (billingEasyResult, purchaseInfoList) -> {
+        BillingEasy.purchase(this,"商品code")
+        BillingEasy.purchase(this,"商品code", (billingEasyResult, purchaseInfoList) -> {
 
         });
 
@@ -114,36 +106,17 @@ public class MainActivity extends AppCompatActivity {
                     //判断商品是否有效
                     if(purchaseInfo.isValid()){
                         for (ProductConfig productConfig : purchaseInfo.getProductList()) {
-                            //判断商品类型
-                            String type = productConfig.getType();
-                            if(type!=null){
-                                switch (type){
-                                    //内购商品-可消耗
-                                    case ProductType.TYPE_INAPP_CONSUMABLE:{
-                                        //消耗商品(消耗包括确认购买)
-                                        billingEasy.consume(purchaseInfo.getPurchaseToken());
-                                    }break;
-                                    //内购商品-非消耗||订阅商品
-                                    case ProductType.TYPE_INAPP_NON_CONSUMABLE:
-                                    case ProductType.TYPE_SUBS: {
-                                        //判断是否已经确认购买
-                                        if(!purchaseInfo.isAcknowledged()){
-                                            //确认购买
-                                            billingEasy.acknowledge(purchaseInfo.getPurchaseToken());
-                                        }
-                                    }break;
+                            //这里可以发放商品
+
+                            if(productConfig.canConsume()){
+                                //消耗商品
+                                BillingEasyStatic.consume(purchaseInfo.getPurchaseToken());
+                            }else{
+                                //确认购买
+                                if(!purchaseInfo.isAcknowledged()){
+                                    BillingEasyStatic.acknowledge(purchaseInfo.getPurchaseToken());
                                 }
                             }
-//                            //或者
-//                            if(productConfig.canConsume()){
-//                                //消耗商品
-//                                billingEasy.consume(purchaseInfo.getPurchaseToken());
-//                            }else{
-//                                //确认购买
-//                                if(!purchaseInfo.isAcknowledged()){
-//                                    billingEasy.acknowledge(purchaseInfo.getPurchaseToken());
-//                                }
-//                            }
                         }
                     }
                 }
