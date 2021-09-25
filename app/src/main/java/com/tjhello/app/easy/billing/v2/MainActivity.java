@@ -78,7 +78,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        BillingEasyStatic.removeListener(mBillingEasyListener);
+        BillingEasyStatic.removeListener(mBillingEasyListener);//移除监听器，防止内存泄漏
     }
 
     /**

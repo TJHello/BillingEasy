@@ -1,4 +1,4 @@
-# BillingEasy-0.1.1-t07
+# BillingEasy-0.1.1-t11
 
 **QQ交流群(425219113)**
 
@@ -41,8 +41,8 @@ android{
 }
 
 dependencies {
-    implementation 'com.TJHello.easy:BillingEasy:0.1.1-t10'//BillingEasy
-    implementation 'com.TJHello.publicLib.billing:google:1.4.0.0-t10'//Google内购
+    implementation 'com.TJHello.easy:BillingEasy:0.1.1-t11'//BillingEasy
+    implementation 'com.TJHello.publicLib.billing:google:1.4.0.0-t11'//Google内购
     //华为等这版本跑通了再加
 }
 
@@ -52,23 +52,24 @@ dependencies {
 ```java
 public class MainActivity extends AppCompatActivity {
 
+    private final MyBillingEasyListener mBillingEasyListener = new MyBillingEasyListener();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        BillingEasy.setDebug(true);
-        BillingEasy.addProductConfig(ProductType.TYPE_INAPP_CONSUMABLE,"可消耗商品code","可消耗商品code");
-        BillingEasy.addProductConfig(ProductType.TYPE_INAPP_NON_CONSUMABLE,"非消耗商品code","非消耗商品code");
-        BillingEasy.addProductConfig(ProductType.TYPE_SUBS,"订阅商品code","订阅商品code");
-        BillingEasy.addListener(new MyBillingEasyListener());//添加完整监听器
-        BillingEasy.init(this.getApplicationContext())
+        BillingEasyStatic.setDebug(true);
+        BillingEasyStatic.addProductConfig(ProductType.TYPE_INAPP_CONSUMABLE,"可消耗商品code","可消耗商品code");
+        BillingEasyStatic.addProductConfig(ProductType.TYPE_INAPP_NON_CONSUMABLE,"非消耗商品code","非消耗商品code");
+        BillingEasyStatic.addProductConfig(ProductType.TYPE_SUBS,"订阅商品code","订阅商品code");
+        BillingEasyStatic.addListener(mBillingEasyListener);//添加完整监听器
+        BillingEasyStatic.init(this.getApplicationContext())
 
         //查询商品信息-两种用法
-        BillingEasy.queryProduct()
-        BillingEasy.queryProduct((billingEasyResult, productInfoList) -> {
+        BillingEasyStatic.queryProduct()
+        BillingEasyStatic.queryProduct((billingEasyResult, productInfoList) -> {
 
         });
         //发起购买-两种用法
-        BillingEasy.purchase(this,"商品code")
-        BillingEasy.purchase(this,"商品code", (billingEasyResult, purchaseInfoList) -> {
+        BillingEasyStatic.purchase(this,"商品code")
+        BillingEasyStatic.purchase(this,"商品code", (billingEasyResult, purchaseInfoList) -> {
 
         });
 
@@ -77,7 +78,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        billingEasy.onDestroy();
+        BillingEasyStatic.removeListener(mBillingEasyListener);//移除监听器，防止内存泄漏
     }
 
     //以下接口只要支持了JAVA8，都是可选实现
@@ -140,27 +141,36 @@ public class MainActivity extends AppCompatActivity {
 
 ```java
 
+//初始化内购服务
+BillingEasyStatic.init(context)
+
+//打开自动消耗商品功能-默认关闭
+BillingEasyStatic.setAutoConsume(true)
+
+//打开自动确认购买功能-默认关闭
+BillingEasyStatic.setAutoAcknowledge(true)
+
 //添加一个商品信息(必须)
-BillingEasy.addProductConfig( ProductType.TYPE_INAPP_CONSUMABLE,"商品code","商品code");
+BillingEasyStatic.addProductConfig( ProductType.TYPE_INAPP_CONSUMABLE,"商品code","商品code");
 
 //查询商品信息
-billingEasy.queryProduct();
-billingEasy.queryProduct((billingEasyResult, productInfoList) -> {
+BillingEasyStatic.queryProduct();
+BillingEasyStatic.queryProduct((billingEasyResult, productInfoList) -> {
 
 });
 //发起购买
-billingEasy.purchase("商品code");
-billingEasy.purchase("商品code", (billingEasyResult, purchaseInfoList) -> {
+BillingEasyStatic.purchase(activity,"商品code");
+BillingEasyStatic.purchase(activity,"商品code", (billingEasyResult, purchaseInfoList) -> {
 
 });
 //查询订单信息
-billingEasy.queryOrderAsync();//联网查询有效订单
-billingEasy.queryOrderLocal();//查询本地缓存订单
-billingEasy.queryOrderHistory();//查询历史订单
+BillingEasyStatic.queryOrderAsync();//联网查询有效订单
+BillingEasyStatic.queryOrderLocal();//查询本地缓存订单
+BillingEasyStatic.queryOrderHistory();//查询历史订单
 //消耗商品
-billingEasy.consume("purchaseToken");
+BillingEasyStatic.consume("purchaseToken");
 //确认购买
-billingEasy.acknowledge("purchaseToken");
+BillingEasyStatic.acknowledge("purchaseToken");
 
 ```
 
@@ -170,6 +180,11 @@ billingEasy.acknowledge("purchaseToken");
 
 
 - ### 更新日志
+
+0.1.1-t11 2021/09/25
+```
+1、添加自动消耗与自动确认购买的逻辑，默认关闭。
+```
 
 0.1.1-t10 2021/09/16
 ```
