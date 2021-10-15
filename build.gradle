@@ -25,16 +25,16 @@ if(os.contains("Windows")){
 
 //版本常量
 
-ext.BASE_VERSION_NAME = "0.1-t11"
+ext.BASE_VERSION_NAME = "0.1-t12"
 ext.BASE_VERSION_CODE = 1
 
-ext.BILLING_EASY_VERSION_NAME = "0.1.1-t11"
+ext.BILLING_EASY_VERSION_NAME = "0.1.1-t12"
 ext.BILLING_EASY_VERSION_CODE = 1
 
-ext.GOOGLE_BILLING_VERSION_NAME = "1.4.0.0-t11"
+ext.GOOGLE_BILLING_VERSION_NAME = "1.4.0.0-t12"
 ext.GOOGLE_BILLING_VERSION_CODE = 1400
 
-ext.IS_DEV_MODEL = false
+ext.IS_DEV_MODEL = true
 
 
 allprojects {

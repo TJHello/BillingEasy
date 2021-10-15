@@ -1,4 +1,4 @@
-# BillingEasy-0.1.1-t07
+# BillingEasy-0.1.1-t12
 
 **QQ交流群(425219113)**
 
@@ -43,8 +43,8 @@ android{
 }
 
 dependencies {
-    implementation 'com.TJHello.easy:BillingEasy:0.1.1-t07'//BillingEasy
-    implementation 'com.TJHello.publicLib.billing:google:1.4.0.0-t07'//Google内购
+    implementation 'com.TJHello.easy:BillingEasy:0.1.1-t12'//BillingEasy
+    implementation 'com.TJHello.publicLib.billing:google:1.4.0.0-t12'//Google内购
     //华为等这版本跑通了再加
 }
 
@@ -197,6 +197,12 @@ billingEasy.acknowledge("purchaseToken");
 
 
 - ### 更新日志
+
+0.1.1-t12 2021/10/15
+```
+1、添加发起购买的时候，因获取商品信息失败而导致的错误回调
+
+```
 
 0.1.1-t11 2021/09/25
 ```

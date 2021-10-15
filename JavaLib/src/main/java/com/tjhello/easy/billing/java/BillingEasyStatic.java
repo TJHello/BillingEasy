@@ -242,12 +242,12 @@ public class BillingEasyStatic {
 
         @Override
         public void onPurchases(@NonNull BillingEasyResult result, @NonNull List<PurchaseInfo> purchaseInfoList) {
-            utilsPurchase(purchaseInfoList);
+            utilsPurchase(result,purchaseInfoList);
         }
 
         @Override
         public void onQueryOrder(@NonNull BillingEasyResult result, @NonNull List<PurchaseInfo> purchaseInfoList) {
-            utilsPurchase(purchaseInfoList);
+            utilsPurchase(result,purchaseInfoList);
         }
 
         @Override
@@ -272,16 +272,18 @@ public class BillingEasyStatic {
             }
         }
 
-        private void utilsPurchase(List<PurchaseInfo> purchaseInfoList){
-            resetRetryNum();
-            for (PurchaseInfo purchaseInfo : purchaseInfoList) {
-                if(purchaseInfo.isValid()){
-                    for (ProductConfig productConfig : purchaseInfo.getProductList()) {
-                        if(productConfig.canConsume()){
-                            consume(purchaseInfo.getPurchaseToken());
-                        }else{
-                            if(!purchaseInfo.isAcknowledged()){
-                                acknowledge(purchaseInfo.getPurchaseToken());
+        private void utilsPurchase(BillingEasyResult result,List<PurchaseInfo> purchaseInfoList){
+            if(result.isSuccess||result.isErrorOwned){
+                resetRetryNum();
+                for (PurchaseInfo purchaseInfo : purchaseInfoList) {
+                    if(purchaseInfo.isValid()){
+                        for (ProductConfig productConfig : purchaseInfo.getProductList()) {
+                            if(productConfig.canConsume()){
+                                consume(purchaseInfo.getPurchaseToken());
+                            }else{
+                                if(!purchaseInfo.isAcknowledged()){
+                                    acknowledge(purchaseInfo.getPurchaseToken());
+                                }
                             }
                         }
                     }

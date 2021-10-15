@@ -20,6 +20,11 @@ public class BillingEasyResult {
     public boolean isError = false;
 
     /**
+     * 发生错误，已拥有商品
+     */
+    public boolean isErrorOwned = true;
+
+    /**
      * 返回信息
      */
     @Nullable

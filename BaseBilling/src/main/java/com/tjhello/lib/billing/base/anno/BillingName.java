@@ -9,12 +9,12 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 @Documented
-@Retention(RetentionPolicy.RUNTIME)
+@Retention(RetentionPolicy.CLASS)
 @Target({ElementType.PARAMETER,ElementType.FIELD,ElementType.METHOD})
 @StringDef(value = {BillingName.GOOGLE,BillingName.HUAWEI,BillingName.EMPTY})
 public @interface BillingName {
 
-    public static final String GOOGLE = "GoogleBilling";
-    public static final String HUAWEI = "HuaweiBilling";
-    public static final String EMPTY = "Empty";
+    String GOOGLE = "GoogleBilling";
+    String HUAWEI = "HuaweiBilling";
+    String EMPTY = "Empty";
 }

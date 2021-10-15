@@ -116,7 +116,11 @@ public class GoogleBillingHandler extends BillingHandler {
                             .build();
                     mBillingClient.launchBillingFlow(activity,flowParams);
                 }else{
-                    BillingEasyLog.e("[GoogleBilling]:获取商品详情失败:"+productCode+",code="+billingResult.getResponseCode()+",msg="+billingResult.getDebugMessage());
+                    String msg = "获取商品详情失败:"+productCode+",code="+billingResult.getResponseCode()+",msg="+billingResult.getDebugMessage();
+                    BillingEasyLog.e("[GoogleBilling]:"+msg);
+                    runMainThread(() -> {
+                        mBillingEasyListener.onPurchases(buildResult(billingResult,msg),new ArrayList<>());
+                    });
                 }
             });
         }
@@ -430,6 +434,18 @@ public class GoogleBillingHandler extends BillingHandler {
                 billingResult.getResponseCode(),billingResult.getDebugMessage(),billingResult);
         result.isCancel = isCancel;
         result.isError = !isSuccess&&!isCancel;
+        result.isErrorOwned = billingResult.getResponseCode()==BillingClient.BillingResponseCode.ITEM_ALREADY_OWNED;
+        return result;
+    }
+
+    private BillingEasyResult buildResult(@NonNull BillingResult billingResult,String msg){
+        boolean isSuccess = billingResult.getResponseCode()==BillingClient.BillingResponseCode.OK;
+        boolean isCancel = billingResult.getResponseCode()==BillingClient.BillingResponseCode.USER_CANCELED;
+        BillingEasyResult result = BillingEasyResult.build(isSuccess,
+                billingResult.getResponseCode(),msg,billingResult);
+        result.isCancel = isCancel;
+        result.isError = !isSuccess&&!isCancel;
+        result.isErrorOwned = billingResult.getResponseCode()==BillingClient.BillingResponseCode.ITEM_ALREADY_OWNED;
         return result;
     }
 
