@@ -1,7 +1,11 @@
 package com.tjhello.lib.billing.base.info;
 
+import androidx.annotation.Nullable;
+
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class PurchaseInfo {
 
@@ -10,6 +14,7 @@ public class PurchaseInfo {
     String orderId ;
     String purchaseToken ;
     GoogleBillingPurchase googleBillingPurchase;
+    private final Map<String,ProductInfo> productInfoMap = new HashMap<>();
     private boolean isAcknowledged = false;
     private boolean isAutoRenewing = false;
     Object baseObj;
@@ -133,6 +138,17 @@ public class PurchaseInfo {
         this.googleBillingPurchase = googleBillingPurchase;
     }
 
+    public void putProductInfo(String code,ProductInfo productInfo){
+        productInfoMap.put(code,productInfo);
+    }
+
+    @Nullable
+    public ProductInfo getProductInfo(String code){
+        if(productInfoMap.containsKey(code)){
+            return productInfoMap.get(code);
+        }
+        return null;
+    }
 
     public String getOrderId() {
         return orderId;

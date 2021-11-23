@@ -222,44 +222,6 @@ public class GoogleBillingHandler extends BillingHandler {
                 mBillingEasyListener.onQueryProduct(result,tempList);
             });
         }
-
-        private List<ProductInfo> toProductInfo(@Nullable List<SkuDetails> list){
-            if(list==null||list.isEmpty()) return new ArrayList<>();
-            List<ProductInfo> infoList = new ArrayList<>();
-            for(int i=0;i<list.size();i++){
-                SkuDetails skuDetails = list.get(i);
-                ProductInfo info = new ProductInfo();
-                info.setCode(skuDetails.getSku());
-                info.setPrice(skuDetails.getPrice());
-                ProductConfig find = findProductInfo(skuDetails.getSku());
-                if(find!=null){
-                    info.setType(find.getType());
-                }
-                ProductInfo.GoogleSkuDetails googleSkuDetails = new ProductInfo.GoogleSkuDetails();
-                googleSkuDetails.setDescription(skuDetails.getDescription());
-                googleSkuDetails.setFreeTrialPeriod(skuDetails.getFreeTrialPeriod());
-                googleSkuDetails.setIconUrl(skuDetails.getIconUrl());
-                googleSkuDetails.setIntroductoryPrice(skuDetails.getIntroductoryPrice());
-                googleSkuDetails.setIntroductoryPriceAmountMicros(skuDetails.getIntroductoryPriceAmountMicros());
-                googleSkuDetails.setIntroductoryPriceCycles(skuDetails.getIntroductoryPriceCycles());
-                googleSkuDetails.setIntroductoryPricePeriod(skuDetails.getIntroductoryPricePeriod());
-                googleSkuDetails.setOriginalJson(skuDetails.getOriginalJson());
-                googleSkuDetails.setOriginalPrice(skuDetails.getOriginalPrice());
-                googleSkuDetails.setOriginalPriceAmountMicros(skuDetails.getPriceAmountMicros());
-                googleSkuDetails.setPrice(skuDetails.getPrice());
-                googleSkuDetails.setPriceAmountMicros(skuDetails.getPriceAmountMicros());
-                googleSkuDetails.setPriceCurrencyCode(skuDetails.getPriceCurrencyCode());
-                googleSkuDetails.setSku(skuDetails.getSku());
-                googleSkuDetails.setSubscriptionPeriod(skuDetails.getSubscriptionPeriod());
-                googleSkuDetails.setTitle(skuDetails.getTitle());
-                googleSkuDetails.setTitle(skuDetails.getType());
-                info.setGoogleSkuDetails(googleSkuDetails);
-                info.setJson(skuDetails.getOriginalJson());
-                info.setBaseObj(skuDetails);
-                infoList.add(info);
-            }
-            return infoList;
-        }
     }
 
     private class MyPurchasesUpdatedListener implements PurchasesUpdatedListener{
@@ -382,6 +344,50 @@ public class GoogleBillingHandler extends BillingHandler {
         }
     }
 
+    private static List<ProductInfo> toProductInfo(@Nullable List<SkuDetails> list){
+        if(list==null||list.isEmpty()) return new ArrayList<>();
+        List<ProductInfo> infoList = new ArrayList<>();
+        for(int i=0;i<list.size();i++){
+            SkuDetails skuDetails = list.get(i);
+            ProductInfo info = toProductInfo(skuDetails);
+            infoList.add(info);
+        }
+        return infoList;
+    }
+
+    private static ProductInfo toProductInfo(SkuDetails skuDetails){
+        ProductInfo info = new ProductInfo();
+        info.setCode(skuDetails.getSku());
+        info.setPrice(skuDetails.getPrice());
+        ProductConfig find = findProductInfo(skuDetails.getSku());
+        if(find!=null){
+            info.setType(find.getType());
+        }
+        ProductInfo.GoogleSkuDetails googleSkuDetails = new ProductInfo.GoogleSkuDetails();
+        googleSkuDetails.setType(skuDetails.getType());
+        googleSkuDetails.setDescription(skuDetails.getDescription());
+        googleSkuDetails.setFreeTrialPeriod(skuDetails.getFreeTrialPeriod());
+        googleSkuDetails.setIconUrl(skuDetails.getIconUrl());
+        googleSkuDetails.setIntroductoryPrice(skuDetails.getIntroductoryPrice());
+        googleSkuDetails.setIntroductoryPriceAmountMicros(skuDetails.getIntroductoryPriceAmountMicros());
+        googleSkuDetails.setIntroductoryPriceCycles(skuDetails.getIntroductoryPriceCycles());
+        googleSkuDetails.setIntroductoryPricePeriod(skuDetails.getIntroductoryPricePeriod());
+        googleSkuDetails.setOriginalJson(skuDetails.getOriginalJson());
+        googleSkuDetails.setOriginalPrice(skuDetails.getOriginalPrice());
+        googleSkuDetails.setOriginalPriceAmountMicros(skuDetails.getPriceAmountMicros());
+        googleSkuDetails.setPrice(skuDetails.getPrice());
+        googleSkuDetails.setPriceAmountMicros(skuDetails.getPriceAmountMicros());
+        googleSkuDetails.setPriceCurrencyCode(skuDetails.getPriceCurrencyCode());
+        googleSkuDetails.setSku(skuDetails.getSku());
+        googleSkuDetails.setSubscriptionPeriod(skuDetails.getSubscriptionPeriod());
+        googleSkuDetails.setTitle(skuDetails.getTitle());
+        googleSkuDetails.setTitle(skuDetails.getType());
+        info.setGoogleSkuDetails(googleSkuDetails);
+        info.setJson(skuDetails.getOriginalJson());
+        info.setBaseObj(skuDetails);
+        return info;
+    }
+
     private static List<PurchaseInfo> toPurchaseInfo(@Nullable List<Purchase> list){
         if(list==null||list.isEmpty()) return new ArrayList<>();
         List<PurchaseInfo> infoList = new ArrayList<>();
@@ -395,6 +401,13 @@ public class GoogleBillingHandler extends BillingHandler {
                     info.addProduct(productConfig);
                 }else{
                     BillingEasyLog.e("未找到该商品配置，请检查:"+sku);
+                }
+                if(skuDetailsMap.containsKey(sku)){
+                    SkuDetails skuDetails = skuDetailsMap.get(sku);
+                    if(skuDetails!=null){
+                        ProductInfo productInfo = toProductInfo(skuDetails);
+                        info.putProductInfo(sku,productInfo);
+                    }
                 }
             }
             info.setOrderId(purchase.getOrderId());
@@ -415,7 +428,6 @@ public class GoogleBillingHandler extends BillingHandler {
             googleBillingPurchase.setQuantity(purchase.getQuantity());
             googleBillingPurchase.setSignature(purchase.getSignature());
             googleBillingPurchase.setSkus(purchase.getSkus());
-
             info.setGoogleBillingPurchase(googleBillingPurchase);
 
             infoList.add(info);

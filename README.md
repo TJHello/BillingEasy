@@ -1,4 +1,4 @@
-# BillingEasy-0.1.1-t12
+# BillingEasy-0.1.1-t14
 
 **QQ交流群(425219113)**
 
@@ -14,7 +14,7 @@
 
 **(内测版本，未经测试，功能不全，尝鲜使用，目前还没有支持华为内购)**
 
-**([全静态操作尝试文档](https://gitee.com/TJHello/BillingEasy/blob/master/README-STATIC.md))**
+**([新版本文档](https://gitee.com/TJHello/BillingEasy/blob/master/README-V2.md))**
 
 ---
 
@@ -43,8 +43,8 @@ android{
 }
 
 dependencies {
-    implementation 'com.TJHello.easy:BillingEasy:0.1.1-t12'//BillingEasy
-    implementation 'com.TJHello.publicLib.billing:google:1.4.0.0-t12'//Google内购
+    implementation 'com.TJHello.easy:BillingEasy:0.1.1-t14'//BillingEasy
+    implementation 'com.TJHello.publicLib.billing:google:1.4.0.0-t14'//Google内购
     //华为等这版本跑通了再加
 }
 
@@ -54,7 +54,7 @@ dependencies {
 ```java
 public class MainActivity extends AppCompatActivity {
 
-    private final BillingEasy billingEasy = BillingEasy.newInstance(this)
+    private final BillingEasy billingEasy = BillingEasy.newInstance(this);
 
 
     @Override
@@ -70,12 +70,12 @@ public class MainActivity extends AppCompatActivity {
         billingEasy.onCreate();
 
         //查询商品信息-两种用法
-        billingEasy.queryProduct()
+        billingEasy.queryProduct();
         billingEasy.queryProduct((billingEasyResult, productInfoList) -> {
 
         });
         //发起购买-两种用法
-        billingEasy.purchase("商品code")
+        billingEasy.purchase("商品code");
         billingEasy.purchase("商品code", (billingEasyResult, purchaseInfoList) -> {
 
         });
@@ -197,6 +197,17 @@ billingEasy.acknowledge("purchaseToken");
 
 
 - ### 更新日志
+
+0.1.1-t14 2021/11/23
+```
+1、PurchaseInfo增加getProductInfo方法，可方便获取商品信息。
+```
+
+0.1.1-t13 2021/10/27
+```
+1、修复自动消耗与自动确认购买的逻辑开关无效的问题
+2、修复googleSkuDetails.type没有值的问题
+```
 
 0.1.1-t12 2021/10/15
 ```

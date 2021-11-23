@@ -254,9 +254,11 @@ public class BillingEasyStatic {
         public void onConsume(@NonNull BillingEasyResult result, @NonNull String purchaseToken) {
             if(!result.isSuccess){
                 //重试
-                if(consumeRetryNum<MAX_CONSUME_RETRY_NUM){
-                    consumeRetryNum++;
-                    consume(purchaseToken);
+                if(isAutoConsume){
+                    if(consumeRetryNum<MAX_CONSUME_RETRY_NUM){
+                        consumeRetryNum++;
+                        consume(purchaseToken);
+                    }
                 }
             }
         }
@@ -265,24 +267,32 @@ public class BillingEasyStatic {
         public void onAcknowledge(@NonNull BillingEasyResult result, @NonNull String purchaseToken) {
             if(!result.isSuccess){
                 //重试
-                if(acknowledgeRetryNum<MAX_ACKNOWLEDGE_RETRY_NUM){
-                    acknowledgeRetryNum++;
-                    acknowledge(purchaseToken);
+                if(isAutoAcknowledge){
+                    if(acknowledgeRetryNum<MAX_ACKNOWLEDGE_RETRY_NUM){
+                        acknowledgeRetryNum++;
+                        acknowledge(purchaseToken);
+                    }
                 }
             }
         }
 
         private void utilsPurchase(BillingEasyResult result,List<PurchaseInfo> purchaseInfoList){
-            if(result.isSuccess||result.isErrorOwned){
-                resetRetryNum();
-                for (PurchaseInfo purchaseInfo : purchaseInfoList) {
-                    if(purchaseInfo.isValid()){
-                        for (ProductConfig productConfig : purchaseInfo.getProductList()) {
-                            if(productConfig.canConsume()){
-                                consume(purchaseInfo.getPurchaseToken());
-                            }else{
-                                if(!purchaseInfo.isAcknowledged()){
-                                    acknowledge(purchaseInfo.getPurchaseToken());
+            if(isAutoConsume||isAutoAcknowledge){
+                if(result.isSuccess||result.isErrorOwned){
+                    resetRetryNum();
+                    for (PurchaseInfo purchaseInfo : purchaseInfoList) {
+                        if(purchaseInfo.isValid()){
+                            for (ProductConfig productConfig : purchaseInfo.getProductList()) {
+                                if(productConfig.canConsume()){
+                                    if(isAutoConsume){
+                                        consume(purchaseInfo.getPurchaseToken());
+                                    }
+                                }else{
+                                    if(!purchaseInfo.isAcknowledged()){
+                                        if(isAutoAcknowledge){
+                                            acknowledge(purchaseInfo.getPurchaseToken());
+                                        }
+                                    }
                                 }
                             }
                         }
