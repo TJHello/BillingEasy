@@ -18,7 +18,6 @@ import java.util.List;
 
 public class NextActivity extends AppCompatActivity {
 
-    private final BillingEasy billingEasy = BillingEasy.newInstance(this);
 
     private AppCompatButton btInapp,btSubs;
 
@@ -26,9 +25,7 @@ public class NextActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.next_activity_layout);
-        billingEasy.onCreate();
-
-        billingEasy.queryProduct((result, productInfoList) -> {
+        BillingEasy.queryProduct((result, productInfoList) -> {
             if(result.isSuccess){
                 for (ProductInfo productInfo : productInfoList) {
                     switch (productInfo.getType()){
@@ -50,18 +47,12 @@ public class NextActivity extends AppCompatActivity {
 
         btInapp = this.findViewById(R.id.btInapp);
         btInapp.setOnClickListener(view->{
-            billingEasy.purchase("内购商品code", this::utilPurchase);
+            BillingEasy.purchase(this,"内购商品code", this::utilPurchase);
         });
         btSubs = this.findViewById(R.id.btSubs);
         btSubs.setOnClickListener(view->{
-            billingEasy.purchase("订阅商品code", this::utilPurchase);
+            BillingEasy.purchase(this,"订阅商品code", this::utilPurchase);
         });
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        billingEasy.onDestroy();
     }
 
     /**
@@ -82,7 +73,7 @@ public class NextActivity extends AppCompatActivity {
                                 //内购商品-可消耗
                                 case ProductType.TYPE_INAPP_CONSUMABLE:{
                                     //消耗商品(消耗包括确认购买)
-                                    billingEasy.consume(purchaseInfo.getPurchaseToken());
+                                    BillingEasy.consume(purchaseInfo.getPurchaseToken());
                                 }break;
                                 //内购商品-非消耗||订阅商品
                                 case ProductType.TYPE_INAPP_NON_CONSUMABLE:
@@ -90,7 +81,7 @@ public class NextActivity extends AppCompatActivity {
                                     //判断是否已经确认购买
                                     if(!purchaseInfo.isAcknowledged()){
                                         //确认购买
-                                        billingEasy.acknowledge(purchaseInfo.getPurchaseToken());
+                                        BillingEasy.acknowledge(purchaseInfo.getPurchaseToken());
                                     }
 
                                 }break;
@@ -99,11 +90,11 @@ public class NextActivity extends AppCompatActivity {
 //                            //或者
 //                            if(productConfig.canConsume()){
 //                                //消耗商品
-//                                billingEasy.consume(purchaseInfo.getPurchaseToken());
+//                                BillingEasy.consume(purchaseInfo.getPurchaseToken());
 //                            }else{
 //                                //确认购买
 //                                if(!purchaseInfo.isAcknowledged()){
-//                                    billingEasy.acknowledge(purchaseInfo.getPurchaseToken());
+//                                    BillingEasy.acknowledge(purchaseInfo.getPurchaseToken());
 //                                }
 //                            }
                     }

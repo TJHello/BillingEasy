@@ -28,9 +28,8 @@ import java.util.Locale;
 public class MainActivity extends AppCompatActivity {
 
     private final Handler handler = new Handler();
-
-    private final BillingEasy billingEasy = BillingEasy.newInstance(this);
-
+    //统一监听器
+    private final MyBillingEasyListener listener = new MyBillingEasyListener();
     //内购-消耗型商品-商品code
     private final static String[] INAPP_CONSUMABLE_CODE_ARRAY = new String[]{"商品code"};
     //内购-非消耗型商品-商品code
@@ -38,7 +37,6 @@ public class MainActivity extends AppCompatActivity {
     //订阅-商品code
     private final static String[] SUBS_CODE_ARRAY = new String[]{"商品code"};
     private TextView tvLog ;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,10 +49,11 @@ public class MainActivity extends AppCompatActivity {
         BillingEasy.addProductConfig(ProductType.TYPE_INAPP_CONSUMABLE,INAPP_CONSUMABLE_CODE_ARRAY);
         BillingEasy.addProductConfig(ProductType.TYPE_INAPP_NON_CONSUMABLE,INAPP_NON_CONSUMABLE_CODE_ARRAY);
         BillingEasy.addProductConfig(ProductType.TYPE_SUBS,SUBS_CODE_ARRAY);
-
+        BillingEasy.setAutoConsume(false);//关闭自动消耗(可按需打开，默认关闭)
+        BillingEasy.setAutoAcknowledge(false);//关闭自动确认购买(可按需打开，默认关闭)
         //添加监听器放到onCreate里更安全
-        billingEasy.addListener(new MyBillingEasyListener());
-        billingEasy.onCreate();
+        BillingEasy.addListener(listener);
+        BillingEasy.init(this);
 
         //ui初始化
         tvLog = this.findViewById(R.id.tvLog);
@@ -72,8 +71,8 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onDestroy() {
+        BillingEasy.removeListener(listener);
         super.onDestroy();
-        billingEasy.onDestroy();
     }
 
     /**
@@ -118,8 +117,6 @@ public class MainActivity extends AppCompatActivity {
         public void onPurchases(@NonNull BillingEasyResult result, @NonNull List<PurchaseInfo> purchaseInfoList) {
             //处理订单示例
             utilPurchase(result,purchaseInfoList);
-
-
 
             //日志输出代码
             log("购买商品:"+result.isSuccess);
@@ -197,7 +194,7 @@ public class MainActivity extends AppCompatActivity {
                                     //内购商品-可消耗
                                     case ProductType.TYPE_INAPP_CONSUMABLE:{
                                         //消耗商品(消耗包括确认购买)
-                                        billingEasy.consume(purchaseInfo.getPurchaseToken());
+                                        BillingEasy.consume(purchaseInfo.getPurchaseToken());
                                     }break;
                                     //内购商品-非消耗||订阅商品
                                     case ProductType.TYPE_INAPP_NON_CONSUMABLE:
@@ -205,7 +202,7 @@ public class MainActivity extends AppCompatActivity {
                                         //判断是否已经确认购买
                                         if(!purchaseInfo.isAcknowledged()){
                                             //确认购买
-                                            billingEasy.acknowledge(purchaseInfo.getPurchaseToken());
+                                            BillingEasy.acknowledge(purchaseInfo.getPurchaseToken());
                                         }
 
                                     }break;
@@ -214,11 +211,11 @@ public class MainActivity extends AppCompatActivity {
 //                            //或者
 //                            if(productConfig.canConsume()){
 //                                //消耗商品
-//                                billingEasy.consume(purchaseInfo.getPurchaseToken());
+//                                BillingEasy.consume(purchaseInfo.getPurchaseToken());
 //                            }else{
 //                                //确认购买
 //                                if(!purchaseInfo.isAcknowledged()){
-//                                    billingEasy.acknowledge(purchaseInfo.getPurchaseToken());
+//                                    BillingEasy.acknowledge(purchaseInfo.getPurchaseToken());
 //                                }
 //                            }
                         }
@@ -227,8 +224,6 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     }
-
-
 
     //region==============================关系不大的方法
     private final StringBuffer logBuffer = new StringBuffer();
