@@ -43,8 +43,8 @@ android{
 }
 
 dependencies {
-    implementation 'com.TJHello.easy:BillingEasy:0.1.2-a01'//BillingEasy
-    implementation 'com.TJHello.publicLib.billing:google:1.4.0.0-a01'//Google内购
+    implementation 'com.TJHello.easy:BillingEasy:0.1.2-a02'//BillingEasy
+    implementation 'com.TJHello.publicLib.billing:google:1.4.0.0-a02'//Google内购
     //华为等这版本跑通了再加
 }
 

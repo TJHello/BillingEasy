@@ -51,17 +51,6 @@ dependencies {
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
 
-
-
-    if(IS_DEV_MODEL){
-        api project(':GoogleBillingLib')
-        api project(':JavaLib')
-    }else{
-        implementation ('com.TJHello.easy:BillingEasy:0.1.1-t13'){
-            changing = true
-        }
-        implementation ('com.TJHello.publicLib.billing:google:1.4.0.0-t13'){
-            changing = true
-        }
-    }
+    api project(':GoogleBillingLib')
+    api project(':JavaLib')
 }

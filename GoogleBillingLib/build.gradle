@@ -1,20 +1,28 @@
 plugins {
     id 'com.android.library'
-    id 'maven'
+    id 'maven-publish'
 }
 
-ext.ver = "${GOOGLE_BILLING_VERSION_NAME}"
+ext.verName = "${GOOGLE_BILLING_VERSION_NAME}"
 ext.verCode = GOOGLE_BILLING_VERSION_CODE
 ext.GROUP_ID = 'com.TJHello.publicLib.billing'
 ext.POM_ARTIFACT_ID = 'google'
 
-uploadArchives {
-    repositories {
-        mavenDeployer {
-            repository(url: uri(REPOSITORY_HOME))
-            pom.groupId = GROUP_ID
-            pom.artifactId = POM_ARTIFACT_ID
-            pom.version = ver
+afterEvaluate {
+    publishing {
+        publications {
+            release(MavenPublication) {
+                from components.release
+                groupId = GROUP_ID
+                artifactId = POM_ARTIFACT_ID
+                version = verName
+                artifact sourcesJar
+            }
+        }
+        repositories {
+            maven {
+                url = uri(REPOSITORY_HOME)
+            }
         }
     }
 }
@@ -24,9 +32,6 @@ tasks.withType(JavaCompile) {
 task sourcesJar(type: Jar) {
     getArchiveClassifier().set('sources')
     from android.sourceSets.main.java.source
-}
-artifacts {
-    archives sourcesJar
 }
 
 
@@ -38,7 +43,7 @@ android {
         minSdkVersion 16
         targetSdkVersion 30
         versionCode verCode
-        versionName "${ver}"
+        versionName "${verName}"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles "consumer-rules.pro"
@@ -61,9 +66,5 @@ dependencies {
     //内购
     api 'com.android.billingclient:billing:4.0.0'
 
-    if(IS_DEV_MODEL){
-        implementation project(':BaseBilling')
-    }else{
-        implementation "com.TJHello.publicLib.billing:base:${BASE_VERSION_NAME}"
-    }
+    implementation project(':BaseBilling')
 }

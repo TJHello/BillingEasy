@@ -1,32 +1,39 @@
 plugins {
     id 'com.android.library'
-    id 'maven'
+    id 'maven-publish'
 }
 
-ext.ver = "${BASE_VERSION_NAME}"
+ext.verName = "${BASE_VERSION_NAME}"
 ext.verCode = BASE_VERSION_CODE
 ext.GROUP_ID = 'com.TJHello.publicLib.billing'
 ext.POM_ARTIFACT_ID = 'base'
 
-uploadArchives {
-    repositories {
-        mavenDeployer {
-            repository(url: uri(REPOSITORY_HOME))
-            pom.groupId = GROUP_ID
-            pom.artifactId = POM_ARTIFACT_ID
-            pom.version = ver
+afterEvaluate {
+    publishing {
+        publications {
+            release(MavenPublication) {
+                from components.release
+                groupId = GROUP_ID
+                artifactId = POM_ARTIFACT_ID
+                version = verName
+                artifact sourcesJar
+            }
+        }
+        repositories {
+            maven {
+                url = uri(REPOSITORY_HOME)
+            }
         }
     }
 }
+
+
 tasks.withType(JavaCompile) {
     options.encoding = "UTF-8"
 }
 task sourcesJar(type: Jar) {
     getArchiveClassifier().set('sources')
     from android.sourceSets.main.java.source
-}
-artifacts {
-    archives sourcesJar
 }
 
 android {
@@ -37,7 +44,7 @@ android {
         minSdkVersion 16
         targetSdkVersion 30
         versionCode verCode
-        versionName "${ver}"
+        versionName "${verName}"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles "consumer-rules.pro"
