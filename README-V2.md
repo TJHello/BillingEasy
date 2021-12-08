@@ -197,6 +197,13 @@ BillingEasy.acknowledge("purchaseToken");
 
 
 - ### 更新日志
+
+0.1.2-a02 2021/12/8
+```
+1、修复个别时候在购买成功回调里无法获得商品详情的问题。
+
+```
+
 0.1.2-a01 2021/11/26
 ```
 1、删除原有的BillingEasy做法，将BillingEasyStatic改名为BillingEasy，采用全静态操作的做法。
