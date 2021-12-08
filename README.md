@@ -43,8 +43,8 @@ android{
 }
 
 dependencies {
-    implementation 'com.TJHello.easy:BillingEasy:0.1.1-t14'//BillingEasy
-    implementation 'com.TJHello.publicLib.billing:google:1.4.0.0-t14'//Google内购
+    implementation 'com.TJHello.easy:BillingEasy:0.1.1-t15'//BillingEasy
+    implementation 'com.TJHello.publicLib.billing:google:1.4.0.0-t15'//Google内购
     //华为等这版本跑通了再加
 }
 
@@ -197,6 +197,11 @@ billingEasy.acknowledge("purchaseToken");
 
 
 - ### 更新日志
+
+0.1.1-t15 2021/12/8
+```
+1、修复个别时候在购买成功回调里无法获得商品详情的问题。
+```
 
 0.1.1-t14 2021/11/23
 ```
