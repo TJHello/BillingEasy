@@ -114,6 +114,9 @@ public class GoogleBillingHandler extends BillingHandler {
                     BillingFlowParams flowParams = BillingFlowParams.newBuilder()
                             .setSkuDetails(list.get(0))
                             .build();
+                    for (SkuDetails skuDetails : list) {
+                        skuDetailsMap.put(skuDetails.getSku(),skuDetails);
+                    }
                     mBillingClient.launchBillingFlow(activity,flowParams);
                 }else{
                     String msg = "获取商品详情失败:"+productCode+",code="+billingResult.getResponseCode()+",msg="+billingResult.getDebugMessage();

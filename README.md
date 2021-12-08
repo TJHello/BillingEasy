@@ -198,6 +198,11 @@ billingEasy.acknowledge("purchaseToken");
 
 - ### 更新日志
 
+0.1.1-t15 2021/12/08
+```
+1、修复个别时候在购买成功回调里无法获得商品详情的问题。
+```
+
 0.1.1-t14 2021/11/23
 ```
 1、PurchaseInfo增加getProductInfo方法，可方便获取商品信息。
