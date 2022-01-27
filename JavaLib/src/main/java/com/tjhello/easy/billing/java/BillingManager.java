@@ -331,8 +331,6 @@ public class BillingManager implements BillingManagerImp {
             }
             if(result.isSuccess){
                 queryProductAll(null);
-                queryOrderAsyncAll(null);
-                queryOrderHistoryAll(null);
             }
         }
 

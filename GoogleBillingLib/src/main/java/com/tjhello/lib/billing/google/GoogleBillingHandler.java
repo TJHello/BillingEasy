@@ -155,19 +155,19 @@ public class GoogleBillingHandler extends BillingHandler {
     @Override
     public void queryOrderLocal(@NonNull List<String> typeList,@NonNull BillingEasyListener listener) {
         for (String type : typeList) {
-            mBillingClient.queryPurchaseHistoryAsync(type,new MyPurchaseHistoryResponseListener(listener));
-        }
-    }
-
-    @Override
-    public void queryOrderHistory(@NonNull List<String> typeList,@NonNull BillingEasyListener listener) {
-        for (String type : typeList) {
             Purchase.PurchasesResult purchasesResult = mBillingClient.queryPurchases(type);
             BillingResult billingResult = purchasesResult.getBillingResult();
             BillingEasyResult result = buildResult(billingResult);
             List<PurchaseInfo> tempList = toPurchaseInfo(purchasesResult.getPurchasesList());
             listener.onQueryOrder(result,tempList );
             mBillingEasyListener.onQueryOrder(result, tempList);
+        }
+    }
+
+    @Override
+    public void queryOrderHistory(@NonNull List<String> typeList,@NonNull BillingEasyListener listener) {
+        for (String type : typeList) {
+            mBillingClient.queryPurchaseHistoryAsync(type,new MyPurchaseHistoryResponseListener(listener));
         }
     }
 

@@ -1,4 +1,4 @@
-# BillingEasy-0.1.1-t14
+# BillingEasy-0.1.2
 
 **QQ交流群(425219113)**
 
@@ -12,9 +12,7 @@
 2. 重新设计了所有接口，去除了业务相关逻辑，还给大家原生操作。
 3. 运用了大量callback，提供更加便捷的即用即回API。
 
-**(内测版本，未经测试，功能不全，尝鲜使用，目前还没有支持华为内购)**
-
-**([新版本文档](https://gitee.com/TJHello/BillingEasy/blob/master/README-V2.md))**
+**(目前还没有支持华为内购)**
 
 ---
 
@@ -43,8 +41,8 @@ android{
 }
 
 dependencies {
-    implementation 'com.TJHello.easy:BillingEasy:0.1.1-t15'//BillingEasy
-    implementation 'com.TJHello.publicLib.billing:google:1.4.0.0-t15'//Google内购
+    implementation 'com.TJHello.easy:BillingEasy:0.1.2'//BillingEasy
+    implementation 'com.TJHello.publicLib.billing:google:4.0.0.101'//Google内购
     //华为等这版本跑通了再加
 }
 
@@ -54,9 +52,7 @@ dependencies {
 ```java
 public class MainActivity extends AppCompatActivity {
 
-    private final BillingEasy billingEasy = BillingEasy.newInstance(this);
-
-
+    private final MyBillingEasyListener billingEasyListener = new MyBillingEasyListener();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -66,17 +62,17 @@ public class MainActivity extends AppCompatActivity {
         BillingEasy.addProductConfig(ProductType.TYPE_INAPP_CONSUMABLE,"可消耗商品code","可消耗商品code");
         BillingEasy.addProductConfig(ProductType.TYPE_INAPP_NON_CONSUMABLE,"非消耗商品code","非消耗商品code");
         BillingEasy.addProductConfig(ProductType.TYPE_SUBS,"订阅商品code","订阅商品code");
-        billing.addListener(new MyBillingEasyListener());//添加完整监听器
-        billingEasy.onCreate();
+        BillingEasy.addListener(billingEasyListener);//添加完整监听器
+        BillingEasy.init(this);
 
         //查询商品信息-两种用法
-        billingEasy.queryProduct();
-        billingEasy.queryProduct((billingEasyResult, productInfoList) -> {
+        BillingEasy.queryProduct();
+        BillingEasy.queryProduct((billingEasyResult, productInfoList) -> {
 
         });
         //发起购买-两种用法
-        billingEasy.purchase("商品code");
-        billingEasy.purchase("商品code", (billingEasyResult, purchaseInfoList) -> {
+        BillingEasy.purchase(this,"商品code");
+        BillingEasy.purchase(this,"商品code", (billingEasyResult, purchaseInfoList) -> {
 
         });
 
@@ -84,8 +80,9 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onDestroy() {
+        //多activity情况下注意移除监听器，避免内存泄漏
+        BillingEasy.removeListener(billingEasyListener);
         super.onDestroy();
-        billingEasy.onDestroy();
     }
 
     //以下接口只要支持了JAVA8，都是可选实现
@@ -108,6 +105,7 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public void onPurchases(@NonNull BillingEasyResult result, @NonNull List<PurchaseInfo> purchaseInfoList) {
+            //如已开启自动消耗与购买，则不需要手动消耗与购买
             //购买商品，判断示例
             if(result.isSuccess){
                 for (PurchaseInfo purchaseInfo : purchaseInfoList) {
@@ -121,7 +119,7 @@ public class MainActivity extends AppCompatActivity {
                                     //内购商品-可消耗
                                     case ProductType.TYPE_INAPP_CONSUMABLE:{
                                         //消耗商品(消耗包括确认购买)
-                                        billingEasy.consume(purchaseInfo.getPurchaseToken());
+                                        BillingEasy.consume(purchaseInfo.getPurchaseToken());
                                     }break;
                                     //内购商品-非消耗||订阅商品
                                     case ProductType.TYPE_INAPP_NON_CONSUMABLE:
@@ -129,7 +127,7 @@ public class MainActivity extends AppCompatActivity {
                                         //判断是否已经确认购买
                                         if(!purchaseInfo.isAcknowledged()){
                                             //确认购买
-                                            billingEasy.acknowledge(purchaseInfo.getPurchaseToken());
+                                            BillingEasy.acknowledge(purchaseInfo.getPurchaseToken());
                                         }
                                     }break;
                                 }
@@ -137,11 +135,11 @@ public class MainActivity extends AppCompatActivity {
 //                            //或者
 //                            if(productConfig.canConsume()){
 //                                //消耗商品
-//                                billingEasy.consume(purchaseInfo.getPurchaseToken());
+//                                BillingEasy.consume(purchaseInfo.getPurchaseToken());
 //                            }else{
 //                                //确认购买
 //                                if(!purchaseInfo.isAcknowledged()){
-//                                    billingEasy.acknowledge(purchaseInfo.getPurchaseToken());
+//                                    BillingEasy.acknowledge(purchaseInfo.getPurchaseToken());
 //                                }
 //                            }
                         }
@@ -171,23 +169,23 @@ public class MainActivity extends AppCompatActivity {
 BillingEasy.addProductConfig( ProductType.TYPE_INAPP_CONSUMABLE,"商品code","商品code");
 
 //查询商品信息
-billingEasy.queryProduct();
-billingEasy.queryProduct((billingEasyResult, productInfoList) -> {
+BillingEasy.queryProduct();
+BillingEasy.queryProduct((billingEasyResult, productInfoList) -> {
 
 });
 //发起购买
-billingEasy.purchase("商品code");
-billingEasy.purchase("商品code", (billingEasyResult, purchaseInfoList) -> {
+BillingEasy.purchase(activity,"商品code");
+BillingEasy.purchase(activity,"商品code", (billingEasyResult, purchaseInfoList) -> {
 
 });
 //查询订单信息
-billingEasy.queryOrderAsync();//联网查询有效订单
-billingEasy.queryOrderLocal();//查询本地缓存订单
-billingEasy.queryOrderHistory();//查询历史订单
+BillingEasy.queryOrderAsync();//联网查询有效订单
+BillingEasy.queryOrderLocal();//查询本地缓存订单
+BillingEasy.queryOrderHistory();//查询历史订单
 //消耗商品
-billingEasy.consume("purchaseToken");
+BillingEasy.consume("purchaseToken");
 //确认购买
-billingEasy.acknowledge("purchaseToken");
+BillingEasy.acknowledge("purchaseToken");
 
 ```
 
@@ -198,9 +196,24 @@ billingEasy.acknowledge("purchaseToken");
 
 - ### 更新日志
 
-0.1.1-t15 2021/12/8
+0.1.2 2022/01/27
+```
+1、queryOrderLocal与queryOrderHistory不生效的问题
+2、移除自动查询订单功能，需要查询订单则自行调用queryOrder系列方法
+
+```
+
+
+0.1.2-a02 2021/12/8
 ```
 1、修复个别时候在购买成功回调里无法获得商品详情的问题。
+
+```
+
+0.1.2-a01 2021/11/26
+```
+1、删除原有的BillingEasy做法，将BillingEasyStatic改名为BillingEasy，采用全静态操作的做法。
+
 ```
 
 0.1.1-t14 2021/11/23
