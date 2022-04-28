@@ -1,0 +1,76 @@
+plugins {
+    id 'com.android.library'
+    id 'maven-publish'
+}
+
+ext.verName = "${HUAWEI_BILLING_VERSION_NAME}"
+ext.verCode = HUAWEI_BILLING_VERSION_CODE
+ext.GROUP_ID = 'com.TJHello.publicLib.billing'
+ext.POM_ARTIFACT_ID = 'huawei'
+
+
+android {
+    compileSdkVersion 30
+
+    defaultConfig {
+        minSdkVersion 16
+        targetSdkVersion 30
+        versionCode verCode
+        versionName "${verName}"
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        consumerProguardFiles "consumer-rules.pro"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+}
+
+
+dependencies {
+
+    implementation 'androidx.appcompat:appcompat:1.3.0'
+    testImplementation 'junit:junit:4.13.2'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.3'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
+
+
+    implementation 'com.huawei.hms:iap:5.1.0.300'
+    implementation project(':BaseBilling')
+}
+
+afterEvaluate {
+    publishing {
+        publications {
+            release(MavenPublication) {
+                from components.release
+                groupId = GROUP_ID
+                artifactId = POM_ARTIFACT_ID
+                version = verName
+                artifact sourcesJar
+            }
+        }
+        repositories {
+            maven {
+                url = uri(REPOSITORY_HOME)
+            }
+        }
+    }
+}
+
+tasks.withType(JavaCompile) {
+    options.encoding = "UTF-8"
+}
+
+task sourcesJar(type: Jar) {
+    getArchiveClassifier().set('sources')
+    from android.sourceSets.main.java.source
+}

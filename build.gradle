@@ -9,12 +9,13 @@ buildscript {
     }
     dependencies {
         classpath "com.android.tools.build:gradle:4.1.3"
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.6.21"
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
     }
 }
 
+//aar生成位置
 Properties prop = System.getProperties()
 String os = prop.getProperty("os.name")
 if(os.contains("Windows")){
@@ -25,16 +26,17 @@ if(os.contains("Windows")){
 
 //版本常量
 
-ext.BASE_VERSION_NAME = "0.1.1"
-ext.BASE_VERSION_CODE = 101
+ext.BASE_VERSION_NAME = "2.0.1-t01"
+ext.BASE_VERSION_CODE = 201
 
-ext.BILLING_EASY_VERSION_NAME = "0.1.2"
-ext.BILLING_EASY_VERSION_CODE = 102
+ext.BILLING_EASY_VERSION_NAME = "2.0.1-t01"
+ext.BILLING_EASY_VERSION_CODE = 201
 
-ext.GOOGLE_BILLING_VERSION_NAME = "4.0.0.101"
-ext.GOOGLE_BILLING_VERSION_CODE = 400101
+ext.GOOGLE_BILLING_VERSION_NAME = "4.0.0.201-t01"
+ext.GOOGLE_BILLING_VERSION_CODE = 400201
 
-ext.IS_DEV_MODEL = false
+ext.HUAWEI_BILLING_VERSION_NAME = "5.1.0.300.201-t01"
+ext.HUAWEI_BILLING_VERSION_CODE = 510300201
 
 
 allprojects {
@@ -44,6 +46,7 @@ allprojects {
         maven { url 'https://tjhello.gitee.io/publiclib/'}
         maven { url 'http://127.0.0.1'}
         maven { url 'http://127.0.0.1/maven'}
+        maven {url 'https://developer.huawei.com/repo/'}
     }
 }
 

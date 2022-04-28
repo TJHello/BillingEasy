@@ -2,10 +2,12 @@ package com.tjhello.easy.billing.java.imp;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.tjhello.lib.billing.base.anno.ProductType;
 import com.tjhello.lib.billing.base.info.ProductConfig;
 import com.tjhello.lib.billing.base.info.ProductInfo;
 import com.tjhello.lib.billing.base.info.PurchaseInfo;
@@ -16,8 +18,8 @@ import java.util.List;
 
 public interface BillingManagerImp {
 
-    void init(@NonNull Context context);
-    void init(@NonNull Context context,EasyCallBack<Boolean> callBack);
+    void init(@NonNull Activity activity);
+    void init(@NonNull Activity activity, EasyCallBack<Boolean> callBack);
 
     void addProductConfig(@NonNull ProductConfig productConfig);
 
@@ -26,6 +28,10 @@ public interface BillingManagerImp {
     void onDestroy();
 
     void queryProduct(@Nullable EasyCallBack<List<ProductInfo>> callBack);
+
+    void queryProduct(@ProductType String type, @Nullable EasyCallBack<List<ProductInfo>> callBack);
+
+    void queryProduct(@ProductType String type, @NonNull List<String> codeList, @Nullable EasyCallBack<List<ProductInfo>> callBack);
 
     void purchase(@NonNull Activity activity,@NonNull String productCode,@Nullable EasyCallBack<List<PurchaseInfo>> callBack);
 
@@ -39,4 +45,5 @@ public interface BillingManagerImp {
 
     void queryOrderHistory(@Nullable EasyCallBack<List<PurchaseHistoryInfo>> callBack);
 
+    void onActivityResult(int requestCode, int resultCode,@Nullable Intent data);
 }

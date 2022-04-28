@@ -2,6 +2,7 @@ package com.tjhello.easy.billing.java;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -47,18 +48,18 @@ public class BillingManager implements BillingManagerImp {
     private static boolean isFirstOnCreate = true;
 
     @Override
-    public void init(@NonNull Context context) {
-        init(context,null);
+    public void init(@NonNull Activity activity) {
+        init(activity,null);
     }
 
     @Override
-    public void init(@NonNull Context context,@Nullable EasyCallBack<Boolean> callBack) {
+    public void init(@NonNull Activity activity,@Nullable EasyCallBack<Boolean> callBack) {
         if(isFirstOnCreate){
             isFirstOnCreate = false;
             billingHandler = BillingHandler.createBillingHandler(mBillingEasyListener);
             billingHandler.setProductConfigList(productConfigList);
             BillingEasyLog.setVersionName(BuildConfig.VERSION_NAME);
-            billingHandler.onInit(context);
+            billingHandler.onInit(activity);
             billingHandler.connection(new ConnectionBillingEasyListener(callBack));
         }
     }
@@ -99,6 +100,29 @@ public class BillingManager implements BillingManagerImp {
         }
         if(billingHandler.connection(new ConnectionBillingEasyListener())){
             queryProductAll(callBack);
+        }
+    }
+
+    @Override
+    public void queryProduct(String type, @Nullable EasyCallBack<List<ProductInfo>> callBack) {
+        if(billingHandler==null) {
+            BillingEasyLog.e("请先初始化SDK");
+        }
+        if(billingHandler.connection(new ConnectionBillingEasyListener())){
+            List<String> list = getProductCodeList(type);
+            ProductBillingEasyListener listener = new ProductBillingEasyListener(callBack);
+            billingHandler.queryProduct(list,billingHandler.getProductType(type),listener);
+        }
+    }
+
+    @Override
+    public void queryProduct(String type, @NonNull List<String> codeList, @Nullable EasyCallBack<List<ProductInfo>> callBack) {
+        if(billingHandler==null) {
+            BillingEasyLog.e("请先初始化SDK");
+        }
+        if(billingHandler.connection(new ConnectionBillingEasyListener())){
+            ProductBillingEasyListener listener = new ProductBillingEasyListener(callBack);
+            billingHandler.queryProduct(codeList,billingHandler.getProductType(type),listener);
         }
     }
 
@@ -197,6 +221,14 @@ public class BillingManager implements BillingManagerImp {
         if(billingHandler.connection(new ConnectionBillingEasyListener())){
             queryOrderHistoryAll(callBack);
         }
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        if(billingHandler==null) {
+            BillingEasyLog.e("请先初始化SDK");
+        }
+        billingHandler.onActivityResult(requestCode,resultCode,data);
     }
 
     private static void queryOrderHistoryAll(@Nullable EasyCallBack<List<PurchaseHistoryInfo>> callBack){
@@ -331,6 +363,8 @@ public class BillingManager implements BillingManagerImp {
             }
             if(result.isSuccess){
                 queryProductAll(null);
+            }else{
+                BillingEasyLog.i("【onConnection】reqCode:"+result.responseCode+",reqMsg:"+result.responseMsg);
             }
         }
 
@@ -345,6 +379,9 @@ public class BillingManager implements BillingManagerImp {
         public void onQueryProduct(@NonNull BillingEasyResult result, @NonNull List<ProductInfo> productInfoList) {
             for (BillingEasyListener listener : publicListenerList) {
                 listener.onQueryProduct(result,productInfoList);
+            }
+            if(!result.isSuccess){
+                BillingEasyLog.i("【onQueryProduct】reqCode:"+result.responseCode+",reqMsg:"+result.responseMsg);
             }
         }
 
@@ -364,12 +401,18 @@ public class BillingManager implements BillingManagerImp {
             for (BillingEasyListener listener : publicListenerList) {
                 listener.onConsume(result, purchaseToken);
             }
+            if(!result.isSuccess){
+                BillingEasyLog.i("【onConsume】reqCode:"+result.responseCode+",reqMsg:"+result.responseMsg);
+            }
         }
 
         @Override
         public void onAcknowledge(@NonNull BillingEasyResult result, @NonNull String purchaseToken) {
             for (BillingEasyListener listener : publicListenerList) {
                 listener.onAcknowledge(result, purchaseToken);
+            }
+            if(!result.isSuccess){
+                BillingEasyLog.i("【onAcknowledge】reqCode:"+result.responseCode+",reqMsg:"+result.responseMsg);
             }
         }
 

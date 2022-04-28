@@ -2,6 +2,7 @@ package com.tjhello.easy.billing.java;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -34,12 +35,12 @@ public class BillingEasy {
         billingManager.addListener(new OnBillingListener());
     }
 
-    public static void init(Context context){
-        billingManager.init(context);
+    public static void init(Activity activity){
+        billingManager.init(activity);
     }
 
-    public static void init(Context context, EasyCallBack<Boolean> callBack){
-        billingManager.init(context,callBack);
+    public static void init(Activity activity, EasyCallBack<Boolean> callBack){
+        billingManager.init(activity,callBack);
     }
 
     /**
@@ -129,7 +130,7 @@ public class BillingEasy {
      * 查询所有商品信息
      */
     public static void queryProduct() {
-        queryProduct(null);
+        billingManager.queryProduct(null);
     }
     /**
      * 查询所有商品信息
@@ -137,6 +138,31 @@ public class BillingEasy {
      */
     public static void queryProduct(EasyCallBack<List<ProductInfo>> callBack) {
         billingManager.queryProduct(callBack);
+    }
+
+    public static void queryProduct(@ProductType String type, @Nullable EasyCallBack<List<ProductInfo>> callBack) {
+        billingManager.queryProduct(type,callBack);
+    }
+
+    public static void queryProduct(@ProductType String type,List<String> codeList, @Nullable EasyCallBack<List<ProductInfo>> callBack) {
+        billingManager.queryProduct(type,codeList,callBack);
+    }
+
+    /**
+     * 查询商品信息-指定类型
+     * @param type 商品类型
+     */
+    public static void queryProduct(@ProductType String type) {
+        billingManager.queryProduct(type,null);
+    }
+
+    /**
+     * 查询商品信息-指定类型与ID
+     * @param type 商品类型
+     * @param codeList 商品Id列表
+     */
+    public static void queryProduct(@ProductType String type,List<String> codeList) {
+        billingManager.queryProduct(type,codeList,null);
     }
 
     /**
@@ -235,6 +261,13 @@ public class BillingEasy {
         billingManager.queryOrderHistory(callBack);
     }
 
+    /**
+     * 仅在接入华为的时候用到
+     */
+    public static void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        billingManager.onActivityResult(requestCode,resultCode,data);
+    }
+
     private static class OnBillingListener implements BillingEasyListener{
 
         @Override
@@ -249,7 +282,7 @@ public class BillingEasy {
 
         @Override
         public void onConsume(@NonNull BillingEasyResult result, @NonNull String purchaseToken) {
-            if(!result.isSuccess){
+            if(!result.isSuccess&&result.state!=BillingEasyResult.State.ERROR_NOT_OWNED){
                 //重试
                 if(isAutoConsume){
                     if(consumeRetryNum<MAX_CONSUME_RETRY_NUM){
@@ -262,7 +295,7 @@ public class BillingEasy {
 
         @Override
         public void onAcknowledge(@NonNull BillingEasyResult result, @NonNull String purchaseToken) {
-            if(!result.isSuccess){
+            if(!result.isSuccess&&result.state!=BillingEasyResult.State.ERROR_NOT_OWNED){
                 //重试
                 if(isAutoAcknowledge){
                     if(acknowledgeRetryNum<MAX_ACKNOWLEDGE_RETRY_NUM){

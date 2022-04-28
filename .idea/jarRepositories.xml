@@ -41,5 +41,10 @@
       <option name="name" value="maven2" />
       <option name="url" value="http://127.0.0.1/maven" />
     </remote-repository>
+    <remote-repository>
+      <option name="id" value="maven4" />
+      <option name="name" value="maven4" />
+      <option name="url" value="https://developer.huawei.com/repo/" />
+    </remote-repository>
   </component>
 </project>

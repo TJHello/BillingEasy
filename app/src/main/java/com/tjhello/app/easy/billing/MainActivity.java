@@ -49,6 +49,8 @@ public class MainActivity extends AppCompatActivity {
         BillingEasy.addProductConfig(ProductType.TYPE_INAPP_CONSUMABLE,INAPP_CONSUMABLE_CODE_ARRAY);
         BillingEasy.addProductConfig(ProductType.TYPE_INAPP_NON_CONSUMABLE,INAPP_NON_CONSUMABLE_CODE_ARRAY);
         BillingEasy.addProductConfig(ProductType.TYPE_SUBS,SUBS_CODE_ARRAY);
+        ProductConfig productConfig = ProductConfig.build(ProductType.TYPE_INAPP_NON_CONSUMABLE,"test_code","noads");//添加一个带去广告属性的商品
+        BillingEasy.addProductConfig(productConfig);
         BillingEasy.setAutoConsume(false);//关闭自动消耗(可按需打开，默认关闭)
         BillingEasy.setAutoAcknowledge(false);//关闭自动确认购买(可按需打开，默认关闭)
         //添加监听器放到onCreate里更安全

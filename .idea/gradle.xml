@@ -12,6 +12,7 @@
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/BaseBilling" />
             <option value="$PROJECT_DIR$/GoogleBillingLib" />
+            <option value="$PROJECT_DIR$/HuaweiBillingLib" />
             <option value="$PROJECT_DIR$/JavaLib" />
             <option value="$PROJECT_DIR$/KotlinLib" />
             <option value="$PROJECT_DIR$/app" />

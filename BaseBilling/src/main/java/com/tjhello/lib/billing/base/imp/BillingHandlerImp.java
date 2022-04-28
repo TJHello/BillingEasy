@@ -1,8 +1,7 @@
 package com.tjhello.lib.billing.base.imp;
 
 import android.app.Activity;
-import android.content.Context;
-
+import android.content.Intent;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -14,7 +13,7 @@ import java.util.List;
 
 public interface BillingHandlerImp {
 
-    void onInit(@NonNull Context context);
+    void onInit(@NonNull Activity activity);
 
     boolean connection(@NonNull BillingEasyListener listener);
 
@@ -31,6 +30,8 @@ public interface BillingHandlerImp {
     void queryOrderLocal(@NonNull List<String> typeList,@NonNull BillingEasyListener listener);
 
     void queryOrderHistory(@NonNull List<String> typeList,@NonNull BillingEasyListener listener);
+
+    void onActivityResult(int requestCode, int resultCode,@Nullable Intent data);
 
     @BillingName
     String getBillingName();

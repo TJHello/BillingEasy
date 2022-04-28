@@ -41,9 +41,14 @@ android{
 }
 
 dependencies {
+    //稳定版
     implementation 'com.TJHello.easy:BillingEasy:0.1.2'//BillingEasy
-    implementation 'com.TJHello.publicLib.billing:google:4.0.0.101'//Google内购
-    //华为等这版本跑通了再加
+    implementation 'com.TJHello.publicLib.billing:google:4.0.0.101'//Google内购(按需添加)
+    
+    //测试版
+    implementation 'com.TJHello.easy:BillingEasy:2.0.1-t01'//BillingEasy
+    implementation 'com.TJHello.publicLib.billing:google:4.0.0.201'//Google内购(按需添加)
+    implementation 'com.TJHello.publicLib.billing:huawei:5.1.0.300.201-t01'//Huawei内购(按需添加)
 }
 
 ```
@@ -62,6 +67,8 @@ public class MainActivity extends AppCompatActivity {
         BillingEasy.addProductConfig(ProductType.TYPE_INAPP_CONSUMABLE,"可消耗商品code","可消耗商品code");
         BillingEasy.addProductConfig(ProductType.TYPE_INAPP_NON_CONSUMABLE,"非消耗商品code","非消耗商品code");
         BillingEasy.addProductConfig(ProductType.TYPE_SUBS,"订阅商品code","订阅商品code");
+        ProductConfig productConfig = ProductConfig.build(ProductType.TYPE_INAPP_NON_CONSUMABLE,"test_code","noads");//添加一个带去广告属性的商品
+        BillingEasy.addProductConfig(productConfig);
         BillingEasy.addListener(billingEasyListener);//添加完整监听器
         BillingEasy.init(this);
 
@@ -76,6 +83,12 @@ public class MainActivity extends AppCompatActivity {
 
         });
 
+    }
+
+    //仅华为内购需要调用
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        BillingEasy.onActivityResult(requestCode,resultCode,data);
     }
 
     @Override
@@ -195,6 +208,12 @@ BillingEasy.acknowledge("purchaseToken");
 
 
 - ### 更新日志
+
+2.0.1-t01 2022/04/28 【测试版】
+```
+1、该版本支持了华为内购，API略微改动
+2、优化了使用体验
+```
 
 0.1.2 2022/01/27
 ```
