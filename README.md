@@ -1,4 +1,4 @@
-# BillingEasy-0.1.2
+# BillingEasy-2.0.1
 
 **QQ交流群(425219113)**
 
@@ -22,7 +22,8 @@
 
 allprojects {
      repositories {
-        maven { url 'https://tjhello.gitee.io/publiclib/'}
+         maven { url 'https://tjhello.gitee.io/publiclib/'}
+         maven {url 'https://developer.huawei.com/repo/'}//华为用到
      }
 }
 
@@ -41,10 +42,7 @@ android{
 }
 
 dependencies {
-    //稳定版
-    implementation 'com.TJHello.easy:BillingEasy:0.1.2'//BillingEasy
-    implementation 'com.TJHello.publicLib.billing:google:4.0.0.101'//Google内购(按需添加)
-    
+
     //测试版
     implementation 'com.TJHello.easy:BillingEasy:2.0.1-t01'//BillingEasy
     implementation 'com.TJHello.publicLib.billing:google:4.0.0.201'//Google内购(按需添加)
