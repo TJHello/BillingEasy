@@ -59,8 +59,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
-        //BillingEasyStatic的用法看v2/MainActivity
-
         BillingEasy.setDebug(true);
         BillingEasy.addProductConfig(ProductType.TYPE_INAPP_CONSUMABLE,"可消耗商品code","可消耗商品code");
         BillingEasy.addProductConfig(ProductType.TYPE_INAPP_NON_CONSUMABLE,"非消耗商品code","非消耗商品code");
@@ -75,6 +73,7 @@ public class MainActivity extends AppCompatActivity {
         BillingEasy.queryProduct((billingEasyResult, productInfoList) -> {
 
         });
+        
         //发起购买-两种用法
         BillingEasy.purchase(this,"商品code");
         BillingEasy.purchase(this,"商品code", (billingEasyResult, purchaseInfoList) -> {
