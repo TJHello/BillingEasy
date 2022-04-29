@@ -33,6 +33,7 @@ import com.tjhello.lib.billing.base.info.ProductConfig;
 import com.tjhello.lib.billing.base.info.ProductInfo;
 import com.tjhello.lib.billing.base.info.PurchaseHistoryInfo;
 import com.tjhello.lib.billing.base.info.PurchaseInfo;
+import com.tjhello.lib.billing.base.info.PurchaseParam;
 import com.tjhello.lib.billing.base.listener.BillingEasyListener;
 
 import org.json.JSONException;
@@ -130,10 +131,12 @@ public class HuaweiBillingHandler extends BillingHandler {
     }
 
     @Override
-    public void purchase(@NonNull Activity activity, @NonNull String productCode, @NonNull String type) {
+    public void purchase(@NonNull Activity activity, @NonNull PurchaseParam param, @NonNull String type) {
         PurchaseIntentReq req = new PurchaseIntentReq();
-        req.setProductId(productCode);
+        req.setProductId(param.productCode);
         req.setPriceType(Integer.parseInt(getProductType(type)));
+        req.setDeveloperPayload(param.developerPayload);
+        req.setReservedInfor(param.reservedInfor);
         Task<PurchaseIntentResult> task = mIapClient.createPurchaseIntent(req);
         task.addOnSuccessListener(purchaseIntentResult -> {
             if(purchaseIntentResult==null){
@@ -367,7 +370,6 @@ public class HuaweiBillingHandler extends BillingHandler {
             huaweiBillingPurchase.setProductGroup(inAppPurchaseData.getProductGroup());
             huaweiBillingPurchase.setOriPurchaseTime(inAppPurchaseData.getOriPurchaseTime());
             huaweiBillingPurchase.setSubscriptionId(inAppPurchaseData.getSubscriptionId());
-
             info.setHuaweiBillingPurchase(huaweiBillingPurchase);
 
             return info;

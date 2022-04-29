@@ -16,6 +16,7 @@ import com.tjhello.lib.billing.base.info.ProductConfig;
 import com.tjhello.lib.billing.base.info.ProductInfo;
 import com.tjhello.lib.billing.base.info.PurchaseInfo;
 import com.tjhello.lib.billing.base.info.PurchaseHistoryInfo;
+import com.tjhello.lib.billing.base.info.PurchaseParam;
 import com.tjhello.lib.billing.base.listener.BillingEasyListener;
 import com.tjhello.lib.billing.base.listener.EasyCallBack;
 import com.tjhello.lib.billing.base.utils.BillingEasyLog;
@@ -147,15 +148,14 @@ public class BillingManager implements BillingManagerImp {
 
 
     @Override
-    public void purchase(@NonNull Activity activity, @NonNull String productCode, @Nullable EasyCallBack<List<PurchaseInfo>> callBack) {
+    public void purchase(@NonNull Activity activity, @NonNull PurchaseParam param) {
         if(billingHandler==null) {
             BillingEasyLog.e("请先初始化SDK");
         }
         if(billingHandler.connection(new ConnectionBillingEasyListener())){
-            ProductConfig config = findProductConfig(productCode);
+            ProductConfig config = findProductConfig(param.productCode);
             if(config!=null){
-                addEasyCallback(callBack);
-                billingHandler.purchase(activity,productCode,billingHandler.getProductType(config.getType()));
+                billingHandler.purchase(activity,param,billingHandler.getProductType(config.getType()));
             }
         }
     }

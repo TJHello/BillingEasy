@@ -47,11 +47,11 @@ public class NextActivity extends AppCompatActivity {
 
         btInapp = this.findViewById(R.id.btInapp);
         btInapp.setOnClickListener(view->{
-            BillingEasy.purchase(this,"内购商品code", this::utilPurchase);
+            BillingEasy.purchase(this,"内购商品code");
         });
         btSubs = this.findViewById(R.id.btSubs);
         btSubs.setOnClickListener(view->{
-            BillingEasy.purchase(this,"订阅商品code", this::utilPurchase);
+            BillingEasy.purchase(this,"订阅商品code");
         });
     }
 

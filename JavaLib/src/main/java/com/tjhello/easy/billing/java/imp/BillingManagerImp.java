@@ -12,6 +12,7 @@ import com.tjhello.lib.billing.base.info.ProductConfig;
 import com.tjhello.lib.billing.base.info.ProductInfo;
 import com.tjhello.lib.billing.base.info.PurchaseInfo;
 import com.tjhello.lib.billing.base.info.PurchaseHistoryInfo;
+import com.tjhello.lib.billing.base.info.PurchaseParam;
 import com.tjhello.lib.billing.base.listener.EasyCallBack;
 
 import java.util.List;
@@ -33,7 +34,7 @@ public interface BillingManagerImp {
 
     void queryProduct(@ProductType String type, @NonNull List<String> codeList, @Nullable EasyCallBack<List<ProductInfo>> callBack);
 
-    void purchase(@NonNull Activity activity,@NonNull String productCode,@Nullable EasyCallBack<List<PurchaseInfo>> callBack);
+    void purchase(@NonNull Activity activity, @NonNull PurchaseParam param);
 
     void consume(@NonNull String purchaseToken,@Nullable EasyCallBack<String> callBack);
 
