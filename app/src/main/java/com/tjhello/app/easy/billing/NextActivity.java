@@ -12,6 +12,7 @@ import com.tjhello.lib.billing.base.info.BillingEasyResult;
 import com.tjhello.lib.billing.base.info.ProductConfig;
 import com.tjhello.lib.billing.base.info.ProductInfo;
 import com.tjhello.lib.billing.base.info.PurchaseInfo;
+import com.tjhello.lib.billing.base.info.PurchaseParam;
 
 import java.util.List;
 

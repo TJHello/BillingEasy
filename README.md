@@ -44,9 +44,9 @@ android{
 dependencies {
 
     //测试版
-    implementation 'com.TJHello.easy:BillingEasy:2.0.1-t01'//BillingEasy
-    implementation 'com.TJHello.publicLib.billing:google:4.0.0.201-t01'//Google内购(按需添加)
-    implementation 'com.TJHello.publicLib.billing:huawei:5.1.0.300.201-t01'//Huawei内购(按需添加)
+    implementation 'com.TJHello.easy:BillingEasy:2.0.2-t01'//BillingEasy
+    implementation 'com.TJHello.publicLib.billing:google:4.0.0.202-t01'//Google内购(按需添加)
+    implementation 'com.TJHello.publicLib.billing:huawei:5.1.0.300.202-t01'//Huawei内购(按需添加)
 }
 
 ```
