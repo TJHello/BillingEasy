@@ -2,6 +2,7 @@ package com.tjhello.app.easy.billing;
 
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatButton;
@@ -12,6 +13,9 @@ import com.tjhello.lib.billing.base.info.BillingEasyResult;
 import com.tjhello.lib.billing.base.info.ProductConfig;
 import com.tjhello.lib.billing.base.info.ProductInfo;
 import com.tjhello.lib.billing.base.info.PurchaseInfo;
+import com.tjhello.lib.billing.base.info.PurchaseParam;
+import com.tjhello.lib.billing.base.listener.BillingEasyListener;
+import com.tjhello.lib.billing.base.listener.EasyCallBack;
 
 import java.util.List;
 
@@ -25,6 +29,7 @@ public class NextActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.next_activity_layout);
+        BillingEasy.addListener(new OnBillingListener());
         BillingEasy.queryProduct((result, productInfoList) -> {
             if(result.isSuccess){
                 for (ProductInfo productInfo : productInfoList) {
@@ -47,11 +52,18 @@ public class NextActivity extends AppCompatActivity {
 
         btInapp = this.findViewById(R.id.btInapp);
         btInapp.setOnClickListener(view->{
-            BillingEasy.purchase(this,"内购商品code", this::utilPurchase);
+            BillingEasy.purchase(this,"内购商品code");
+            PurchaseParam param = new PurchaseParam.Builder("内购商品code").setObfuscatedAccountId("").build();
+            BillingEasy.purchase(this, param, new EasyCallBack<List<PurchaseInfo>>() {
+                @Override
+                public void callback(@NonNull BillingEasyResult result, @NonNull List<PurchaseInfo> purchaseInfos) {
+
+                }
+            });
         });
         btSubs = this.findViewById(R.id.btSubs);
         btSubs.setOnClickListener(view->{
-            BillingEasy.purchase(this,"订阅商品code", this::utilPurchase);
+            BillingEasy.purchase(this,"订阅商品code");
         });
     }
 
@@ -100,6 +112,14 @@ public class NextActivity extends AppCompatActivity {
                     }
                 }
             }
+        }
+    }
+
+    private class OnBillingListener implements BillingEasyListener{
+
+        @Override
+        public void onPurchases(@NonNull BillingEasyResult result, @NonNull List<PurchaseInfo> purchaseInfoList) {
+            utilPurchase(result,purchaseInfoList);
         }
     }
 }

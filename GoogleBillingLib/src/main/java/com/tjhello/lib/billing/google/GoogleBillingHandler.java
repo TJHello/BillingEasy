@@ -9,6 +9,7 @@ import androidx.annotation.Keep;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.android.billingclient.api.AccountIdentifiers;
 import com.android.billingclient.api.AcknowledgePurchaseParams;
 import com.android.billingclient.api.AcknowledgePurchaseResponseListener;
 import com.android.billingclient.api.BillingClient;
@@ -33,6 +34,7 @@ import com.tjhello.lib.billing.base.info.ProductConfig;
 import com.tjhello.lib.billing.base.info.ProductInfo;
 import com.tjhello.lib.billing.base.info.PurchaseInfo;
 import com.tjhello.lib.billing.base.info.PurchaseHistoryInfo;
+import com.tjhello.lib.billing.base.info.PurchaseParam;
 import com.tjhello.lib.billing.base.listener.BillingEasyListener;
 import com.tjhello.lib.billing.base.utils.BillingEasyLog;
 
@@ -95,31 +97,37 @@ public class GoogleBillingHandler extends BillingHandler {
     }
 
     @Override
-    public void purchase(@NonNull Activity activity,@NonNull String productCode,@NonNull String type) {
-        if(skuDetailsMap.containsKey(productCode)){
-            SkuDetails skuDetails = skuDetailsMap.get(productCode);
+    public void purchase(@NonNull Activity activity, @NonNull String type, @NonNull PurchaseParam param) {
+        if(skuDetailsMap.containsKey(param.productCode)){
+            SkuDetails skuDetails = skuDetailsMap.get(param.productCode);
             if(skuDetails!=null){
                 BillingFlowParams flowParams = BillingFlowParams.newBuilder()
                         .setSkuDetails(skuDetails)
+                        .setObfuscatedAccountId(param.obfuscatedAccountId)
+                        .setObfuscatedProfileId(param.obfuscatedProfileId)
+                        .setVrPurchaseFlow(param.vrPurchaseFlow)
                         .build();
                 mBillingClient.launchBillingFlow(activity,flowParams);
             }
         }else{
             SkuDetailsParams params = SkuDetailsParams.newBuilder()
-                    .setSkusList(Collections.singletonList(productCode))
+                    .setSkusList(Collections.singletonList(param.productCode))
                     .setType(type)
                     .build();
             mBillingClient.querySkuDetailsAsync(params, (billingResult, list) -> {
                 if(billingResult.getResponseCode()== BillingClient.BillingResponseCode.OK&&list!=null&&!list.isEmpty()){
                     BillingFlowParams flowParams = BillingFlowParams.newBuilder()
                             .setSkuDetails(list.get(0))
+                            .setObfuscatedAccountId(param.obfuscatedAccountId)
+                            .setObfuscatedProfileId(param.obfuscatedProfileId)
+                            .setVrPurchaseFlow(param.vrPurchaseFlow)
                             .build();
                     for (SkuDetails skuDetails : list) {
                         skuDetailsMap.put(skuDetails.getSku(),skuDetails);
                     }
                     mBillingClient.launchBillingFlow(activity,flowParams);
                 }else{
-                    String msg = "获取商品详情失败:"+productCode+",code="+billingResult.getResponseCode()+",msg="+billingResult.getDebugMessage();
+                    String msg = "获取商品详情失败:"+param.productCode+",code="+billingResult.getResponseCode()+",msg="+billingResult.getDebugMessage();
                     BillingEasyLog.e("[GoogleBilling]:"+msg);
                     runMainThread(() -> {
                         mBillingEasyListener.onPurchases(buildResult(billingResult,msg),new ArrayList<>());
@@ -431,8 +439,12 @@ public class GoogleBillingHandler extends BillingHandler {
             googleBillingPurchase.setQuantity(purchase.getQuantity());
             googleBillingPurchase.setSignature(purchase.getSignature());
             googleBillingPurchase.setSkus(purchase.getSkus());
+            AccountIdentifiers accountIdentifiers = purchase.getAccountIdentifiers();
+            if(accountIdentifiers!=null){
+                googleBillingPurchase.setObfuscatedAccountId(accountIdentifiers.getObfuscatedAccountId());
+                googleBillingPurchase.setObfuscatedProfileId(accountIdentifiers.getObfuscatedProfileId());
+            }
             info.setGoogleBillingPurchase(googleBillingPurchase);
-
             infoList.add(info);
         }
         return infoList;

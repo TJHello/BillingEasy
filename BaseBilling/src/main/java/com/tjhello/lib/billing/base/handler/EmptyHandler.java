@@ -8,6 +8,7 @@ import androidx.annotation.Nullable;
 
 
 import com.tjhello.lib.billing.base.anno.BillingName;
+import com.tjhello.lib.billing.base.info.PurchaseParam;
 import com.tjhello.lib.billing.base.listener.BillingEasyListener;
 import com.tjhello.lib.billing.base.utils.BillingEasyLog;
 
@@ -53,9 +54,10 @@ public class EmptyHandler extends  BillingHandler {
     }
 
     @Override
-    public void purchase(@NonNull Activity activity, @NonNull String productCode, @NonNull String type) {
+    public void purchase(@NonNull Activity activity, @NonNull String type, @NonNull PurchaseParam purchaseParam) {
 
     }
+
 
     @Override
     public void consume(@NonNull String purchaseToken, @NonNull BillingEasyListener listener) {

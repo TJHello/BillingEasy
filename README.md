@@ -1,4 +1,4 @@
-# BillingEasy-0.1.2
+# BillingEasy-0.1.5
 
 **QQ交流群(425219113)**
 
@@ -41,8 +41,8 @@ android{
 }
 
 dependencies {
-    implementation 'com.TJHello.easy:BillingEasy:0.1.2'//BillingEasy
-    implementation 'com.TJHello.publicLib.billing:google:4.0.0.101'//Google内购
+    implementation 'com.TJHello.easy:BillingEasy:0.1.5'//BillingEasy
+    implementation 'com.TJHello.publicLib.billing:google:4.0.0.105'//Google内购
     //华为等这版本跑通了再加
 }
 
@@ -195,6 +195,15 @@ BillingEasy.acknowledge("purchaseToken");
 
 
 - ### 更新日志
+
+0.1.5 2022/04/29
+```
+注意：不再建议使用发起购买的callback用法
+1、发起购买api添加自定义参数用法
+2、带callack的purchase方法改为deprecated。
+2、支持obfuscatedProfileId和obfuscatedAccountId字段的设置和获取
+
+```
 
 0.1.2 2022/01/27
 ```

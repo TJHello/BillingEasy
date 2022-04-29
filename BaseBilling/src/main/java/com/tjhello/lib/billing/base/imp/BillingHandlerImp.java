@@ -8,6 +8,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.tjhello.lib.billing.base.anno.BillingName;
+import com.tjhello.lib.billing.base.info.PurchaseParam;
 import com.tjhello.lib.billing.base.listener.BillingEasyListener;
 
 import java.util.List;
@@ -20,7 +21,7 @@ public interface BillingHandlerImp {
 
     void queryProduct(@NonNull List<String> productCodeList, @NonNull String type, @NonNull BillingEasyListener listener);
 
-    void purchase(@NonNull Activity activity, @NonNull String productCode, @NonNull String type);
+    void purchase(@NonNull Activity activity,@NonNull String type,@NonNull PurchaseParam purchaseParam);
 
     void consume(@NonNull String purchaseToken,@NonNull BillingEasyListener listener);
 

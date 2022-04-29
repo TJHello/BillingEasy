@@ -12,6 +12,7 @@ import com.tjhello.lib.billing.base.info.ProductConfig;
 import com.tjhello.lib.billing.base.info.ProductInfo;
 import com.tjhello.lib.billing.base.info.PurchaseHistoryInfo;
 import com.tjhello.lib.billing.base.info.PurchaseInfo;
+import com.tjhello.lib.billing.base.info.PurchaseParam;
 import com.tjhello.lib.billing.base.listener.BillingEasyListener;
 import com.tjhello.lib.billing.base.listener.EasyCallBack;
 import com.tjhello.lib.billing.base.utils.BillingEasyLog;
@@ -144,16 +145,35 @@ public class BillingEasy {
      * @param productCode 商品代码
      */
     public static void purchase(@NonNull Activity activity, @NonNull String productCode) {
-        purchase(activity,productCode,null);
+        PurchaseParam param = new PurchaseParam.Builder(productCode).build();
+        billingManager.purchase(activity,param,null);
     }
 
     /**
      * 发起购买
+     * @param purchaseParam 发起购买的高级参数
+     */
+    public static void purchase(@NonNull Activity activity, @NonNull PurchaseParam purchaseParam) {
+        billingManager.purchase(activity,purchaseParam,null);
+    }
+
+    /**
+     * 发起购买
+     * @deprecated 建议通过注册监听器的方式来监听购买回调 {@link BillingEasyListener#onPurchases(BillingEasyResult, List)}
      * @param productCode 商品代码
      * @param callBack 回调
      */
     public static void purchase(Activity activity, @NonNull String productCode, @Nullable EasyCallBack<List<PurchaseInfo>> callBack) {
-        billingManager.purchase(activity,productCode,callBack);
+        PurchaseParam param = new PurchaseParam.Builder(productCode).build();
+        billingManager.purchase(activity,param,callBack);
+    }
+
+    /**
+     * 发起购买
+     * @deprecated 发起购买建议通过注册监听器的方式来监听购买回调 {@link BillingEasyListener#onPurchases(BillingEasyResult, List)}
+     */
+    public static void purchase(Activity activity, @NonNull PurchaseParam param, @Nullable EasyCallBack<List<PurchaseInfo>> callBack) {
+        billingManager.purchase(activity,param,callBack);
     }
 
     /**

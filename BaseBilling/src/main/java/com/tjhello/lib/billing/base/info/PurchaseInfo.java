@@ -32,6 +32,8 @@ public class PurchaseInfo {
         List<String> skus ;
         boolean isAcknowledged;
         boolean isAutoRenewing;
+        public String obfuscatedAccountId;
+        public String obfuscatedProfileId;
 
         public String getDeveloperPayload() {
             return developerPayload;
@@ -127,6 +129,22 @@ public class PurchaseInfo {
 
         public void setAutoRenewing(boolean autoRenewing) {
             isAutoRenewing = autoRenewing;
+        }
+
+        public void setObfuscatedAccountId(String obfuscatedAccountId) {
+            this.obfuscatedAccountId = obfuscatedAccountId;
+        }
+
+        public void setObfuscatedProfileId(String obfuscatedProfileId) {
+            this.obfuscatedProfileId = obfuscatedProfileId;
+        }
+
+        public String getObfuscatedProfileId() {
+            return obfuscatedProfileId;
+        }
+
+        public String getObfuscatedAccountId() {
+            return obfuscatedAccountId;
         }
     }
 
