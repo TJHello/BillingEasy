@@ -13,6 +13,7 @@ import com.tjhello.lib.billing.base.info.ProductConfig;
 import com.tjhello.lib.billing.base.info.ProductInfo;
 import com.tjhello.lib.billing.base.info.PurchaseHistoryInfo;
 import com.tjhello.lib.billing.base.info.PurchaseInfo;
+import com.tjhello.lib.billing.base.info.PurchaseParam;
 import com.tjhello.lib.billing.base.listener.BillingEasyListener;
 import com.tjhello.lib.billing.base.listener.EasyCallBack;
 import com.tjhello.lib.billing.base.utils.BillingEasyLog;
@@ -170,16 +171,12 @@ public class BillingEasy {
      * @param productCode 商品代码
      */
     public static void purchase(@NonNull Activity activity, @NonNull String productCode) {
-        purchase(activity,productCode,null);
+        PurchaseParam param = new PurchaseParam.DefBuilder(productCode).build();
+        billingManager.purchase(activity,param);
     }
 
-    /**
-     * 发起购买
-     * @param productCode 商品代码
-     * @param callBack 回调
-     */
-    public static void purchase(Activity activity, @NonNull String productCode, @Nullable EasyCallBack<List<PurchaseInfo>> callBack) {
-        billingManager.purchase(activity,productCode,callBack);
+    public static void purchase(@NonNull Activity activity, @NonNull PurchaseParam param) {
+        billingManager.purchase(activity,param);
     }
 
     /**

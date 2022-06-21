@@ -180,11 +180,11 @@ BillingEasy.queryProduct();
 BillingEasy.queryProduct((billingEasyResult, productInfoList) -> {
 
 });
+
 //发起购买
 BillingEasy.purchase(activity,"商品code");
-BillingEasy.purchase(activity,"商品code", (billingEasyResult, purchaseInfoList) -> {
+BillingEasy.purchase(activity,param);
 
-});
 //查询订单信息
 BillingEasy.queryOrderAsync();//联网查询有效订单
 BillingEasy.queryOrderLocal();//查询本地缓存订单
@@ -203,10 +203,10 @@ BillingEasy.acknowledge("purchaseToken");
 
 - ### 更新日志
 
-2.0.2-t01 2022/06/21 【测试版】
+2.0.2-t01 2022/04/29 【测试版】
 ```
-1、修复华为内购无法发起购买的问题
-2、
+1、删除purchase方法的callback用法。
+2、purchase方法添加PurchaseParam参数，支持高级用法需要的参数传递
 ```
 
 2.0.1-t01 2022/04/28 【测试版】
