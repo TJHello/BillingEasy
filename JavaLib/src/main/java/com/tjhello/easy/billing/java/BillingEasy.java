@@ -219,47 +219,121 @@ public class BillingEasy {
     }
 
 
+    //region================queryOrder
+
     /**
      * 查询有效商品订单-在线或本地缓存
+     * @param type {@link ProductType}
+     */
+    public static void queryOrderAsync(@ProductType @NonNull String type){
+        billingManager.queryOrderAsync(type,null);
+    }
+
+    /**
+     * 查询有效商品订单-本地缓存
+     * @param type {@link ProductType}
+     */
+    public static void queryOrderLocal(@ProductType @NonNull String type) {
+        billingManager.queryOrderLocal(type,null);
+    }
+
+    /**
+     * 查询历史订单
+     * @param type {@link ProductType}
+     */
+    public static void queryOrderHistory(@ProductType @NonNull String type) {
+        billingManager.queryOrderHistory(type,null);
+    }
+
+    /**
+     * 查询有效商品订单-在线或本地缓存
+     * @param type {@link ProductType}
+     */
+    public static void queryOrderAsync(@ProductType @NonNull String type,@Nullable EasyCallBack<List<PurchaseInfo>> callBack) {
+        billingManager.queryOrderAsync(type,callBack);
+    }
+
+    /**
+     * 查询有效商品订单-本地缓存
+     * @param type {@link ProductType}
+     */
+    public static void queryOrderLocal(@ProductType @NonNull String type,@Nullable EasyCallBack<List<PurchaseInfo>> callBack) {
+        billingManager.queryOrderLocal(type,callBack);
+    }
+
+    /**
+     * 查询历史订单
+     * @param type {@link ProductType}
+     */
+    public static void queryOrderHistory(@ProductType @NonNull String type,@Nullable EasyCallBack<List<PurchaseHistoryInfo>> callBack) {
+        billingManager.queryOrderHistory(type,callBack);
+    }
+
+    //endregion
+
+    //region================deprecated
+
+    /**
+     * 查询有效商品订单-在线或本地缓存
+     * @deprecated {@link #queryOrderAsync(String)}
      */
     public static void queryOrderAsync() {
-        billingManager.queryOrderAsync(null);
+        for (String type : BillingManager.getTypeListAll()) {
+            billingManager.queryOrderAsync(type,null);
+        }
     }
 
     /**
      * 查询有效商品订单-本地缓存
+     * @deprecated {@link #queryOrderLocal(String)}
      */
     public static void queryOrderLocal() {
-        billingManager.queryOrderLocal(null);
+        for (String type : BillingManager.getTypeListAll()) {
+            billingManager.queryOrderLocal(type,null);
+        }
     }
 
     /**
      * 查询历史订单
+     * @deprecated {@link #queryOrderHistory(String)}
      */
     public static void queryOrderHistory() {
-        billingManager.queryOrderHistory(null);
+        for (String type : BillingManager.getTypeListAll()) {
+            billingManager.queryOrderHistory(type,null);
+        }
     }
 
     /**
      * 查询有效商品订单-在线或本地缓存
+     * @deprecated {@link #queryOrderAsync(String, EasyCallBack)}
      */
     public static void queryOrderAsync(@Nullable EasyCallBack<List<PurchaseInfo>> callBack) {
-        billingManager.queryOrderAsync(callBack);
+        for (String type : BillingManager.getTypeListAll()) {
+            billingManager.queryOrderAsync(type,callBack);
+        }
     }
 
     /**
      * 查询有效商品订单-本地缓存
+     * @deprecated {@link #queryOrderLocal(String, EasyCallBack)}
      */
     public static void queryOrderLocal(@Nullable EasyCallBack<List<PurchaseInfo>> callBack) {
-        billingManager.queryOrderLocal(callBack);
+        for (String type : BillingManager.getTypeListAll()) {
+            billingManager.queryOrderLocal(type,callBack);
+        }
     }
 
     /**
      * 查询历史订单
+     * @deprecated {@link #queryOrderHistory(String, EasyCallBack)}
      */
     public static void queryOrderHistory(@Nullable EasyCallBack<List<PurchaseHistoryInfo>> callBack) {
-        billingManager.queryOrderHistory(callBack);
+        for (String type : BillingManager.getTypeListAll()) {
+            billingManager.queryOrderHistory(type,callBack);
+        }
     }
+
+    //endregion
 
     /**
      * 仅在接入华为的时候用到

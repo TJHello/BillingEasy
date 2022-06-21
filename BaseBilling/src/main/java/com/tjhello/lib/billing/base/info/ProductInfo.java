@@ -15,7 +15,8 @@ public class ProductInfo {
 
     String title ;
     String desc ;
-    long priceMicros ;
+    long priceAmountMicros ;
+    String priceCurrencyCode ;
 
     @Nullable
     GoogleSkuDetails googleSkuDetails ;
@@ -406,12 +407,30 @@ public class ProductInfo {
         this.baseObj = baseObj;
     }
 
+    @Deprecated
     public long getPriceMicros() {
-        return priceMicros;
+        return priceAmountMicros;
     }
 
+    @Deprecated
     public void setPriceMicros(long priceMicros) {
-        this.priceMicros = priceMicros;
+        this.priceAmountMicros = priceMicros;
+    }
+
+    public long getPriceAmountMicros() {
+        return priceAmountMicros;
+    }
+
+    public void setPriceAmountMicros(long priceAmountMicros) {
+        this.priceAmountMicros = priceAmountMicros;
+    }
+
+    public String getPriceCurrencyCode() {
+        return priceCurrencyCode;
+    }
+
+    public void setPriceCurrencyCode(String priceCurrencyCode) {
+        this.priceCurrencyCode = priceCurrencyCode;
     }
 
     public String getDesc() {

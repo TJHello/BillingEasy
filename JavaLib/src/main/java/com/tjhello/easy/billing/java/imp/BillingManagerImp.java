@@ -31,7 +31,8 @@ public interface BillingManagerImp {
 
     void queryProduct(@ProductType String type, @Nullable EasyCallBack<List<ProductInfo>> callBack);
 
-    void queryProduct(@ProductType String type, @NonNull List<String> codeList, @Nullable EasyCallBack<List<ProductInfo>> callBack);
+    void queryProduct(@ProductType String type,@NonNull List<String> codeList, @Nullable EasyCallBack<List<ProductInfo>> callBack);
+
 
     void purchase(@NonNull Activity activity,@NonNull String productCode,@Nullable EasyCallBack<List<PurchaseInfo>> callBack);
 
@@ -39,11 +40,11 @@ public interface BillingManagerImp {
 
     void acknowledge(@NonNull String purchaseToken,@Nullable EasyCallBack<String> callBack);
 
-    void queryOrderAsync(@Nullable EasyCallBack<List<PurchaseInfo>> callBack);
+    void queryOrderAsync(@ProductType String type,@Nullable EasyCallBack<List<PurchaseInfo>> callBack);
 
-    void queryOrderLocal(@Nullable EasyCallBack<List<PurchaseInfo>> callBack);
+    void queryOrderLocal(@ProductType String type,@Nullable EasyCallBack<List<PurchaseInfo>> callBack);
 
-    void queryOrderHistory(@Nullable EasyCallBack<List<PurchaseHistoryInfo>> callBack);
+    void queryOrderHistory(@ProductType String type,@Nullable EasyCallBack<List<PurchaseHistoryInfo>> callBack);
 
     void onActivityResult(int requestCode, int resultCode,@Nullable Intent data);
 }

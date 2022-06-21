@@ -22,6 +22,7 @@ import com.tjhello.lib.billing.base.utils.BillingEasyLog;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
@@ -183,43 +184,35 @@ public class BillingManager implements BillingManagerImp {
     }
 
     @Override
-    public void queryOrderAsync(@Nullable EasyCallBack<List<PurchaseInfo>> callBack) {
-        if(billingHandler==null) {
-            BillingEasyLog.e("请先初始化SDK");
-        }
-        if(billingHandler.connection(new ConnectionBillingEasyListener())){
-            queryOrderAsyncAll(callBack);
-        }
-    }
-
-    private static void queryOrderAsyncAll(@Nullable EasyCallBack<List<PurchaseInfo>> callBack){
+    public void queryOrderAsync(@ProductType String type,@Nullable EasyCallBack<List<PurchaseInfo>> callBack) {
         if(billingHandler==null) {
             BillingEasyLog.e("请先初始化SDK");
         }
         if(billingHandler.connection(new ConnectionBillingEasyListener())){
             PurchaseBillingEasyListener listener = new PurchaseBillingEasyListener(callBack);
-            billingHandler.queryOrderAsync(getTypeListAll(),listener);
+            billingHandler.queryOrderAsync(getTypeByHandler(type),listener);
         }
     }
 
     @Override
-    public void queryOrderLocal( @Nullable EasyCallBack<List<PurchaseInfo>> callBack) {
+    public void queryOrderLocal(@ProductType String type,@Nullable EasyCallBack<List<PurchaseInfo>> callBack) {
         if(billingHandler==null) {
             BillingEasyLog.e("请先初始化SDK");
         }
         if(billingHandler.connection(new ConnectionBillingEasyListener())){
             PurchaseBillingEasyListener listener = new PurchaseBillingEasyListener(callBack);
-            billingHandler.queryOrderLocal(getTypeListAll(),listener);
+            billingHandler.queryOrderLocal(getTypeByHandler(type),listener);
         }
     }
 
     @Override
-    public void queryOrderHistory(@Nullable EasyCallBack<List<PurchaseHistoryInfo>> callBack) {
+    public void queryOrderHistory(@ProductType String type,@Nullable EasyCallBack<List<PurchaseHistoryInfo>> callBack) {
         if(billingHandler==null) {
             BillingEasyLog.e("请先初始化SDK");
         }
         if(billingHandler.connection(new ConnectionBillingEasyListener())){
-            queryOrderHistoryAll(callBack);
+            PurchaseHistoryBillingEasyListener listener = new PurchaseHistoryBillingEasyListener(callBack);
+            billingHandler.queryOrderHistory(getTypeByHandler(type),listener);
         }
     }
 
@@ -231,13 +224,6 @@ public class BillingManager implements BillingManagerImp {
         billingHandler.onActivityResult(requestCode,resultCode,data);
     }
 
-    private static void queryOrderHistoryAll(@Nullable EasyCallBack<List<PurchaseHistoryInfo>> callBack){
-        if(billingHandler==null) {
-            BillingEasyLog.e("请先初始化SDK");
-        }
-        PurchaseHistoryBillingEasyListener listener = new PurchaseHistoryBillingEasyListener(callBack);
-        billingHandler.queryOrderHistory(getTypeListAll(),listener);
-    }
 
     public void addListener(@NonNull BillingEasyListener listener) {
         publicListenerList.add(listener);
@@ -440,20 +426,24 @@ public class BillingManager implements BillingManagerImp {
         purchaseEasyCallBackList.clear();
     }
 
-    private static List<String> getTypeListAll(){
-        return getTypeList(ProductType.TYPE_INAPP_CONSUMABLE,ProductType.TYPE_INAPP_NON_CONSUMABLE,ProductType.TYPE_SUBS);
-    }
-
-    @SuppressWarnings("ConstantConditions")
-    private static List<String> getTypeList(String... types){
+    public static List<String> getTypeListAll(){
         List<String> list = new ArrayList<>();
-        for (String type : types) {
-            String billingType = billingHandler.getProductType(type);
-            if(!list.contains(billingType)){
-                list.add(billingType);
-            }
+        if(billingHandler==null) return list;
+        if(Objects.equals(billingHandler.getBillingName(), BillingName.GOOGLE)){
+            list.add(ProductType.TYPE_INAPP_CONSUMABLE);
+            list.add(ProductType.TYPE_SUBS);
+        }else{
+            list.add(ProductType.TYPE_INAPP_CONSUMABLE);
+            list.add(ProductType.TYPE_SUBS);
+            list.add(ProductType.TYPE_INAPP_NON_CONSUMABLE);
         }
         return list;
+    }
+
+    @NonNull
+    private static String getTypeByHandler(@ProductType @NonNull String type){
+        if(billingHandler==null) return "";
+        return billingHandler.getProductType(type);
     }
 
     @Nullable

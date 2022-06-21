@@ -70,17 +70,17 @@ public class EmptyHandler extends  BillingHandler {
     }
 
     @Override
-    public void queryOrderAsync(@NonNull List<String> typeList, @NonNull BillingEasyListener listener) {
+    public void queryOrderAsync(@NonNull String type, @NonNull BillingEasyListener listener) {
 
     }
 
     @Override
-    public void queryOrderLocal(@NonNull List<String> typeList, @NonNull BillingEasyListener listener) {
+    public void queryOrderLocal(@NonNull String type, @NonNull BillingEasyListener listener) {
 
     }
 
     @Override
-    public void queryOrderHistory(@NonNull List<String> typeList, @NonNull BillingEasyListener listener) {
+    public void queryOrderHistory(@NonNull String type, @NonNull BillingEasyListener listener) {
 
     }
 

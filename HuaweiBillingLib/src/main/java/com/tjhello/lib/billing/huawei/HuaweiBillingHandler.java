@@ -133,7 +133,7 @@ public class HuaweiBillingHandler extends BillingHandler {
     public void purchase(@NonNull Activity activity, @NonNull String productCode, @NonNull String type) {
         PurchaseIntentReq req = new PurchaseIntentReq();
         req.setProductId(productCode);
-        req.setPriceType(Integer.parseInt(getProductType(type)));
+        req.setPriceType(Integer.parseInt(type));
         Task<PurchaseIntentResult> task = mIapClient.createPurchaseIntent(req);
         task.addOnSuccessListener(purchaseIntentResult -> {
             if(purchaseIntentResult==null){
@@ -185,50 +185,46 @@ public class HuaweiBillingHandler extends BillingHandler {
     }
 
     @Override
-    public void queryOrderAsync(@NonNull List<String> typeList, @NonNull BillingEasyListener listener) {
-        queryOrderLocal(typeList, listener);
+    public void queryOrderAsync(@NonNull String type, @NonNull BillingEasyListener listener) {
+        queryOrderLocal(type, listener);
     }
 
     @Override
-    public void queryOrderLocal(@NonNull List<String> typeList, @NonNull BillingEasyListener listener) {
-        for (String type : typeList) {
-            OwnedPurchasesReq req = new OwnedPurchasesReq();
-            req.setPriceType(Integer.parseInt(getProductType(type)));
-            Task<OwnedPurchasesResult> task = mIapClient.obtainOwnedPurchases(req);
-            task.addOnSuccessListener(ownedPurchasesResult -> {
-                BillingEasyResult easyResult = createResultSuccess(ownedPurchasesResult);
-                List<PurchaseInfo> productInfoList = toPurchaseInfo(ownedPurchasesResult.getItemList());
-                listener.onQueryOrder(easyResult,productInfoList);
-                mBillingEasyListener.onQueryOrder(easyResult,productInfoList);
-            });
-            task.addOnFailureListener(e -> {
-                BillingEasyResult easyResult = createResultFailure(e);
-                List<PurchaseInfo> productInfoList = new ArrayList<>();
-                listener.onQueryOrder(easyResult,productInfoList);
-                mBillingEasyListener.onQueryOrder(easyResult,productInfoList);
-            });
-        }
+    public void queryOrderLocal(@NonNull String type, @NonNull BillingEasyListener listener) {
+        OwnedPurchasesReq req = new OwnedPurchasesReq();
+        req.setPriceType(Integer.parseInt(type));
+        Task<OwnedPurchasesResult> task = mIapClient.obtainOwnedPurchases(req);
+        task.addOnSuccessListener(ownedPurchasesResult -> {
+            BillingEasyResult easyResult = createResultSuccess(ownedPurchasesResult);
+            List<PurchaseInfo> productInfoList = toPurchaseInfo(ownedPurchasesResult.getInAppPurchaseDataList());
+            listener.onQueryOrder(easyResult,productInfoList);
+            mBillingEasyListener.onQueryOrder(easyResult,productInfoList);
+        });
+        task.addOnFailureListener(e -> {
+            BillingEasyResult easyResult = createResultFailure(e);
+            List<PurchaseInfo> productInfoList = new ArrayList<>();
+            listener.onQueryOrder(easyResult,productInfoList);
+            mBillingEasyListener.onQueryOrder(easyResult,productInfoList);
+        });
     }
 
     @Override
-    public void queryOrderHistory(@NonNull List<String> typeList, @NonNull BillingEasyListener listener) {
-        for (String type : typeList) {
-            OwnedPurchasesReq req = new OwnedPurchasesReq();
-            req.setPriceType(Integer.parseInt(getProductType(type)));
-            Task<OwnedPurchasesResult> task = mIapClient.obtainOwnedPurchaseRecord(req);
-            task.addOnSuccessListener(ownedPurchasesResult -> {
-                BillingEasyResult easyResult = createResultSuccess(ownedPurchasesResult);
-                List<PurchaseHistoryInfo> productInfoList = toPurchaseHistoryInfo(ownedPurchasesResult.getItemList());
-                listener.onQueryOrderHistory(easyResult,productInfoList);
-                mBillingEasyListener.onQueryOrderHistory(easyResult,productInfoList);
-            });
-            task.addOnFailureListener(e -> {
-                BillingEasyResult easyResult = createResultFailure(e);
-                List<PurchaseHistoryInfo> productInfoList = new ArrayList<>();
-                listener.onQueryOrderHistory(easyResult,productInfoList);
-                mBillingEasyListener.onQueryOrderHistory(easyResult,productInfoList);
-            });
-        }
+    public void queryOrderHistory(@NonNull String type, @NonNull BillingEasyListener listener) {
+        OwnedPurchasesReq req = new OwnedPurchasesReq();
+        req.setPriceType(Integer.parseInt(type));
+        Task<OwnedPurchasesResult> task = mIapClient.obtainOwnedPurchaseRecord(req);
+        task.addOnSuccessListener(ownedPurchasesResult -> {
+            BillingEasyResult easyResult = createResultSuccess(ownedPurchasesResult);
+            List<PurchaseHistoryInfo> productInfoList = toPurchaseHistoryInfo(ownedPurchasesResult.getInAppPurchaseDataList());
+            listener.onQueryOrderHistory(easyResult,productInfoList);
+            mBillingEasyListener.onQueryOrderHistory(easyResult,productInfoList);
+        });
+        task.addOnFailureListener(e -> {
+            BillingEasyResult easyResult = createResultFailure(e);
+            List<PurchaseHistoryInfo> productInfoList = new ArrayList<>();
+            listener.onQueryOrderHistory(easyResult,productInfoList);
+            mBillingEasyListener.onQueryOrderHistory(easyResult,productInfoList);
+        });
     }
 
     @Override
@@ -241,9 +237,11 @@ public class HuaweiBillingHandler extends BillingHandler {
             PurchaseResultInfo purchaseResultInfo = mIapClient.parsePurchaseResultInfoFromIntent(data);
 
             BillingEasyResult easyResult =  createPurchaseResultSuccess(purchaseResultInfo);
-            PurchaseInfo purchaseInfo = toPurchaseInfo(purchaseResultInfo.getInAppPurchaseData());
             List<PurchaseInfo> infoList = new ArrayList<>();
-            infoList.add(purchaseInfo);
+            PurchaseInfo purchaseInfo = toPurchaseInfo(purchaseResultInfo.getInAppPurchaseData());
+            if(purchaseInfo!=null){
+                infoList.add(purchaseInfo);
+            }
             mBillingEasyListener.onPurchases(easyResult,infoList);
         }
     }

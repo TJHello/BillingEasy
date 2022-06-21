@@ -1,4 +1,4 @@
-# BillingEasy-2.0.1
+# BillingEasy-2.0.2
 
 **QQ交流群(425219113)**
 
@@ -44,9 +44,9 @@ android{
 dependencies {
 
     //测试版
-    implementation 'com.TJHello.easy:BillingEasy:2.0.1-t01'//BillingEasy
-    implementation 'com.TJHello.publicLib.billing:google:4.0.0.201-t01'//Google内购(按需添加)
-    implementation 'com.TJHello.publicLib.billing:huawei:5.1.0.300.201-t01'//Huawei内购(按需添加)
+    implementation 'com.TJHello.easy:BillingEasy:2.0.2-t01'//BillingEasy
+    implementation 'com.TJHello.publicLib.billing:google:4.0.0.202-t01'//Google内购(按需添加)
+    implementation 'com.TJHello.publicLib.billing:huawei:5.1.0.300.202-t01'//Huawei内购(按需添加)
 }
 
 ```
@@ -69,16 +69,13 @@ public class MainActivity extends AppCompatActivity {
         BillingEasy.init(this);
 
         //查询商品信息-两种用法
-        BillingEasy.queryProduct();
-        BillingEasy.queryProduct((billingEasyResult, productInfoList) -> {
+        BillingEasy.queryProduct(ProductType.TYPE_INAPP_CONSUMABLE);
+        BillingEasy.queryProduct(ProductType.TYPE_INAPP_CONSUMABLE,(billingEasyResult, productInfoList) -> {
 
         });
         
-        //发起购买-两种用法
+        //发起购买
         BillingEasy.purchase(this,"商品code");
-        BillingEasy.purchase(this,"商品code", (billingEasyResult, purchaseInfoList) -> {
-
-        });
 
     }
 
@@ -205,6 +202,12 @@ BillingEasy.acknowledge("purchaseToken");
 
 
 - ### 更新日志
+
+2.0.2-t01 2022/06/21 【测试版】
+```
+1、修复华为内购无法发起购买的问题
+2、
+```
 
 2.0.1-t01 2022/04/28 【测试版】
 ```

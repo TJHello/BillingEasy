@@ -25,11 +25,11 @@ public interface BillingHandlerImp {
 
     void acknowledge(@NonNull String purchaseToken,@NonNull BillingEasyListener listener);
 
-    void queryOrderAsync(@NonNull List<String> typeList,@NonNull BillingEasyListener listener);
+    void queryOrderAsync(@NonNull String type, @NonNull BillingEasyListener listener);
 
-    void queryOrderLocal(@NonNull List<String> typeList,@NonNull BillingEasyListener listener);
+    void queryOrderLocal(@NonNull String type,@NonNull BillingEasyListener listener);
 
-    void queryOrderHistory(@NonNull List<String> typeList,@NonNull BillingEasyListener listener);
+    void queryOrderHistory(@NonNull String type,@NonNull BillingEasyListener listener);
 
     void onActivityResult(int requestCode, int resultCode,@Nullable Intent data);
 
