@@ -39,7 +39,9 @@ import com.tjhello.lib.billing.base.listener.BillingEasyListener;
 import org.json.JSONException;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class HuaweiBillingHandler extends BillingHandler {
@@ -47,6 +49,8 @@ public class HuaweiBillingHandler extends BillingHandler {
     private static final int REQ_CODE_BUY = 3001;
 
     private IapClient mIapClient ;
+    private static final Map<String,ProductInfo> productInfoMap = new HashMap<>();
+
 
 
     public HuaweiBillingHandler(BillingEasyListener mBillingEasyListener) {
@@ -111,6 +115,9 @@ public class HuaweiBillingHandler extends BillingHandler {
         task.addOnSuccessListener((result)->{
             BillingEasyResult easyResult = createResultSuccess(result);
             List<ProductInfo> productInfoList = toProductInfo(result.getProductInfoList());
+            for (ProductInfo productInfo : productInfoList) {
+                productInfoMap.put(productInfo.getCode(),productInfo);
+            }
             listener.onQueryProduct(easyResult,productInfoList);
             mBillingEasyListener.onQueryProduct(easyResult,productInfoList);
         });
@@ -133,7 +140,7 @@ public class HuaweiBillingHandler extends BillingHandler {
     @Override
     public void purchase(@NonNull Activity activity, @NonNull PurchaseParam param, @NonNull String type) {
         PurchaseIntentReq req = new PurchaseIntentReq();
-        req.setProductId(productCode);
+        req.setProductId(param.productCode);
         req.setPriceType(Integer.parseInt(type));
         req.setDeveloperPayload(param.developerPayload);
         req.setReservedInfor(param.reservedInfor);
@@ -346,6 +353,12 @@ public class HuaweiBillingHandler extends BillingHandler {
             ProductConfig productConfig = findProductInfo(inAppPurchaseData.getProductId());
             if(productConfig!=null){
                 info.addProduct(productConfig);
+                if(productInfoMap.containsKey(productConfig.getCode())){
+                    ProductInfo productInfo = productInfoMap.get(productConfig.getCode());
+                    if(productInfo!=null){
+                        info.putProductInfo(productConfig.getCode(),productInfo);
+                    }
+                }
             }
 
             PurchaseInfo.HuaweiBillingPurchase huaweiBillingPurchase = new PurchaseInfo.HuaweiBillingPurchase();

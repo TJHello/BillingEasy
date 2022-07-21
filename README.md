@@ -112,7 +112,7 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public void onPurchases(@NonNull BillingEasyResult result, @NonNull List<PurchaseInfo> purchaseInfoList) {
-            //如已开启自动消耗与购买，则不需要手动消耗与购买
+            //如已开启自动消耗与购买，则不需要手动消耗与确认购买
             //购买商品，判断示例
             if(result.isSuccess){
                 for (PurchaseInfo purchaseInfo : purchaseInfoList) {
