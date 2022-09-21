@@ -1,4 +1,4 @@
-# BillingEasy-0.1.5
+# BillingEasy-2.0.2
 
 **QQ交流群(425219113)**
 
@@ -22,7 +22,8 @@
 
 allprojects {
      repositories {
-        maven { url 'https://tjhello.gitee.io/publiclib/'}
+         maven { url 'https://tjhello.gitee.io/publiclib/'}
+         maven {url 'https://developer.huawei.com/repo/'}//华为用到
      }
 }
 
@@ -41,9 +42,11 @@ android{
 }
 
 dependencies {
-    implementation 'com.TJHello.easy:BillingEasy:0.1.5'//BillingEasy
-    implementation 'com.TJHello.publicLib.billing:google:4.0.0.105'//Google内购
-    //华为等这版本跑通了再加
+
+    //测试版
+    implementation 'com.TJHello.easy:BillingEasy:2.0.2-t01'//BillingEasy
+    implementation 'com.TJHello.publicLib.billing:google:4.0.0.202-t01'//Google内购(按需添加)
+    implementation 'com.TJHello.publicLib.billing:huawei:5.1.0.300.202-t01'//Huawei内购(按需添加)
 }
 
 ```
@@ -56,26 +59,30 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
-        //BillingEasyStatic的用法看v2/MainActivity
-
         BillingEasy.setDebug(true);
         BillingEasy.addProductConfig(ProductType.TYPE_INAPP_CONSUMABLE,"可消耗商品code","可消耗商品code");
         BillingEasy.addProductConfig(ProductType.TYPE_INAPP_NON_CONSUMABLE,"非消耗商品code","非消耗商品code");
         BillingEasy.addProductConfig(ProductType.TYPE_SUBS,"订阅商品code","订阅商品code");
+        ProductConfig productConfig = ProductConfig.build(ProductType.TYPE_INAPP_NON_CONSUMABLE,"test_code","noads");//添加一个带去广告属性的商品
+        BillingEasy.addProductConfig(productConfig);
         BillingEasy.addListener(billingEasyListener);//添加完整监听器
         BillingEasy.init(this);
 
         //查询商品信息-两种用法
-        BillingEasy.queryProduct();
-        BillingEasy.queryProduct((billingEasyResult, productInfoList) -> {
+        BillingEasy.queryProduct(ProductType.TYPE_INAPP_CONSUMABLE);
+        BillingEasy.queryProduct(ProductType.TYPE_INAPP_CONSUMABLE,(billingEasyResult, productInfoList) -> {
 
         });
-        //发起购买-两种用法
+        
+        //发起购买
         BillingEasy.purchase(this,"商品code");
-        BillingEasy.purchase(this,"商品code", (billingEasyResult, purchaseInfoList) -> {
 
-        });
+    }
 
+    //仅华为内购需要调用
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        BillingEasy.onActivityResult(requestCode,resultCode,data);
     }
 
     @Override
@@ -105,7 +112,7 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public void onPurchases(@NonNull BillingEasyResult result, @NonNull List<PurchaseInfo> purchaseInfoList) {
-            //如已开启自动消耗与购买，则不需要手动消耗与购买
+            //如已开启自动消耗与购买，则不需要手动消耗与确认购买
             //购买商品，判断示例
             if(result.isSuccess){
                 for (PurchaseInfo purchaseInfo : purchaseInfoList) {
@@ -173,11 +180,11 @@ BillingEasy.queryProduct();
 BillingEasy.queryProduct((billingEasyResult, productInfoList) -> {
 
 });
+
 //发起购买
 BillingEasy.purchase(activity,"商品code");
-BillingEasy.purchase(activity,"商品code", (billingEasyResult, purchaseInfoList) -> {
+BillingEasy.purchase(activity,param);
 
-});
 //查询订单信息
 BillingEasy.queryOrderAsync();//联网查询有效订单
 BillingEasy.queryOrderLocal();//查询本地缓存订单
@@ -196,13 +203,16 @@ BillingEasy.acknowledge("purchaseToken");
 
 - ### 更新日志
 
-0.1.5 2022/04/29
+2.0.2-t01 2022/04/29 【测试版】
 ```
-注意：不再建议使用发起购买的callback用法
-1、发起购买api添加自定义参数用法
-2、带callack的purchase方法改为deprecated。
-2、支持obfuscatedProfileId和obfuscatedAccountId字段的设置和获取
+1、删除purchase方法的callback用法。
+2、purchase方法添加PurchaseParam参数，支持高级用法需要的参数传递
+```
 
+2.0.1-t01 2022/04/28 【测试版】
+```
+1、该版本支持了华为内购，API略微改动
+2、优化了使用体验
 ```
 
 0.1.2 2022/01/27

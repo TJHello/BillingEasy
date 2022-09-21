@@ -15,6 +15,7 @@ buildscript {
     }
 }
 
+//aar生成位置
 Properties prop = System.getProperties()
 String os = prop.getProperty("os.name")
 if(os.contains("Windows")){
@@ -25,16 +26,17 @@ if(os.contains("Windows")){
 
 //版本常量
 
-ext.BASE_VERSION_NAME = "0.1.5"
-ext.BASE_VERSION_CODE = 105
+ext.BASE_VERSION_NAME = "2.0.2-t01"
+ext.BASE_VERSION_CODE = 202
 
-ext.BILLING_EASY_VERSION_NAME = "0.1.5"
-ext.BILLING_EASY_VERSION_CODE = 105
+ext.BILLING_EASY_VERSION_NAME = "2.0.2-t01"
+ext.BILLING_EASY_VERSION_CODE = 202
 
-ext.GOOGLE_BILLING_VERSION_NAME = "4.0.0.105"
-ext.GOOGLE_BILLING_VERSION_CODE = 400105
+ext.GOOGLE_BILLING_VERSION_NAME = "4.0.0.202-t01"
+ext.GOOGLE_BILLING_VERSION_CODE = 400202
 
-ext.IS_DEV_MODEL = false
+ext.HUAWEI_BILLING_VERSION_NAME = "5.1.0.300.202-t01"
+ext.HUAWEI_BILLING_VERSION_CODE = 510300202
 
 
 allprojects {
@@ -44,6 +46,7 @@ allprojects {
         maven { url 'https://tjhello.gitee.io/publiclib/'}
         maven { url 'http://127.0.0.1'}
         maven { url 'http://127.0.0.1/maven'}
+        maven {url 'https://developer.huawei.com/repo/'}
     }
 }
 

@@ -2,6 +2,7 @@ package com.tjhello.easy.billing.java;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -35,12 +36,12 @@ public class BillingEasy {
         billingManager.addListener(new OnBillingListener());
     }
 
-    public static void init(Context context){
-        billingManager.init(context);
+    public static void init(Activity activity){
+        billingManager.init(activity);
     }
 
-    public static void init(Context context, EasyCallBack<Boolean> callBack){
-        billingManager.init(context,callBack);
+    public static void init(Activity activity, EasyCallBack<Boolean> callBack){
+        billingManager.init(activity,callBack);
     }
 
     /**
@@ -130,7 +131,7 @@ public class BillingEasy {
      * 查询所有商品信息
      */
     public static void queryProduct() {
-        queryProduct(null);
+        billingManager.queryProduct(null);
     }
     /**
      * 查询所有商品信息
@@ -140,40 +141,42 @@ public class BillingEasy {
         billingManager.queryProduct(callBack);
     }
 
+    public static void queryProduct(@ProductType String type, @Nullable EasyCallBack<List<ProductInfo>> callBack) {
+        billingManager.queryProduct(type,callBack);
+    }
+
+    public static void queryProduct(@ProductType String type,List<String> codeList, @Nullable EasyCallBack<List<ProductInfo>> callBack) {
+        billingManager.queryProduct(type,codeList,callBack);
+    }
+
+    /**
+     * 查询商品信息-指定类型
+     * @param type 商品类型
+     */
+    public static void queryProduct(@ProductType String type) {
+        billingManager.queryProduct(type,null);
+    }
+
+    /**
+     * 查询商品信息-指定类型与ID
+     * @param type 商品类型
+     * @param codeList 商品Id列表
+     */
+    public static void queryProduct(@ProductType String type,List<String> codeList) {
+        billingManager.queryProduct(type,codeList,null);
+    }
+
     /**
      * 发起购买
      * @param productCode 商品代码
      */
     public static void purchase(@NonNull Activity activity, @NonNull String productCode) {
-        PurchaseParam param = new PurchaseParam.Builder(productCode).build();
-        billingManager.purchase(activity,param,null);
+        PurchaseParam param = new PurchaseParam.DefBuilder(productCode).build();
+        billingManager.purchase(activity,param);
     }
 
-    /**
-     * 发起购买
-     * @param purchaseParam 发起购买的高级参数
-     */
-    public static void purchase(@NonNull Activity activity, @NonNull PurchaseParam purchaseParam) {
-        billingManager.purchase(activity,purchaseParam,null);
-    }
-
-    /**
-     * 发起购买
-     * @deprecated 建议通过注册监听器的方式来监听购买回调 {@link BillingEasyListener#onPurchases(BillingEasyResult, List)}
-     * @param productCode 商品代码
-     * @param callBack 回调
-     */
-    public static void purchase(Activity activity, @NonNull String productCode, @Nullable EasyCallBack<List<PurchaseInfo>> callBack) {
-        PurchaseParam param = new PurchaseParam.Builder(productCode).build();
-        billingManager.purchase(activity,param,callBack);
-    }
-
-    /**
-     * 发起购买
-     * @deprecated 发起购买建议通过注册监听器的方式来监听购买回调 {@link BillingEasyListener#onPurchases(BillingEasyResult, List)}
-     */
-    public static void purchase(Activity activity, @NonNull PurchaseParam param, @Nullable EasyCallBack<List<PurchaseInfo>> callBack) {
-        billingManager.purchase(activity,param,callBack);
+    public static void purchase(@NonNull Activity activity, @NonNull PurchaseParam param) {
+        billingManager.purchase(activity,param);
     }
 
     /**
@@ -213,46 +216,127 @@ public class BillingEasy {
     }
 
 
+    //region================queryOrder
+
     /**
      * 查询有效商品订单-在线或本地缓存
+     * @param type {@link ProductType}
+     */
+    public static void queryOrderAsync(@ProductType @NonNull String type){
+        billingManager.queryOrderAsync(type,null);
+    }
+
+    /**
+     * 查询有效商品订单-本地缓存
+     * @param type {@link ProductType}
+     */
+    public static void queryOrderLocal(@ProductType @NonNull String type) {
+        billingManager.queryOrderLocal(type,null);
+    }
+
+    /**
+     * 查询历史订单
+     * @param type {@link ProductType}
+     */
+    public static void queryOrderHistory(@ProductType @NonNull String type) {
+        billingManager.queryOrderHistory(type,null);
+    }
+
+    /**
+     * 查询有效商品订单-在线或本地缓存
+     * @param type {@link ProductType}
+     */
+    public static void queryOrderAsync(@ProductType @NonNull String type,@Nullable EasyCallBack<List<PurchaseInfo>> callBack) {
+        billingManager.queryOrderAsync(type,callBack);
+    }
+
+    /**
+     * 查询有效商品订单-本地缓存
+     * @param type {@link ProductType}
+     */
+    public static void queryOrderLocal(@ProductType @NonNull String type,@Nullable EasyCallBack<List<PurchaseInfo>> callBack) {
+        billingManager.queryOrderLocal(type,callBack);
+    }
+
+    /**
+     * 查询历史订单
+     * @param type {@link ProductType}
+     */
+    public static void queryOrderHistory(@ProductType @NonNull String type,@Nullable EasyCallBack<List<PurchaseHistoryInfo>> callBack) {
+        billingManager.queryOrderHistory(type,callBack);
+    }
+
+    //endregion
+
+    //region================deprecated
+
+    /**
+     * 查询有效商品订单-在线或本地缓存
+     * @deprecated {@link #queryOrderAsync(String)}
      */
     public static void queryOrderAsync() {
-        billingManager.queryOrderAsync(null);
+        for (String type : BillingManager.getTypeListAll()) {
+            billingManager.queryOrderAsync(type,null);
+        }
     }
 
     /**
      * 查询有效商品订单-本地缓存
+     * @deprecated {@link #queryOrderLocal(String)}
      */
     public static void queryOrderLocal() {
-        billingManager.queryOrderLocal(null);
+        for (String type : BillingManager.getTypeListAll()) {
+            billingManager.queryOrderLocal(type,null);
+        }
     }
 
     /**
      * 查询历史订单
+     * @deprecated {@link #queryOrderHistory(String)}
      */
     public static void queryOrderHistory() {
-        billingManager.queryOrderHistory(null);
+        for (String type : BillingManager.getTypeListAll()) {
+            billingManager.queryOrderHistory(type,null);
+        }
     }
 
     /**
      * 查询有效商品订单-在线或本地缓存
+     * @deprecated {@link #queryOrderAsync(String, EasyCallBack)}
      */
     public static void queryOrderAsync(@Nullable EasyCallBack<List<PurchaseInfo>> callBack) {
-        billingManager.queryOrderAsync(callBack);
+        for (String type : BillingManager.getTypeListAll()) {
+            billingManager.queryOrderAsync(type,callBack);
+        }
     }
 
     /**
      * 查询有效商品订单-本地缓存
+     * @deprecated {@link #queryOrderLocal(String, EasyCallBack)}
      */
     public static void queryOrderLocal(@Nullable EasyCallBack<List<PurchaseInfo>> callBack) {
-        billingManager.queryOrderLocal(callBack);
+        for (String type : BillingManager.getTypeListAll()) {
+            billingManager.queryOrderLocal(type,callBack);
+        }
     }
 
     /**
      * 查询历史订单
+     * @deprecated {@link #queryOrderHistory(String, EasyCallBack)}
      */
     public static void queryOrderHistory(@Nullable EasyCallBack<List<PurchaseHistoryInfo>> callBack) {
-        billingManager.queryOrderHistory(callBack);
+        for (String type : BillingManager.getTypeListAll()) {
+            billingManager.queryOrderHistory(type,callBack);
+        }
+    }
+
+    //endregion
+
+    /**
+     * 仅在接入华为的时候用到
+     */
+    public static void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        billingManager.onActivityResult(requestCode,resultCode,data);
     }
 
     private static class OnBillingListener implements BillingEasyListener{
@@ -269,7 +353,7 @@ public class BillingEasy {
 
         @Override
         public void onConsume(@NonNull BillingEasyResult result, @NonNull String purchaseToken) {
-            if(!result.isSuccess){
+            if(!result.isSuccess&&result.state!=BillingEasyResult.State.ERROR_NOT_OWNED){
                 //重试
                 if(isAutoConsume){
                     if(consumeRetryNum<MAX_CONSUME_RETRY_NUM){
@@ -282,7 +366,7 @@ public class BillingEasy {
 
         @Override
         public void onAcknowledge(@NonNull BillingEasyResult result, @NonNull String purchaseToken) {
-            if(!result.isSuccess){
+            if(!result.isSuccess&&result.state!=BillingEasyResult.State.ERROR_NOT_OWNED){
                 //重试
                 if(isAutoAcknowledge){
                     if(acknowledgeRetryNum<MAX_ACKNOWLEDGE_RETRY_NUM){

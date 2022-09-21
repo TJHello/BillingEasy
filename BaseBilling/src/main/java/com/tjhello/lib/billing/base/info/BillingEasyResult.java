@@ -1,5 +1,6 @@
 package com.tjhello.lib.billing.base.info;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 public class BillingEasyResult {
@@ -11,18 +12,23 @@ public class BillingEasyResult {
 
     /**
      * 是否用户取消
+     * @deprecated 改为判断State
      */
     public boolean isCancel = false;
 
     /**
      * 是否发生错误
+     * @deprecated 改为判断State
      */
     public boolean isError = false;
 
+    public State state ;
+
     /**
      * 发生错误，已拥有商品
+     * @deprecated 改为判断State
      */
-    public boolean isErrorOwned = true;
+    public boolean isErrorOwned = false;
 
     /**
      * 返回信息
@@ -43,7 +49,8 @@ public class BillingEasyResult {
     public Object baseObj;
 
 
-    public static BillingEasyResult build(boolean isSuccess,String responseCode,String responseMsg,Object obj){
+    @NonNull
+    public static BillingEasyResult build(boolean isSuccess, String responseCode, String responseMsg, Object obj){
         BillingEasyResult result = new BillingEasyResult();
         result.isSuccess = isSuccess;
         result.responseMsg = responseMsg;
@@ -52,13 +59,23 @@ public class BillingEasyResult {
         return result;
     }
 
-    public static BillingEasyResult build(boolean isSuccess,int responseCode,String responseMsg,Object obj){
+    @NonNull
+    public static BillingEasyResult build(boolean isSuccess, int responseCode, String responseMsg, Object obj){
         BillingEasyResult result = new BillingEasyResult();
         result.isSuccess = isSuccess;
         result.responseMsg = responseMsg;
         result.responseCode = ""+responseCode;
         result.baseObj = obj;
         return result;
+    }
+
+
+    public enum State{
+        SUCCESS,//成功
+        CANCEL,//取消购买
+        ERROR_OWNED,//错误-已拥有商品
+        ERROR_OTHER,//错误-其他
+        ERROR_NOT_OWNED//错误-未拥有该商品-无法被消耗
     }
 
 

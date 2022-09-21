@@ -1,7 +1,7 @@
 package com.tjhello.lib.billing.google;
 
 import android.app.Activity;
-import android.content.Context;
+import android.content.Intent;
 import android.os.Handler;
 import android.os.Looper;
 
@@ -32,12 +32,11 @@ import com.tjhello.lib.billing.base.handler.BillingHandler;
 import com.tjhello.lib.billing.base.info.BillingEasyResult;
 import com.tjhello.lib.billing.base.info.ProductConfig;
 import com.tjhello.lib.billing.base.info.ProductInfo;
-import com.tjhello.lib.billing.base.info.PurchaseInfo;
 import com.tjhello.lib.billing.base.info.PurchaseHistoryInfo;
+import com.tjhello.lib.billing.base.info.PurchaseInfo;
 import com.tjhello.lib.billing.base.info.PurchaseParam;
 import com.tjhello.lib.billing.base.listener.BillingEasyListener;
 import com.tjhello.lib.billing.base.utils.BillingEasyLog;
-
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -61,7 +60,7 @@ public class GoogleBillingHandler extends BillingHandler {
 
     private BillingClient mBillingClient ;
     private final PurchasesUpdatedListener mPurchasesListener = new MyPurchasesUpdatedListener();
-    private final static Map<String,SkuDetails> skuDetailsMap = new HashMap<>();
+    private final static Map<String, SkuDetails> skuDetailsMap = new HashMap<>();
     private final static Handler handler = new Handler(Looper.getMainLooper());
 
     public GoogleBillingHandler(BillingEasyListener mBillingEasyListener) {
@@ -69,9 +68,9 @@ public class GoogleBillingHandler extends BillingHandler {
     }
 
     @Override
-    public void onInit(@NonNull Context context) {
+    public void onInit(@NonNull Activity activity) {
 
-        BillingClient.Builder mBuilder = BillingClient.newBuilder(context)
+        BillingClient.Builder mBuilder = BillingClient.newBuilder(activity)
                 .enablePendingPurchases()
                 .setListener(mPurchasesListener);
         mBillingClient = mBuilder.build();
@@ -97,7 +96,7 @@ public class GoogleBillingHandler extends BillingHandler {
     }
 
     @Override
-    public void purchase(@NonNull Activity activity, @NonNull String type, @NonNull PurchaseParam param) {
+    public void purchase(@NonNull Activity activity, @NonNull PurchaseParam param, @NonNull String type) {
         if(skuDetailsMap.containsKey(param.productCode)){
             SkuDetails skuDetails = skuDetailsMap.get(param.productCode);
             if(skuDetails!=null){
@@ -154,29 +153,29 @@ public class GoogleBillingHandler extends BillingHandler {
     }
 
     @Override
-    public void queryOrderAsync(@NonNull List<String> typeList,@NonNull BillingEasyListener listener) {
-        for (String type : typeList) {
-            mBillingClient.queryPurchasesAsync(type,new MyPurchasesResponseListener(listener));
-        }
+    public void queryOrderAsync(@NonNull String type,@NonNull BillingEasyListener listener) {
+        mBillingClient.queryPurchasesAsync(type,new MyPurchasesResponseListener(listener));
+
     }
 
     @Override
-    public void queryOrderLocal(@NonNull List<String> typeList,@NonNull BillingEasyListener listener) {
-        for (String type : typeList) {
-            Purchase.PurchasesResult purchasesResult = mBillingClient.queryPurchases(type);
-            BillingResult billingResult = purchasesResult.getBillingResult();
-            BillingEasyResult result = buildResult(billingResult);
-            List<PurchaseInfo> tempList = toPurchaseInfo(purchasesResult.getPurchasesList());
-            listener.onQueryOrder(result,tempList );
-            mBillingEasyListener.onQueryOrder(result, tempList);
-        }
+    public void queryOrderLocal(@NonNull String type,@NonNull BillingEasyListener listener) {
+        Purchase.PurchasesResult purchasesResult = mBillingClient.queryPurchases(type);
+        BillingResult billingResult = purchasesResult.getBillingResult();
+        BillingEasyResult result = buildResult(billingResult);
+        List<PurchaseInfo> tempList = toPurchaseInfo(purchasesResult.getPurchasesList());
+        listener.onQueryOrder(result,tempList );
+        mBillingEasyListener.onQueryOrder(result, tempList);
     }
 
     @Override
-    public void queryOrderHistory(@NonNull List<String> typeList,@NonNull BillingEasyListener listener) {
-        for (String type : typeList) {
-            mBillingClient.queryPurchaseHistoryAsync(type,new MyPurchaseHistoryResponseListener(listener));
-        }
+    public void queryOrderHistory(@NonNull String type,@NonNull BillingEasyListener listener) {
+        mBillingClient.queryPurchaseHistoryAsync(type,new MyPurchaseHistoryResponseListener(listener));
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+
     }
 
     @Override
@@ -211,7 +210,7 @@ public class GoogleBillingHandler extends BillingHandler {
         }
     }
 
-    private class MySkuDetailsResponseListener implements SkuDetailsResponseListener{
+    private class MySkuDetailsResponseListener implements SkuDetailsResponseListener {
 
         private final BillingEasyListener mListener;
         MySkuDetailsResponseListener(BillingEasyListener listener){
@@ -246,7 +245,7 @@ public class GoogleBillingHandler extends BillingHandler {
         }
     }
 
-    private class MyConsumeResponseListener implements ConsumeResponseListener{
+    private class MyConsumeResponseListener implements ConsumeResponseListener {
 
         private final BillingEasyListener listener;
 
@@ -264,7 +263,7 @@ public class GoogleBillingHandler extends BillingHandler {
         }
     }
 
-    private class MyAcknowledgePurchaseResponseListener implements AcknowledgePurchaseResponseListener{
+    private class MyAcknowledgePurchaseResponseListener implements AcknowledgePurchaseResponseListener {
 
         private final BillingEasyListener listener;
         private final String purchaseToken ;
@@ -284,7 +283,7 @@ public class GoogleBillingHandler extends BillingHandler {
         }
     }
 
-    private class MyPurchasesResponseListener implements PurchasesResponseListener{
+    private class MyPurchasesResponseListener implements PurchasesResponseListener {
 
         private final BillingEasyListener listener;
 
@@ -303,7 +302,7 @@ public class GoogleBillingHandler extends BillingHandler {
         }
     }
 
-    private class MyPurchaseHistoryResponseListener implements PurchaseHistoryResponseListener{
+    private class MyPurchaseHistoryResponseListener implements PurchaseHistoryResponseListener {
 
         private final BillingEasyListener listener;
 
@@ -374,6 +373,10 @@ public class GoogleBillingHandler extends BillingHandler {
         if(find!=null){
             info.setType(find.getType());
         }
+        info.setPriceMicros(skuDetails.getPriceAmountMicros());
+        info.setTitle(skuDetails.getTitle());
+        info.setDesc(skuDetails.getDescription());
+
         ProductInfo.GoogleSkuDetails googleSkuDetails = new ProductInfo.GoogleSkuDetails();
         googleSkuDetails.setType(skuDetails.getType());
         googleSkuDetails.setDescription(skuDetails.getDescription());
@@ -421,6 +424,7 @@ public class GoogleBillingHandler extends BillingHandler {
                     }
                 }
             }
+            info.setPurchaseTime(purchase.getPurchaseTime());
             info.setOrderId(purchase.getOrderId());
             info.setPurchaseToken(purchase.getPurchaseToken());
             info.setBaseObj(purchase);
@@ -444,7 +448,9 @@ public class GoogleBillingHandler extends BillingHandler {
                 googleBillingPurchase.setObfuscatedAccountId(accountIdentifiers.getObfuscatedAccountId());
                 googleBillingPurchase.setObfuscatedProfileId(accountIdentifiers.getObfuscatedProfileId());
             }
+
             info.setGoogleBillingPurchase(googleBillingPurchase);
+
             infoList.add(info);
         }
         return infoList;
@@ -457,22 +463,48 @@ public class GoogleBillingHandler extends BillingHandler {
     private BillingEasyResult buildResult(@NonNull BillingResult billingResult){
         boolean isSuccess = billingResult.getResponseCode()==BillingClient.BillingResponseCode.OK;
         boolean isCancel = billingResult.getResponseCode()==BillingClient.BillingResponseCode.USER_CANCELED;
+        boolean isErrorOwned = billingResult.getResponseCode()==BillingClient.BillingResponseCode.ITEM_ALREADY_OWNED;
+        boolean isErrorNotOwned = billingResult.getResponseCode()==BillingClient.BillingResponseCode.ITEM_NOT_OWNED;
         BillingEasyResult result = BillingEasyResult.build(isSuccess,
                 billingResult.getResponseCode(),billingResult.getDebugMessage(),billingResult);
         result.isCancel = isCancel;
         result.isError = !isSuccess&&!isCancel;
-        result.isErrorOwned = billingResult.getResponseCode()==BillingClient.BillingResponseCode.ITEM_ALREADY_OWNED;
+        result.isErrorOwned = isErrorOwned;
+        if(isSuccess){
+            result.state = BillingEasyResult.State.SUCCESS;
+        }else if(isCancel){
+            result.state = BillingEasyResult.State.CANCEL;
+        }else if(isErrorOwned){
+            result.state = BillingEasyResult.State.ERROR_OWNED;
+        }else if(isErrorNotOwned){
+            result.state = BillingEasyResult.State.ERROR_NOT_OWNED;
+        }else{
+            result.state = BillingEasyResult.State.ERROR_OTHER;
+        }
         return result;
     }
 
     private BillingEasyResult buildResult(@NonNull BillingResult billingResult,String msg){
         boolean isSuccess = billingResult.getResponseCode()==BillingClient.BillingResponseCode.OK;
         boolean isCancel = billingResult.getResponseCode()==BillingClient.BillingResponseCode.USER_CANCELED;
+        boolean isErrorOwned = billingResult.getResponseCode()==BillingClient.BillingResponseCode.ITEM_ALREADY_OWNED;
+        boolean isErrorNotOwned = billingResult.getResponseCode()==BillingClient.BillingResponseCode.ITEM_NOT_OWNED;
         BillingEasyResult result = BillingEasyResult.build(isSuccess,
                 billingResult.getResponseCode(),msg,billingResult);
         result.isCancel = isCancel;
         result.isError = !isSuccess&&!isCancel;
-        result.isErrorOwned = billingResult.getResponseCode()==BillingClient.BillingResponseCode.ITEM_ALREADY_OWNED;
+        result.isErrorOwned =isErrorOwned;
+        if(isSuccess){
+            result.state = BillingEasyResult.State.SUCCESS;
+        }else if(isCancel){
+            result.state = BillingEasyResult.State.CANCEL;
+        }else if(isErrorOwned){
+            result.state = BillingEasyResult.State.ERROR_OWNED;
+        }else if(isErrorNotOwned){
+            result.state = BillingEasyResult.State.ERROR_NOT_OWNED;
+        }else{
+            result.state = BillingEasyResult.State.ERROR_OTHER;
+        }
         return result;
     }
 

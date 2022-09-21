@@ -1,0 +1,1 @@
+-keep class com.tjhello.lib.billing.huawei.HuaweiBillingHandler

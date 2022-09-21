@@ -24,10 +24,11 @@ public interface BillingEasyImp {
 
     void purchase(@NonNull String productCode);
 
-    void purchase(@NonNull String productCode, @NonNull PurchaseParam purchaseParam);
+    void purchase(@NonNull PurchaseParam param);
 
-    @Deprecated
     void purchase(@NonNull String productCode,@Nullable EasyCallBack<List<PurchaseInfo>> callBack);
+
+    void purchase(@NonNull PurchaseParam param,@Nullable EasyCallBack<List<PurchaseInfo>> callBack);
 
     void consume(@NonNull String purchaseToken);
 
