@@ -347,7 +347,7 @@ public class BillingEasy {
         }
 
         @Override
-        public void onQueryOrder(@NonNull BillingEasyResult result, @NonNull List<PurchaseInfo> purchaseInfoList) {
+        public void onQueryOrder(@NonNull BillingEasyResult result,@NonNull String type, @NonNull List<PurchaseInfo> purchaseInfoList) {
             utilsPurchase(result,purchaseInfoList);
         }
 

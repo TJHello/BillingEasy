@@ -44,9 +44,10 @@ android{
 dependencies {
 
     //测试版
-    implementation 'com.TJHello.easy:BillingEasy:2.0.2-t01'//BillingEasy
-    implementation 'com.TJHello.publicLib.billing:google:4.0.0.202-t01'//Google内购(按需添加)
-    implementation 'com.TJHello.publicLib.billing:huawei:5.1.0.300.202-t01'//Huawei内购(按需添加)
+    implementation 'com.TJHello.easy:BillingEasy:2.0.3-t01'//BillingEasy
+    implementation 'com.TJHello.publicLib.billing:google:4.0.0.203-t01'//Google内购(按需添加)
+    implementation 'com.TJHello.publicLib.billing:google:5.0.0.203-t01'//Google内购(按需添加)
+    implementation 'com.TJHello.publicLib.billing:huawei:5.1.0.300.203-t01'//Huawei内购(按需添加)
 }
 
 ```
@@ -156,12 +157,12 @@ public class MainActivity extends AppCompatActivity {
         }
 
         @Override
-        public void onQueryOrder(@NonNull BillingEasyResult result, @NonNull List<PurchaseInfo> purchaseInfoList) {
+        public void onQueryOrder(@NonNull BillingEasyResult result,@NonNull String type, @NonNull List<PurchaseInfo> purchaseInfoList) {
             //查询有效订单
         }
 
         @Override
-        public void onQueryOrderHistory(@NonNull BillingEasyResult result, @NonNull List<PurchaseHistoryInfo> purchaseInfoList) {
+        public void onQueryOrderHistory(@NonNull BillingEasyResult result,@NonNull String type,, @NonNull List<PurchaseHistoryInfo> purchaseInfoList) {
             //查询历史订单
         }
     }
@@ -202,6 +203,11 @@ BillingEasy.acknowledge("purchaseToken");
 
 
 - ### 更新日志
+2.0.3-t01 2022/09/21 【测试版】
+```
+1、支持谷歌内购5.0.0版本
+2、个别接口与监听器做了修改
+```
 
 2.0.2-t01 2022/04/29 【测试版】
 ```

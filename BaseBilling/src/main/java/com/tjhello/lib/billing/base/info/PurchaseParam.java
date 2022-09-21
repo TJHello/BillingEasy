@@ -11,6 +11,7 @@ public class PurchaseParam {
     public boolean vrPurchaseFlow;
     public String developerPayload;
     public String reservedInfor ;
+    public String offerToken ;
 
     private PurchaseParam(@NonNull String productCode){
         this.productCode = productCode;
@@ -33,6 +34,7 @@ public class PurchaseParam {
         private String obfuscatedAccountId;
         private String obfuscatedProfileId;
         private boolean vrPurchaseFlow;
+        private String offerToken;
 
         public GoogleBuilder(@NonNull String productCode) {
             super(productCode);
@@ -52,12 +54,18 @@ public class PurchaseParam {
             return this;
         }
 
+        public GoogleBuilder setOfferToken(String token){
+            offerToken = token;
+            return this;
+        }
+
         @Override
         public PurchaseParam build() {
             PurchaseParam param = new PurchaseParam(productCode);
             param.obfuscatedAccountId = obfuscatedAccountId;
             param.obfuscatedProfileId = obfuscatedProfileId;
             param.vrPurchaseFlow = vrPurchaseFlow;
+            param.offerToken = offerToken;
             return param;
         }
     }

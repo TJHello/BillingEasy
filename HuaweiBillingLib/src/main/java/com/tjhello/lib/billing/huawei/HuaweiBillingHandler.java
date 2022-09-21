@@ -207,14 +207,14 @@ public class HuaweiBillingHandler extends BillingHandler {
         task.addOnSuccessListener(ownedPurchasesResult -> {
             BillingEasyResult easyResult = createResultSuccess(ownedPurchasesResult);
             List<PurchaseInfo> productInfoList = toPurchaseInfo(ownedPurchasesResult.getInAppPurchaseDataList());
-            listener.onQueryOrder(easyResult,productInfoList);
-            mBillingEasyListener.onQueryOrder(easyResult,productInfoList);
+            listener.onQueryOrder(easyResult,type,productInfoList);
+            mBillingEasyListener.onQueryOrder(easyResult,type,productInfoList);
         });
         task.addOnFailureListener(e -> {
             BillingEasyResult easyResult = createResultFailure(e);
             List<PurchaseInfo> productInfoList = new ArrayList<>();
-            listener.onQueryOrder(easyResult,productInfoList);
-            mBillingEasyListener.onQueryOrder(easyResult,productInfoList);
+            listener.onQueryOrder(easyResult,type,productInfoList);
+            mBillingEasyListener.onQueryOrder(easyResult,type,productInfoList);
         });
     }
 
@@ -226,14 +226,14 @@ public class HuaweiBillingHandler extends BillingHandler {
         task.addOnSuccessListener(ownedPurchasesResult -> {
             BillingEasyResult easyResult = createResultSuccess(ownedPurchasesResult);
             List<PurchaseHistoryInfo> productInfoList = toPurchaseHistoryInfo(ownedPurchasesResult.getInAppPurchaseDataList());
-            listener.onQueryOrderHistory(easyResult,productInfoList);
-            mBillingEasyListener.onQueryOrderHistory(easyResult,productInfoList);
+            listener.onQueryOrderHistory(easyResult,type,productInfoList);
+            mBillingEasyListener.onQueryOrderHistory(easyResult,type,productInfoList);
         });
         task.addOnFailureListener(e -> {
             BillingEasyResult easyResult = createResultFailure(e);
             List<PurchaseHistoryInfo> productInfoList = new ArrayList<>();
-            listener.onQueryOrderHistory(easyResult,productInfoList);
-            mBillingEasyListener.onQueryOrderHistory(easyResult,productInfoList);
+            listener.onQueryOrderHistory(easyResult,type,productInfoList);
+            mBillingEasyListener.onQueryOrderHistory(easyResult,type,productInfoList);
         });
     }
 

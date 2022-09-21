@@ -6,7 +6,6 @@ import androidx.annotation.Nullable;
 import com.tjhello.lib.billing.base.anno.ProductType;
 import com.tjhello.lib.billing.base.imp.BillingHandlerImp;
 import com.tjhello.lib.billing.base.info.ProductConfig;
-import com.tjhello.lib.billing.base.info.ProductInfo;
 import com.tjhello.lib.billing.base.listener.BillingEasyListener;
 import com.tjhello.lib.billing.base.utils.BillingEasyLog;
 
@@ -14,7 +13,6 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * BillingEasy

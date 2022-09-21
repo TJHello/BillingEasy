@@ -53,7 +53,6 @@ public class MainActivity extends AppCompatActivity {
         ProductConfig productConfig = ProductConfig.build(ProductType.TYPE_INAPP_NON_CONSUMABLE,"test_code","noads");//添加一个带去广告属性的商品
         BillingEasy.addProductConfig(productConfig);
 
-
         BillingEasy.setAutoConsume(false);//关闭自动消耗(可按需打开，默认关闭)
         BillingEasy.setAutoAcknowledge(false);//关闭自动确认购买(可按需打开，默认关闭)
         //添加监听器放到onCreate里更安全
@@ -139,7 +138,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         @Override
-        public void onQueryOrder(@NonNull BillingEasyResult result, @NonNull List<PurchaseInfo> purchaseInfoList) {
+        public void onQueryOrder(@NonNull BillingEasyResult result,@NonNull String type, @NonNull List<PurchaseInfo> purchaseInfoList) {
             //处理订单示例
             utilPurchase(result,purchaseInfoList);
 
@@ -161,7 +160,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         @Override
-        public void onQueryOrderHistory(@NonNull BillingEasyResult result, @NonNull List<PurchaseHistoryInfo> purchaseInfoList) {
+        public void onQueryOrderHistory(@NonNull BillingEasyResult result,@NonNull String type, @NonNull List<PurchaseHistoryInfo> purchaseInfoList) {
             //获取历史订单回调
 
 

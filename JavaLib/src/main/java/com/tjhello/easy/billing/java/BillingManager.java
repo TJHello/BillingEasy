@@ -277,7 +277,7 @@ public class BillingManager implements BillingManagerImp {
         }
 
         @Override
-        public void onQueryOrder(@NonNull BillingEasyResult result, @NonNull List<PurchaseInfo> purchaseInfoList) {
+        public void onQueryOrder(@NonNull BillingEasyResult result,@NonNull String type, @NonNull List<PurchaseInfo> purchaseInfoList) {
             if(purchaseCallback==null) return;
             purchaseCallback.callback(result,purchaseInfoList);
         }
@@ -315,7 +315,7 @@ public class BillingManager implements BillingManagerImp {
         }
 
         @Override
-        public void onQueryOrderHistory(@NonNull BillingEasyResult result, @NonNull List<PurchaseHistoryInfo> purchaseInfoList) {
+        public void onQueryOrderHistory(@NonNull BillingEasyResult result,@NonNull String type, @NonNull List<PurchaseHistoryInfo> purchaseInfoList) {
             if(callback==null) return;
             callback.callback(result,purchaseInfoList);
         }
@@ -348,9 +348,10 @@ public class BillingManager implements BillingManagerImp {
                 listener.onConnection(result);
             }
             if(result.isSuccess){
+                BillingEasyLog.i("【onConnection】success");
                 queryProductAll(null);
             }else{
-                BillingEasyLog.i("【onConnection】reqCode:"+result.responseCode+",reqMsg:"+result.responseMsg);
+                BillingEasyLog.e("【onConnection】reqCode:"+result.responseCode+",reqMsg:"+result.responseMsg);
             }
         }
 
@@ -367,7 +368,9 @@ public class BillingManager implements BillingManagerImp {
                 listener.onQueryProduct(result,productInfoList);
             }
             if(!result.isSuccess){
-                BillingEasyLog.i("【onQueryProduct】reqCode:"+result.responseCode+",reqMsg:"+result.responseMsg);
+                BillingEasyLog.e("【onQueryProduct】reqCode:"+result.responseCode+",reqMsg:"+result.responseMsg);
+            }else{
+                BillingEasyLog.i("【onQueryProduct】success");
             }
         }
 
@@ -380,6 +383,11 @@ public class BillingManager implements BillingManagerImp {
             for (BillingEasyListener listener : publicListenerList) {
                 listener.onPurchases(result, purchaseInfoList);
             }
+            if(!result.isSuccess){
+                BillingEasyLog.e("【onPurchases】reqCode:"+result.responseCode+",reqMsg:"+result.responseMsg);
+            }else{
+                BillingEasyLog.i("【onPurchases】success");
+            }
         }
 
         @Override
@@ -388,7 +396,9 @@ public class BillingManager implements BillingManagerImp {
                 listener.onConsume(result, purchaseToken);
             }
             if(!result.isSuccess){
-                BillingEasyLog.i("【onConsume】reqCode:"+result.responseCode+",reqMsg:"+result.responseMsg);
+                BillingEasyLog.e("【onConsume】reqCode:"+result.responseCode+",reqMsg:"+result.responseMsg);
+            }else{
+                BillingEasyLog.i("【onConsume】success");
             }
         }
 
@@ -398,21 +408,23 @@ public class BillingManager implements BillingManagerImp {
                 listener.onAcknowledge(result, purchaseToken);
             }
             if(!result.isSuccess){
-                BillingEasyLog.i("【onAcknowledge】reqCode:"+result.responseCode+",reqMsg:"+result.responseMsg);
+                BillingEasyLog.e("【onAcknowledge】reqCode:"+result.responseCode+",reqMsg:"+result.responseMsg);
+            }else{
+                BillingEasyLog.i("【onAcknowledge】success");
             }
         }
 
         @Override
-        public void onQueryOrder(@NonNull BillingEasyResult result, @NonNull List<PurchaseInfo> purchaseInfoList) {
+        public void onQueryOrder(@NonNull BillingEasyResult result,@NonNull String type, @NonNull List<PurchaseInfo> purchaseInfoList) {
             for (BillingEasyListener listener : publicListenerList) {
-                listener.onQueryOrder(result, purchaseInfoList);
+                listener.onQueryOrder(result,type, purchaseInfoList);
             }
         }
 
         @Override
-        public void onQueryOrderHistory(@NonNull BillingEasyResult result, @NonNull List<PurchaseHistoryInfo> purchaseInfoList) {
+        public void onQueryOrderHistory(@NonNull BillingEasyResult result,@NonNull String type, @NonNull List<PurchaseHistoryInfo> purchaseInfoList) {
             for (BillingEasyListener listener : publicListenerList) {
-                listener.onQueryOrderHistory(result,purchaseInfoList);
+                listener.onQueryOrderHistory(result,type,purchaseInfoList);
             }
         }
     }

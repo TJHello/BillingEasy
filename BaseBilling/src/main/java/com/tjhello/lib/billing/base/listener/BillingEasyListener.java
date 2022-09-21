@@ -2,6 +2,7 @@ package com.tjhello.lib.billing.base.listener;
 
 import androidx.annotation.NonNull;
 
+import com.tjhello.lib.billing.base.anno.ProductType;
 import com.tjhello.lib.billing.base.info.BillingEasyResult;
 import com.tjhello.lib.billing.base.info.ProductInfo;
 import com.tjhello.lib.billing.base.info.PurchaseInfo;
@@ -34,7 +35,7 @@ public interface BillingEasyListener {
 
     default void onAcknowledge(@NonNull BillingEasyResult result,@NonNull String purchaseToken){}
 
-    default void onQueryOrder(@NonNull BillingEasyResult result, @NonNull List<PurchaseInfo> purchaseInfoList){}
+    default void onQueryOrder(@NonNull BillingEasyResult result,@ProductType String type, @NonNull List<PurchaseInfo> purchaseInfoList){}
 
-    default void onQueryOrderHistory(@NonNull BillingEasyResult result, @NonNull List<PurchaseHistoryInfo> purchaseInfoList){}
+    default void onQueryOrderHistory(@NonNull BillingEasyResult result, @ProductType String type, @NonNull List<PurchaseHistoryInfo> purchaseInfoList){}
 }
