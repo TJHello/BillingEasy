@@ -27,7 +27,11 @@ public interface BillingEasyListener {
 
     default void onDisconnected(){}
 
+    @Deprecated
     default void onQueryProduct(@NonNull BillingEasyResult result,@NonNull List<ProductInfo> productInfoList){}
+    default void onQueryProduct(@NonNull BillingEasyResult result,@ProductType String type,@NonNull List<ProductInfo> productInfoList){
+        onQueryProduct(result,productInfoList);
+    }
 
     default void onPurchases(@NonNull BillingEasyResult result, @NonNull List<PurchaseInfo> purchaseInfoList){}
 
@@ -35,7 +39,16 @@ public interface BillingEasyListener {
 
     default void onAcknowledge(@NonNull BillingEasyResult result,@NonNull String purchaseToken){}
 
-    default void onQueryOrder(@NonNull BillingEasyResult result,@ProductType String type, @NonNull List<PurchaseInfo> purchaseInfoList){}
+    @Deprecated
+    default void onQueryOrder(@NonNull BillingEasyResult result, @NonNull List<PurchaseInfo> purchaseInfoList){}
+    @Deprecated
+    default void onQueryOrderHistory(@NonNull BillingEasyResult result, @NonNull List<PurchaseHistoryInfo> purchaseInfoList){}
 
-    default void onQueryOrderHistory(@NonNull BillingEasyResult result, @ProductType String type, @NonNull List<PurchaseHistoryInfo> purchaseInfoList){}
+    default void onQueryOrder(@NonNull BillingEasyResult result,@ProductType String type, @NonNull List<PurchaseInfo> purchaseInfoList){
+        onQueryOrder(result,purchaseInfoList);
+    }
+
+    default void onQueryOrderHistory(@NonNull BillingEasyResult result, @ProductType String type, @NonNull List<PurchaseHistoryInfo> purchaseInfoList){
+        onQueryOrderHistory(result,purchaseInfoList);
+    }
 }

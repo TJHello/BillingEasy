@@ -43,8 +43,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        //BillingEasy
-        BillingEasy.setDebug(true);
+        BillingEasy.setDebug(true);//按需打开日志
 
         //这里修改成自己的商品code(GP在这里设置消耗与非消耗，不会影响内购，只是用于自己判断而已)
         BillingEasy.addProductConfig(ProductType.TYPE_INAPP_CONSUMABLE,INAPP_CONSUMABLE_CODE_ARRAY);
@@ -53,24 +52,14 @@ public class MainActivity extends AppCompatActivity {
         ProductConfig productConfig = ProductConfig.build(ProductType.TYPE_INAPP_NON_CONSUMABLE,"test_code","noads");//添加一个带去广告属性的商品
         BillingEasy.addProductConfig(productConfig);
 
-        BillingEasy.setAutoConsume(false);//关闭自动消耗(可按需打开，默认关闭)
-        BillingEasy.setAutoAcknowledge(false);//关闭自动确认购买(可按需打开，默认关闭)
-        //添加监听器放到onCreate里更安全
+        BillingEasy.setAutoConsume(true);//打开自动消耗(可按需关闭，默认关闭)
+        BillingEasy.setAutoAcknowledge(true);//打开自动确认购买(可按需关闭，默认关闭)
+
         BillingEasy.addListener(listener);
         BillingEasy.init(this);
 
-        //ui初始化
-        tvLog = this.findViewById(R.id.tvLog);
-        this.findViewById(R.id.tvLogClean).setOnClickListener(view -> tvLog.setText(null));
-        this.findViewById(R.id.ivHelp).setOnClickListener(view->{
-            Intent intent = new Intent();
-            Uri uri = Uri.parse("https://gitee.com/TJHello/BillingEasy");
-            intent.setAction(Intent.ACTION_VIEW);
-            intent.setData(uri);
-            startActivity(intent);
-        });
-        this.findViewById(R.id.btNext).setOnClickListener(view->
-                startActivity(new Intent(this,NextActivity.class)));
+        //demoUI代码
+        initActivityUI();
     }
 
     @Override
@@ -86,7 +75,10 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public void onConnection(@NonNull BillingEasyResult result) {
+            if(result.isSuccess){
+                //任何时候都不要忘记判断isSuccess
 
+            }
 
             //日志输出代码
             log("内购服务已连接:"+result.isSuccess
@@ -100,21 +92,14 @@ public class MainActivity extends AppCompatActivity {
         }
 
         @Override
-        public void onQueryProduct(@NonNull BillingEasyResult result, @NonNull List<ProductInfo> productInfoList) {
+        public void onQueryProduct(@NonNull BillingEasyResult result,@NonNull String type, @NonNull List<ProductInfo> productInfoList) {
             //获取商品信息回调
+            if(result.isSuccess){
 
+            }
 
             //日志输出代码
-            log("查询商品信息:"+result.isSuccess);
-            StringBuilder tempBuilder = new StringBuilder();
-            for (ProductInfo info : productInfoList) {
-                String details = String.format(Locale.getDefault(),"%s , %s\n",
-                        info.getCode(),info.getPrice());
-                tempBuilder.append(details);
-            }
-            if(!tempBuilder.toString().isEmpty()){
-                log(tempBuilder.toString());
-            }
+            printQueryProductLog(result,type,productInfoList);
         }
 
         @Override
@@ -123,18 +108,7 @@ public class MainActivity extends AppCompatActivity {
             utilPurchase(result,purchaseInfoList);
 
             //日志输出代码
-            log("购买商品:"+result.isSuccess);
-            StringBuilder tempBuilder = new StringBuilder();
-            for (PurchaseInfo info : purchaseInfoList) {
-                for (ProductConfig productConfig : info.getProductList()) {
-                    String details = String.format(Locale.getDefault(),"%s:%s\n",
-                            productConfig.getCode(),info.getOrderId());
-                    tempBuilder.append(details);
-                }
-            }
-            if(!tempBuilder.toString().isEmpty()){
-                log(tempBuilder.toString());
-            }
+            printPurchasesLog(result,purchaseInfoList);
         }
 
         @Override
@@ -142,42 +116,20 @@ public class MainActivity extends AppCompatActivity {
             //处理订单示例
             utilPurchase(result,purchaseInfoList);
 
-
-
             //日志输出代码
-            log("查询有效订单:"+result.isSuccess);
-            StringBuilder tempBuilder = new StringBuilder();
-            for (PurchaseInfo info : purchaseInfoList) {
-                for (ProductConfig productConfig : info.getProductList()) {
-                    String details = String.format(Locale.getDefault(),"%s:%s\n",
-                            productConfig.getCode(),info.getOrderId());
-                    tempBuilder.append(details);
-                }
-            }
-            if(!tempBuilder.toString().isEmpty()){
-                log(tempBuilder.toString());
-            }
+            printQueryOrderLog(result,type,purchaseInfoList);
         }
 
         @Override
         public void onQueryOrderHistory(@NonNull BillingEasyResult result,@NonNull String type, @NonNull List<PurchaseHistoryInfo> purchaseInfoList) {
             //获取历史订单回调
+            if(result.isSuccess){
 
+            }
 
 
             //日志输出代码
-            log("查询历史订单:"+result.isSuccess);
-            StringBuilder tempBuilder = new StringBuilder();
-            for (PurchaseHistoryInfo info : purchaseInfoList) {
-                for (ProductConfig productConfig : info.getProductList()) {
-                    String details = String.format(Locale.getDefault(),"%s:%s\n",
-                            productConfig.getCode(),info.getPurchaseToken());
-                    tempBuilder.append(details);
-                }
-            }
-            if(!tempBuilder.toString().isEmpty()){
-                log(tempBuilder.toString());
-            }
+            printQueryOrderHistoryLog(result, type, purchaseInfoList);
         }
 
         /**
@@ -191,37 +143,9 @@ public class MainActivity extends AppCompatActivity {
                     //判断商品是否有效
                     if(purchaseInfo.isValid()){
                         for (ProductConfig productConfig : purchaseInfo.getProductList()) {
-                            //判断商品类型
-                            String type = productConfig.getType();
-                            if(type!=null){
-                                switch (type){
-                                    //内购商品-可消耗
-                                    case ProductType.TYPE_INAPP_CONSUMABLE:{
-                                        //消耗商品(消耗包括确认购买)
-                                        BillingEasy.consume(purchaseInfo.getPurchaseToken());
-                                    }break;
-                                    //内购商品-非消耗||订阅商品
-                                    case ProductType.TYPE_INAPP_NON_CONSUMABLE:
-                                    case ProductType.TYPE_SUBS: {
-                                        //判断是否已经确认购买
-                                        if(!purchaseInfo.isAcknowledged()){
-                                            //确认购买
-                                            BillingEasy.acknowledge(purchaseInfo.getPurchaseToken());
-                                        }
-
-                                    }break;
-                                }
-                            }
-//                            //或者
-//                            if(productConfig.canConsume()){
-//                                //消耗商品
-//                                BillingEasy.consume(purchaseInfo.getPurchaseToken());
-//                            }else{
-//                                //确认购买
-//                                if(!purchaseInfo.isAcknowledged()){
-//                                    BillingEasy.acknowledge(purchaseInfo.getPurchaseToken());
-//                                }
-//                            }
+                            //这里进行发货
+                            //如果用户使用了延迟付款，应用启动的时候，这里可能会有订单回调，这时也是需要进行发货的
+                            //应当建立简单订单系统，需要避免重复发货
                         }
                     }
                 }
@@ -230,6 +154,80 @@ public class MainActivity extends AppCompatActivity {
     }
 
     //region==============================关系不大的方法
+
+    private void initActivityUI(){
+        //ui初始化
+        tvLog = this.findViewById(R.id.tvLog);
+        this.findViewById(R.id.tvLogClean).setOnClickListener(view -> tvLog.setText(null));
+        this.findViewById(R.id.ivHelp).setOnClickListener(view->{
+            Intent intent = new Intent();
+            Uri uri = Uri.parse("https://gitee.com/TJHello/BillingEasy");
+            intent.setAction(Intent.ACTION_VIEW);
+            intent.setData(uri);
+            startActivity(intent);
+        });
+        this.findViewById(R.id.btNext).setOnClickListener(view->
+                startActivity(new Intent(this,NextActivity.class)));
+    }
+
+    private void printQueryProductLog(@NonNull BillingEasyResult result,@NonNull String type, @NonNull List<ProductInfo> productInfoList){
+        log("查询商品信息:"+result.isSuccess);
+        StringBuilder tempBuilder = new StringBuilder();
+        for (ProductInfo info : productInfoList) {
+            String details = String.format(Locale.getDefault(),"%s , %s\n",
+                    info.getCode(),info.getPrice());
+            tempBuilder.append(details);
+        }
+        if(!tempBuilder.toString().isEmpty()){
+            log(tempBuilder.toString());
+        }
+    }
+
+    private void printPurchasesLog(@NonNull BillingEasyResult result, @NonNull List<PurchaseInfo> purchaseInfoList){
+        log("购买商品:"+result.isSuccess);
+        StringBuilder tempBuilder = new StringBuilder();
+        for (PurchaseInfo info : purchaseInfoList) {
+            for (ProductConfig productConfig : info.getProductList()) {
+                String details = String.format(Locale.getDefault(),"%s:%s\n",
+                        productConfig.getCode(),info.getOrderId());
+                tempBuilder.append(details);
+            }
+        }
+        if(!tempBuilder.toString().isEmpty()){
+            log(tempBuilder.toString());
+        }
+    }
+
+    private void printQueryOrderLog(@NonNull BillingEasyResult result,@NonNull String type, @NonNull List<PurchaseInfo> purchaseInfoList){
+        log("查询有效订单:"+result.isSuccess);
+        StringBuilder tempBuilder = new StringBuilder();
+        for (PurchaseInfo info : purchaseInfoList) {
+            for (ProductConfig productConfig : info.getProductList()) {
+                String details = String.format(Locale.getDefault(),"%s:%s\n",
+                        productConfig.getCode(),info.getOrderId());
+                tempBuilder.append(details);
+            }
+        }
+        if(!tempBuilder.toString().isEmpty()){
+            log(tempBuilder.toString());
+        }
+    }
+
+    private void printQueryOrderHistoryLog(@NonNull BillingEasyResult result,@NonNull String type, @NonNull List<PurchaseHistoryInfo> purchaseInfoList){
+        log("查询历史订单:"+result.isSuccess);
+        StringBuilder tempBuilder = new StringBuilder();
+        for (PurchaseHistoryInfo info : purchaseInfoList) {
+            for (ProductConfig productConfig : info.getProductList()) {
+                String details = String.format(Locale.getDefault(),"%s:%s\n",
+                        productConfig.getCode(),info.getPurchaseToken());
+                tempBuilder.append(details);
+            }
+        }
+        if(!tempBuilder.toString().isEmpty()){
+            log(tempBuilder.toString());
+        }
+    }
+
     private final StringBuffer logBuffer = new StringBuffer();
     private void log(String msg){
         handler.post(() -> {
