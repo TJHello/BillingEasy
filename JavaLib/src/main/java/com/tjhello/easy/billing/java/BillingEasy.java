@@ -19,6 +19,7 @@ import com.tjhello.lib.billing.base.listener.EasyCallBack;
 import com.tjhello.lib.billing.base.utils.BillingEasyLog;
 
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class BillingEasy {
 
@@ -37,7 +38,7 @@ public class BillingEasy {
     }
 
     public static void init(Activity activity){
-        billingManager.init(activity);
+        init(activity,null);
     }
 
     public static void init(Activity activity, EasyCallBack<Boolean> callBack){

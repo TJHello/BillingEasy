@@ -1,4 +1,4 @@
-# BillingEasy-2.0.2
+# BillingEasy-2.0.3
 
 **QQ交流群(425219113)**
 
@@ -44,9 +44,9 @@ android{
 dependencies {
 
     //测试版
-    implementation 'com.TJHello.easy:BillingEasy:2.0.2-t01'//BillingEasy
-    implementation 'com.TJHello.publicLib.billing:google:4.0.0.202-t01'//Google内购(按需添加)
-    implementation 'com.TJHello.publicLib.billing:huawei:5.1.0.300.202-t01'//Huawei内购(按需添加)
+    implementation 'com.TJHello.easy:BillingEasy:2.0.3-t01'//BillingEasy
+    implementation 'com.TJHello.publicLib.billing:google:4.0.0.203-t01'//Google内购(按需添加)
+    implementation 'com.TJHello.publicLib.billing:huawei:5.1.0.300.203-t01'//Huawei内购(按需添加)
 }
 
 ```
@@ -96,7 +96,10 @@ public class MainActivity extends AppCompatActivity {
     private class MyBillingEasyListener implements BillingEasyListener{
         @Override
         public void onConnection(@NonNull BillingEasyResult result) {
-            //内购服务连接
+            //内购服务连接结果回调
+            if(result.isSuccess){
+                //如果要在此查询订单，需要判断isSuccess之后再操作，否则可能发生死循环
+            }
         }
 
         @Override
@@ -106,8 +109,10 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public void onQueryProduct(@NonNull BillingEasyResult result, @NonNull List<ProductInfo> productInfoList) {
-            //查询商品信息
-
+            //查询商品信息结果回调
+            if(result.isSuccess){
+                
+            }
         }
 
         @Override
@@ -158,15 +163,91 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onQueryOrder(@NonNull BillingEasyResult result, @NonNull List<PurchaseInfo> purchaseInfoList) {
             //查询有效订单
+            if(result.isSuccess){
+                
+            }
         }
 
         @Override
         public void onQueryOrderHistory(@NonNull BillingEasyResult result, @NonNull List<PurchaseHistoryInfo> purchaseInfoList) {
             //查询历史订单
+            if(result.isSuccess){
+                
+            }
         }
     }
 }
 ```
+
+- ### 最佳实践
+```java
+
+public class MainActivity extends AppCompatActivity {
+    private final MyBillingEasyListener listener = new MyBillingEasyListener();
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        BillingEasy.addProductConfig(ProductType.TYPE_INAPP_CONSUMABLE,"xxx_1","xxx_2");
+        BillingEasy.setAutoConsume(true);//打开自动消耗
+        BillingEasy.setAutoAcknowledge(true);//打开自动确认购买
+        BillingEasy.addListener(listener);
+        BillingEasy.init(this);
+    }
+    private class MyBillingEasyListener implements BillingEasyListener{
+        @Override
+        public void onConnection(@NonNull BillingEasyResult result) {
+            if(result.isSuccess){
+                BillingEasy.queryOrderAsync(ProductType.TYPE_INAPP_CONSUMABLE);
+                
+            }
+        }
+        @Override
+        public void onQueryOrder(@NonNull BillingEasyResult result, @NonNull List<PurchaseInfo> purchaseInfoList) {
+            //此处可以进行补单
+            if(result.isSuccess){
+                for (PurchaseInfo purchaseInfo : purchaseInfoList) {
+                    if(purchaseInfo.isValid()){
+                        List<ProductConfig> list = purchaseInfo.getProductList();
+                        for (ProductConfig productConfig : list) {
+                            if(productConfig.canConsume()){
+                                //可消耗型订单，可以进行补单重新发货
+                                //机会只有一次，查询订单后会进行自动消耗，需要本次进行发货
+                                //注意，应当建立订单系统，管理订单的发货状态，如果订单已发货，则不再进行发货
+                            }else{
+                                //非可消耗型订单或订阅订单，可以进行权益刷新
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        @Override
+        public void onPurchases(@NonNull BillingEasyResult result, @NonNull List<PurchaseInfo> purchaseInfoList) {
+            //处理订单示例
+            if(result.isSuccess){
+                for (PurchaseInfo purchaseInfo : purchaseInfoList) {
+                    if(purchaseInfo.isValid()){
+                        for (ProductConfig productConfig : purchaseInfo.getProductList()) {
+                            //只要这里有回调都进行发货
+                            //如果用户使用了延迟付款，应用启动的时候，这里可能会有订单回调，这时也是需要进行发货的
+                            //如有多个监听器，需要避免重复发货
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        BillingEasy.removeListener(listener);
+        super.onDestroy();
+    }
+}
+
+
+```
+
 
 - ### API说明
 
@@ -176,8 +257,8 @@ public class MainActivity extends AppCompatActivity {
 BillingEasy.addProductConfig( ProductType.TYPE_INAPP_CONSUMABLE,"商品code","商品code");
 
 //查询商品信息
-BillingEasy.queryProduct();
-BillingEasy.queryProduct((billingEasyResult, productInfoList) -> {
+BillingEasy.queryProduct(type);
+BillingEasy.queryProduct(type,(billingEasyResult, productInfoList) -> {
 
 });
 
@@ -186,9 +267,9 @@ BillingEasy.purchase(activity,"商品code");
 BillingEasy.purchase(activity,param);
 
 //查询订单信息
-BillingEasy.queryOrderAsync();//联网查询有效订单
-BillingEasy.queryOrderLocal();//查询本地缓存订单
-BillingEasy.queryOrderHistory();//查询历史订单
+BillingEasy.queryOrderAsync(type);//联网查询有效订单
+BillingEasy.queryOrderLocal(type);//查询本地缓存订单
+BillingEasy.queryOrderHistory(type);//查询历史订单
 //消耗商品
 BillingEasy.consume("purchaseToken");
 //确认购买

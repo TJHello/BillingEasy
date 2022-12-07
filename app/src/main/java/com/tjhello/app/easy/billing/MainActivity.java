@@ -88,6 +88,10 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onConnection(@NonNull BillingEasyResult result) {
 
+            if(result.isSuccess){
+                //如果要在此查询订单，需要判断isSuccess之后再操作，否则可能发生死循环
+                BillingEasy.queryOrderAsync(ProductType.TYPE_INAPP_CONSUMABLE);
+            }
 
             //日志输出代码
             log("内购服务已连接:"+result.isSuccess
@@ -140,6 +144,22 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public void onQueryOrder(@NonNull BillingEasyResult result, @NonNull List<PurchaseInfo> purchaseInfoList) {
+
+            //此处可以进行补单
+            if(result.isSuccess){
+                for (PurchaseInfo purchaseInfo : purchaseInfoList) {
+                    if(purchaseInfo.isValid()){
+                        List<ProductConfig> list = purchaseInfo.getProductList();
+                        for (ProductConfig productConfig : list) {
+                            if(productConfig.canConsume()){
+                                //可消耗型订单，可以进行补单重新发货
+                                //注意，应当建立订单系统，管理订单的发货状态，如果订单已发货，则不再进行发货
+                            }
+                        }
+                    }
+                }
+            }
+
             //处理订单示例
             utilPurchase(result,purchaseInfoList);
 
