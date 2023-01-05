@@ -42,10 +42,10 @@ android{
 dependencies {
 
     //测试版
-    implementation 'com.TJHello.easy:BillingEasy:2.0.3-t01'//BillingEasy
-    implementation 'com.TJHello.publicLib.billing:google:4.0.0.203-t01'//Google内购(按需添加)
-    implementation 'com.TJHello.publicLib.billing:google:5.0.0.203-t01'//Google内购(按需添加)
-    implementation 'com.TJHello.publicLib.billing:huawei:5.1.0.300.203-t01'//Huawei内购(按需添加)
+    implementation 'com.TJHello.easy:BillingEasy:2.0.3-t02'//BillingEasy
+    implementation 'com.TJHello.publicLib.billing:google:4.0.0.203-t02'//Google内购(按需添加)
+    implementation 'com.TJHello.publicLib.billing:google:5.0.0.203-t02'//Google内购(按需添加)
+    implementation 'com.TJHello.publicLib.billing:huawei:5.1.0.300.203-t02'//Huawei内购(按需添加)
 }
 
 ```
@@ -201,6 +201,12 @@ BillingEasy.acknowledge("purchaseToken");
 
 
 - ### 更新日志
+2.0.3-t02 2023/01/05 【测试版】
+```
+1、增加未初始化的情况的判断，避免在极端情况下的空指针问题
+2、补漏个别字段，修复个别接口type不对应的问题
+```
+
 2.0.3-t01 2022/09/21 【测试版】
 ```
 1、支持谷歌内购5.0.0版本

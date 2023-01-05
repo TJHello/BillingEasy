@@ -21,7 +21,7 @@ String os = prop.getProperty("os.name")
 if(os.contains("Windows")){
     ext.REPOSITORY_HOME = "C:\\Android\\unityWorkSpace\\ADEasyLib\\repo\\"
 }else{
-    ext.REPOSITORY_HOME = "/Users/TJHello/TJRepository"
+    ext.REPOSITORY_HOME = "/Users/tjhello/Documents/TJRepository"
 }
 
 //版本常量
@@ -44,8 +44,6 @@ allprojects {
         google()
         mavenCentral()
         maven { url 'https://tjhello.gitee.io/publiclib/'}
-        maven { url 'http://127.0.0.1'}
-        maven { url 'http://127.0.0.1/maven'}
         maven {url 'https://developer.huawei.com/repo/'}
     }
 }

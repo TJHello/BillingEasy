@@ -9,6 +9,7 @@ import androidx.annotation.Keep;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.android.billingclient.api.AccountIdentifiers;
 import com.android.billingclient.api.AcknowledgePurchaseParams;
 import com.android.billingclient.api.AcknowledgePurchaseResponseListener;
 import com.android.billingclient.api.BillingClient;
@@ -169,20 +170,20 @@ public class GoogleBillingHandler extends BillingHandler {
     }
 
     @Override
-    public void queryOrderAsync(@NonNull String type,@NonNull BillingEasyListener listener) {
-        QueryPurchasesParams params = QueryPurchasesParams.newBuilder().setProductType(type).build();
+    public void queryOrderAsync(@ProductType @NonNull String type,@NonNull BillingEasyListener listener) {
+        QueryPurchasesParams params = QueryPurchasesParams.newBuilder().setProductType(getProductType(type)).build();
         mBillingClient.queryPurchasesAsync(params,new MyPurchasesResponseListener(type,listener));
     }
 
     @Override
-    public void queryOrderLocal(@NonNull String type,@NonNull BillingEasyListener listener) {
-        QueryPurchasesParams params = QueryPurchasesParams.newBuilder().setProductType(type).build();
+    public void queryOrderLocal(@ProductType @NonNull String type,@NonNull BillingEasyListener listener) {
+        QueryPurchasesParams params = QueryPurchasesParams.newBuilder().setProductType(getProductType(type)).build();
         mBillingClient.queryPurchasesAsync(params,new MyPurchasesResponseListener(type,listener));
     }
 
     @Override
-    public void queryOrderHistory(@NonNull String type,@NonNull BillingEasyListener listener) {
-        QueryPurchaseHistoryParams params = QueryPurchaseHistoryParams.newBuilder().setProductType(type).build();
+    public void queryOrderHistory(@ProductType @NonNull String type,@NonNull BillingEasyListener listener) {
+        QueryPurchaseHistoryParams params = QueryPurchaseHistoryParams.newBuilder().setProductType(getProductType(type)).build();
         mBillingClient.queryPurchaseHistoryAsync(params,new MyPurchaseHistoryResponseListener(type,listener));
     }
 
@@ -497,7 +498,18 @@ public class GoogleBillingHandler extends BillingHandler {
             googleBillingPurchase.setQuantity(purchase.getQuantity());
             googleBillingPurchase.setSignature(purchase.getSignature());
             googleBillingPurchase.setSkus(purchase.getProducts());
+            googleBillingPurchase.setAutoRenewing(purchase.isAutoRenewing());
+            googleBillingPurchase.setAcknowledged(purchase.isAcknowledged());
+
+            AccountIdentifiers accountIdentifiers = purchase.getAccountIdentifiers();
+            if(accountIdentifiers!=null){
+                googleBillingPurchase.setObfuscatedAccountId(accountIdentifiers.getObfuscatedAccountId());
+                googleBillingPurchase.setObfuscatedProfileId(accountIdentifiers.getObfuscatedProfileId());
+            }
+
             info.setGoogleBillingPurchase(googleBillingPurchase);
+
+
 
             infoList.add(info);
         }
@@ -524,6 +536,8 @@ public class GoogleBillingHandler extends BillingHandler {
             info.setType(find.getType());
         }
         info.setPriceMicros(skuDetails.getPriceAmountMicros());
+        info.setPriceAmountMicros(skuDetails.getPriceAmountMicros());
+        info.setPriceCurrencyCode(skuDetails.getPriceCurrencyCode());
         info.setTitle(skuDetails.getTitle());
         info.setDesc(skuDetails.getDescription());
 

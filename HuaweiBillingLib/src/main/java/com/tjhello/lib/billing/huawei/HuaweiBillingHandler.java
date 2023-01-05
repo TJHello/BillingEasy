@@ -202,7 +202,7 @@ public class HuaweiBillingHandler extends BillingHandler {
     @Override
     public void queryOrderLocal(@NonNull String type, @NonNull BillingEasyListener listener) {
         OwnedPurchasesReq req = new OwnedPurchasesReq();
-        req.setPriceType(Integer.parseInt(type));
+        req.setPriceType(Integer.parseInt(getProductType(type)));
         Task<OwnedPurchasesResult> task = mIapClient.obtainOwnedPurchases(req);
         task.addOnSuccessListener(ownedPurchasesResult -> {
             BillingEasyResult easyResult = createResultSuccess(ownedPurchasesResult);
@@ -396,6 +396,8 @@ public class HuaweiBillingHandler extends BillingHandler {
         info.setCode(skuDetails.getProductId());
         info.setPrice(skuDetails.getPrice());
         info.setPriceMicros(skuDetails.getMicrosPrice());
+        info.setPriceAmountMicros(skuDetails.getMicrosPrice());
+        info.setPriceCurrencyCode(skuDetails.getCurrency());
         info.setTitle(skuDetails.getProductName());
         info.setDesc(skuDetails.getProductDesc());
         ProductConfig find = findProductInfo(skuDetails.getProductId());

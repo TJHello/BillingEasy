@@ -192,7 +192,7 @@ public class BillingManager implements BillingManagerImp {
         }
         if(billingHandler.connection(new ConnectionBillingEasyListener())){
             PurchaseBillingEasyListener listener = new PurchaseBillingEasyListener(callBack);
-            billingHandler.queryOrderAsync(getTypeByHandler(type),listener);
+            billingHandler.queryOrderAsync(type,listener);
         }
     }
 
@@ -204,7 +204,7 @@ public class BillingManager implements BillingManagerImp {
         }
         if(billingHandler.connection(new ConnectionBillingEasyListener())){
             PurchaseBillingEasyListener listener = new PurchaseBillingEasyListener(callBack);
-            billingHandler.queryOrderLocal(getTypeByHandler(type),listener);
+            billingHandler.queryOrderLocal(type,listener);
         }
     }
 

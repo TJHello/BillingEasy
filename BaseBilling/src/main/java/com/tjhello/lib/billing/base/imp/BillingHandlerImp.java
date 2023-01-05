@@ -7,6 +7,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.tjhello.lib.billing.base.anno.BillingName;
+import com.tjhello.lib.billing.base.anno.ProductType;
 import com.tjhello.lib.billing.base.info.PurchaseParam;
 import com.tjhello.lib.billing.base.listener.BillingEasyListener;
 
@@ -26,11 +27,11 @@ public interface BillingHandlerImp {
 
     void acknowledge(@NonNull String purchaseToken,@NonNull BillingEasyListener listener);
 
-    void queryOrderAsync(@NonNull String type, @NonNull BillingEasyListener listener);
+    void queryOrderAsync(@ProductType @NonNull String type, @NonNull BillingEasyListener listener);
 
-    void queryOrderLocal(@NonNull String type,@NonNull BillingEasyListener listener);
+    void queryOrderLocal(@ProductType @NonNull String type,@NonNull BillingEasyListener listener);
 
-    void queryOrderHistory(@NonNull String type,@NonNull BillingEasyListener listener);
+    void queryOrderHistory(@ProductType @NonNull String type,@NonNull BillingEasyListener listener);
 
     void onActivityResult(int requestCode, int resultCode,@Nullable Intent data);
 

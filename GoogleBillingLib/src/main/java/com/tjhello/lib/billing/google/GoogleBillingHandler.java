@@ -152,14 +152,14 @@ public class GoogleBillingHandler extends BillingHandler {
     }
 
     @Override
-    public void queryOrderAsync(@NonNull String type,@NonNull BillingEasyListener listener) {
-        mBillingClient.queryPurchasesAsync(type,new MyPurchasesResponseListener(type,listener));
+    public void queryOrderAsync(@ProductType @NonNull String type,@NonNull BillingEasyListener listener) {
+        mBillingClient.queryPurchasesAsync(getProductType(type),new MyPurchasesResponseListener(type,listener));
 
     }
 
     @Override
-    public void queryOrderLocal(@NonNull String type,@NonNull BillingEasyListener listener) {
-        Purchase.PurchasesResult purchasesResult = mBillingClient.queryPurchases(type);
+    public void queryOrderLocal(@ProductType @NonNull String type,@NonNull BillingEasyListener listener) {
+        Purchase.PurchasesResult purchasesResult = mBillingClient.queryPurchases(getProductType(type));
         BillingResult billingResult = purchasesResult.getBillingResult();
         BillingEasyResult result = buildResult(billingResult);
         List<PurchaseInfo> tempList = toPurchaseInfo(purchasesResult.getPurchasesList());
@@ -168,8 +168,8 @@ public class GoogleBillingHandler extends BillingHandler {
     }
 
     @Override
-    public void queryOrderHistory(@NonNull String type,@NonNull BillingEasyListener listener) {
-        mBillingClient.queryPurchaseHistoryAsync(type,new MyPurchaseHistoryResponseListener(type,listener));
+    public void queryOrderHistory(@ProductType @NonNull String type,@NonNull BillingEasyListener listener) {
+        mBillingClient.queryPurchaseHistoryAsync(getProductType(type),new MyPurchaseHistoryResponseListener(type,listener));
     }
 
     @Override
@@ -377,6 +377,8 @@ public class GoogleBillingHandler extends BillingHandler {
             info.setType(find.getType());
         }
         info.setPriceMicros(skuDetails.getPriceAmountMicros());
+        info.setPriceAmountMicros(skuDetails.getPriceAmountMicros());
+        info.setPriceCurrencyCode(skuDetails.getPriceCurrencyCode());
         info.setTitle(skuDetails.getTitle());
         info.setDesc(skuDetails.getDescription());
 
@@ -446,6 +448,9 @@ public class GoogleBillingHandler extends BillingHandler {
             googleBillingPurchase.setQuantity(purchase.getQuantity());
             googleBillingPurchase.setSignature(purchase.getSignature());
             googleBillingPurchase.setSkus(purchase.getSkus());
+            googleBillingPurchase.setAutoRenewing(purchase.isAutoRenewing());
+            googleBillingPurchase.setAcknowledged(purchase.isAcknowledged());
+
             AccountIdentifiers accountIdentifiers = purchase.getAccountIdentifiers();
             if(accountIdentifiers!=null){
                 googleBillingPurchase.setObfuscatedAccountId(accountIdentifiers.getObfuscatedAccountId());
