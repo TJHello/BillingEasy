@@ -91,7 +91,7 @@ public class BillingManager implements BillingManagerImp {
 
     @Override
     public void queryProduct(@Nullable EasyCallBack<List<ProductInfo>> callBack) {
-        if(isInit.get()) {
+        if(!isInit.get()) {
             BillingEasyLog.e("请先初始化SDK");
             return;
         }
@@ -102,7 +102,7 @@ public class BillingManager implements BillingManagerImp {
 
     @Override
     public void queryProduct(String type, @Nullable EasyCallBack<List<ProductInfo>> callBack) {
-        if(isInit.get()) {
+        if(!isInit.get()) {
             BillingEasyLog.e("请先初始化SDK");
             return;
         }
@@ -115,7 +115,7 @@ public class BillingManager implements BillingManagerImp {
 
     @Override
     public void queryProduct(String type, @NonNull List<String> codeList, @Nullable EasyCallBack<List<ProductInfo>> callBack) {
-        if(isInit.get()) {
+        if(!isInit.get()) {
             BillingEasyLog.e("请先初始化SDK");
             return;
         }
@@ -126,7 +126,7 @@ public class BillingManager implements BillingManagerImp {
     }
 
     private static void queryProductAll(@Nullable EasyCallBack<List<ProductInfo>> callBack){
-        if(isInit.get()) {
+        if(!isInit.get()) {
             BillingEasyLog.e("请先初始化SDK");
             return;
         }
@@ -148,7 +148,7 @@ public class BillingManager implements BillingManagerImp {
 
     @Override
     public void purchase(@NonNull Activity activity, @NonNull PurchaseParam param) {
-        if(isInit.get()) {
+        if(!isInit.get()) {
             BillingEasyLog.e("请先初始化SDK");
             return;
         }
@@ -162,7 +162,7 @@ public class BillingManager implements BillingManagerImp {
 
     @Override
     public void consume(@NonNull String purchaseToken, @Nullable EasyCallBack<String> callBack) {
-        if(isInit.get()) {
+        if(!isInit.get()) {
             BillingEasyLog.e("请先初始化SDK");
             return;
         }
@@ -174,7 +174,7 @@ public class BillingManager implements BillingManagerImp {
 
     @Override
     public void acknowledge(@NonNull String purchaseToken, @Nullable EasyCallBack<String> callBack) {
-        if(isInit.get()) {
+        if(!isInit.get()) {
             BillingEasyLog.e("请先初始化SDK");
             return;
         }
@@ -186,7 +186,7 @@ public class BillingManager implements BillingManagerImp {
 
     @Override
     public void queryOrderAsync(@ProductType String type,@Nullable EasyCallBack<List<PurchaseInfo>> callBack) {
-        if(isInit.get()) {
+        if(!isInit.get()) {
             BillingEasyLog.e("请先初始化SDK");
             return;
         }
@@ -198,7 +198,7 @@ public class BillingManager implements BillingManagerImp {
 
     @Override
     public void queryOrderLocal(@ProductType String type,@Nullable EasyCallBack<List<PurchaseInfo>> callBack) {
-        if(isInit.get()) {
+        if(!isInit.get()) {
             BillingEasyLog.e("请先初始化SDK");
             return;
         }
@@ -210,7 +210,7 @@ public class BillingManager implements BillingManagerImp {
 
     @Override
     public void queryOrderHistory(@ProductType String type,@Nullable EasyCallBack<List<PurchaseHistoryInfo>> callBack) {
-        if(isInit.get()) {
+        if(!isInit.get()) {
             BillingEasyLog.e("请先初始化SDK");
             return;
         }
@@ -222,7 +222,7 @@ public class BillingManager implements BillingManagerImp {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        if(isInit.get()) {
+        if(!isInit.get()) {
             BillingEasyLog.e("请先初始化SDK");
             return;
         }
