@@ -7,6 +7,8 @@ import android.content.IntentSender;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.huawei.hmf.tasks.OnFailureListener;
+import com.huawei.hmf.tasks.OnSuccessListener;
 import com.huawei.hmf.tasks.Task;
 import com.huawei.hms.iap.Iap;
 import com.huawei.hms.iap.IapApiException;
@@ -15,6 +17,8 @@ import com.huawei.hms.iap.entity.ConsumeOwnedPurchaseReq;
 import com.huawei.hms.iap.entity.ConsumeOwnedPurchaseResult;
 import com.huawei.hms.iap.entity.InAppPurchaseData;
 import com.huawei.hms.iap.entity.IsEnvReadyResult;
+import com.huawei.hms.iap.entity.IsSandboxActivatedReq;
+import com.huawei.hms.iap.entity.IsSandboxActivatedResult;
 import com.huawei.hms.iap.entity.OrderStatusCode;
 import com.huawei.hms.iap.entity.OwnedPurchasesReq;
 import com.huawei.hms.iap.entity.OwnedPurchasesResult;
@@ -35,6 +39,7 @@ import com.tjhello.lib.billing.base.info.PurchaseHistoryInfo;
 import com.tjhello.lib.billing.base.info.PurchaseInfo;
 import com.tjhello.lib.billing.base.info.PurchaseParam;
 import com.tjhello.lib.billing.base.listener.BillingEasyListener;
+import com.tjhello.lib.billing.base.utils.BillingEasyLog;
 
 import org.json.JSONException;
 
@@ -75,7 +80,25 @@ public class HuaweiBillingHandler extends BillingHandler {
     public void onInit(@NonNull Activity activity) {
         if(mIapClient==null){
             mIapClient = Iap.getIapClient(activity);
+            isSandboxActivated();
         }
+    }
+
+    private void isSandboxActivated(){
+        IsSandboxActivatedReq req = new IsSandboxActivatedReq();
+        Task<IsSandboxActivatedResult> task = mIapClient.isSandboxActivated(req);
+        task.addOnSuccessListener(new OnSuccessListener<IsSandboxActivatedResult>() {
+            @Override
+            public void onSuccess(IsSandboxActivatedResult result) {
+                BillingEasyLog.i("检测沙盒模式:\n受支持的apk:"+result.getIsSandboxApk()+"\n受支持的用户:"+result.getIsSandboxUser()+"\n错误信息:"+result.getErrMsg());
+            }
+        });
+        task.addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(Exception e) {
+                BillingEasyLog.i("进入沙盒模式失败:"+e.getMessage());
+            }
+        });
     }
 
     private final AtomicBoolean isFistConnection = new AtomicBoolean(true);
@@ -87,22 +110,35 @@ public class HuaweiBillingHandler extends BillingHandler {
             Task<IsEnvReadyResult> task = mIapClient.isEnvReady();
             task.addOnSuccessListener(isEnvReadyResult -> {
                 isEnvReady = true;
-                listener.onConnection(BillingEasyResult.build(true,1,null,null));
+                BillingEasyResult result = BillingEasyResult.build(true,1,null,null);
+                listener.onConnection(result);
+                mBillingEasyListener.onConnection(result);
             });
             task.addOnFailureListener(e -> {
                 isEnvReady = false;
+                BillingEasyResult result ;
                 if (e instanceof IapApiException) {
                     IapApiException apiException = (IapApiException) e;
                     Status status = apiException.getStatus();
                     if (status.getStatusCode() == OrderStatusCode.ORDER_HWID_NOT_LOGIN) {
                         // 未登录帐号
-                        listener.onConnection(BillingEasyResult.build(false,status.getStatusCode(),"未登录帐号",e));
+                        result = BillingEasyResult.build(false,status.getStatusCode(),"未登录帐号",e);
+                        listener.onConnection(result);
+                        mBillingEasyListener.onConnection(result);
                     } else if (status.getStatusCode() == OrderStatusCode.ORDER_ACCOUNT_AREA_NOT_SUPPORTED) {
                         // 用户当前登录的华为帐号所在的服务地不在华为IAP支持结算的国家/地区中
-                        listener.onConnection(BillingEasyResult.build(false,status.getStatusCode(),"华为帐号所在地区不支持华为IAP",e));
+                        result = BillingEasyResult.build(false,status.getStatusCode(),"华为帐号所在地区不支持华为IAP",e);
+                        listener.onConnection(result);
+                        mBillingEasyListener.onConnection(result);
                     }else{
-                        listener.onConnection(BillingEasyResult.build(false,status.getStatusCode(),"其他外部错误",e));
+                        result = BillingEasyResult.build(false,status.getStatusCode(),"其他外部错误",e);
+                        listener.onConnection(result);
+                        mBillingEasyListener.onConnection(result);
                     }
+                }else {
+                    result = BillingEasyResult.build(false,-9999,"未知错误",e);
+                    listener.onConnection(result);
+                    mBillingEasyListener.onConnection(result);
                 }
             });
         }
@@ -424,6 +460,7 @@ public class HuaweiBillingHandler extends BillingHandler {
         huaweiProductInfo.setSubGroupTitle(skuDetails.getSubGroupTitle());
         huaweiProductInfo.setSubProductLevel(skuDetails.getSubProductLevel());
         huaweiProductInfo.setStatus(skuDetails.getStatus());
+        info.setHuaweiProductInfo(huaweiProductInfo);
         info.setBaseObj(skuDetails);
         return info;
     }

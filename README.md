@@ -20,8 +20,14 @@
 
 allprojects {
      repositories {
-         maven { url 'https://tjhello.gitee.io/publiclib/'}
          maven {url 'https://developer.huawei.com/repo/'}//华为用到
+         maven {
+             credentials {
+                 username '63eccc7ed1660910428ca696'
+                 password 'Te8Fh9dpLQme'
+             }
+             url 'https://packages.aliyun.com/maven/repository/2331792-release-aOp3og/'
+         }
      }
 }
 
@@ -42,10 +48,12 @@ android{
 dependencies {
 
     //测试版
-    implementation 'com.TJHello.easy:BillingEasy:2.0.3-t03'//BillingEasy
-    implementation 'com.TJHello.publicLib.billing:google:4.0.0.203-t02'//Google内购(按需添加)
-    implementation 'com.TJHello.publicLib.billing:google:5.0.0.203-t02'//Google内购(按需添加)
-    implementation 'com.TJHello.publicLib.billing:huawei:5.1.0.300.203-t02'//Huawei内购(按需添加)
+    implementation 'com.TJHello.easy:BillingEasy:2.0.3-t06'//BillingEasy
+    implementation 'com.TJHello.publicLib.billing:google:4.0.0.203-t03'//Google内购(按需添加)
+    implementation 'com.TJHello.publicLib.billing:google:5.0.0.203-t03'//Google内购(按需添加)
+    //谷歌和华为适配器不可同时接入
+    //接入华为支付需要先接入HMS，详情看官方接入文档(https://developer.huawei.com/consumer/cn/doc/development/HMSCore-Guides/dev-process-0000001050033070)
+    implementation 'com.TJHello.publicLib.billing:huawei:5.1.0.300.203-t07'//Huawei内购(按需添加)
 }
 
 ```
@@ -201,6 +209,12 @@ BillingEasy.acknowledge("purchaseToken");
 
 
 - ### 更新日志
+2.0.3-t06 2023/01/05 【测试版】
+```
+1、修复华为支付的若干问题
+2、更换仓库地址
+```
+
 2.0.3-t03 2023/01/05 【测试版】
 ```
 1、增加未初始化的情况的判断，避免在极端情况下的空指针问题

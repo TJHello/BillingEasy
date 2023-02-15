@@ -41,7 +41,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class BillingManager implements BillingManagerImp {
 
     private static final MyBillingEasyListener mBillingEasyListener = new MyBillingEasyListener();
-    private static final BillingHandler billingHandler = BillingHandler.createBillingHandler(mBillingEasyListener);
+    private static BillingHandler billingHandler = null;
     private static final CopyOnWriteArrayList<BillingEasyListener> publicListenerList = new CopyOnWriteArrayList<>();
 
     private static final CopyOnWriteArrayList<EasyCallBack<List<PurchaseInfo>>> purchaseEasyCallBackList = new CopyOnWriteArrayList<>();
@@ -57,11 +57,19 @@ public class BillingManager implements BillingManagerImp {
     @Override
     public void init(@NonNull Activity activity,@Nullable EasyCallBack<Boolean> callBack) {
         if(!isInit.getAndSet(true)){
-            billingHandler.setProductConfigList(productConfigList);
+            getHandler().setProductConfigList(productConfigList);
             BillingEasyLog.setVersionName(BuildConfig.VERSION_NAME);
             billingHandler.onInit(activity);
             billingHandler.connection(new ConnectionBillingEasyListener(callBack));
         }
+    }
+
+    private BillingHandler getHandler(){
+        if(billingHandler==null)
+        {
+            billingHandler = BillingHandler.createBillingHandler(mBillingEasyListener);
+        }
+        return billingHandler;
     }
 
     @Override
@@ -75,13 +83,13 @@ public class BillingManager implements BillingManagerImp {
             }
         }
         productConfigList.add(productConfig);
-        billingHandler.addProductConfigList(productConfig);
+        getHandler().addProductConfigList(productConfig);
     }
 
     @Override
     public void cleanProductConfig() {
         productConfigList.clear();
-        billingHandler.cleanProductConfigList();
+        getHandler().cleanProductConfigList();
     }
 
     @Override

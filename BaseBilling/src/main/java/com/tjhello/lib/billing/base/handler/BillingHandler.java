@@ -36,8 +36,8 @@ public abstract class BillingHandler implements BillingHandlerImp {
             if(handler!=null){
                 return handler;
             }
-        }else if(containsClass("com.eyewind.lib.billing.huawei.HuaweiBillingHandler")){
-            BillingHandler handler = callConstructor("com.eyewind.lib.billing.huawei.HuaweiBillingHandler",mBillingEasyListener);
+        }else if(containsClass("com.tjhello.lib.billing.huawei.HuaweiBillingHandler")){
+            BillingHandler handler = callConstructor("com.tjhello.lib.billing.huawei.HuaweiBillingHandler",mBillingEasyListener);
             if(handler!=null){
                 return handler;
             }

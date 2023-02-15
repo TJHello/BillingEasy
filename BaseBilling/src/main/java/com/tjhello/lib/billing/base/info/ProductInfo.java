@@ -390,12 +390,22 @@ public class ProductInfo {
         this.json = json;
     }
 
+    @Nullable
     public GoogleSkuDetails getGoogleSkuDetails() {
         return googleSkuDetails;
     }
 
-    public void setGoogleSkuDetails(GoogleSkuDetails googleSkuDetails) {
+    public void setGoogleSkuDetails(@Nullable GoogleSkuDetails googleSkuDetails) {
         this.googleSkuDetails = googleSkuDetails;
+    }
+
+    @Nullable
+    public HuaweiProductInfo getHuaweiProductInfo() {
+        return huaweiProductInfo;
+    }
+
+    public void setHuaweiProductInfo(@Nullable HuaweiProductInfo huaweiProductInfo) {
+        this.huaweiProductInfo = huaweiProductInfo;
     }
 
     @Nullable
