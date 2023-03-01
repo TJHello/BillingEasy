@@ -559,7 +559,6 @@ public class GoogleBillingHandler extends BillingHandler {
         googleSkuDetails.setSku(skuDetails.getSku());
         googleSkuDetails.setSubscriptionPeriod(skuDetails.getSubscriptionPeriod());
         googleSkuDetails.setTitle(skuDetails.getTitle());
-        googleSkuDetails.setTitle(skuDetails.getType());
         info.setGoogleSkuDetails(googleSkuDetails);
         info.setJson(skuDetails.getOriginalJson());
         info.setBaseObj(skuDetails);
