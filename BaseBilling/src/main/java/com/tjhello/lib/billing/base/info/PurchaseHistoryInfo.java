@@ -104,7 +104,7 @@ public class PurchaseHistoryInfo {
     }
 
     public static class HuaweiBillingPurchaseHistory{
-        private long applicationId ;
+        private String applicationId ;
         private boolean isAutoRenewing ;
         private String orderId ;
         private String packageName ;
@@ -168,7 +168,7 @@ public class PurchaseHistoryInfo {
             return trialFlag;
         }
 
-        public long getApplicationId() {
+        public String getApplicationId() {
             return applicationId;
         }
 
@@ -232,7 +232,7 @@ public class PurchaseHistoryInfo {
             this.currency = currency;
         }
 
-        public void setApplicationId(long applicationId) {
+        public void setApplicationId(String applicationId) {
             this.applicationId = applicationId;
         }
 

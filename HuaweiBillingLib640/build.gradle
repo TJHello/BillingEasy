@@ -3,8 +3,8 @@ plugins {
     id 'maven-publish'
 }
 
-ext.verName = "5.1.0.300.203-t09"
-ext.verCode = 510300203
+ext.verName = "6.4.0.301.203-t02"
+ext.verCode = 640301203
 ext.GROUP_ID = 'com.TJHello.publicLib.billing'
 ext.POM_ARTIFACT_ID = 'huawei'
 
@@ -44,7 +44,7 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
 
 
-    implementation 'com.huawei.hms:iap:5.1.0.300'
+    implementation 'com.huawei.hms:iap:6.4.0.301'
     implementation project(':BaseBilling')
 }
 

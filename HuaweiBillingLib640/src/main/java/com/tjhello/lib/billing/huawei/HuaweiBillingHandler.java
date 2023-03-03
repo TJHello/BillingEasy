@@ -93,10 +93,12 @@ public class HuaweiBillingHandler extends BillingHandler {
         return ProductConfig.build(ProductType.TYPE_INAPP_CONSUMABLE,productCode);
     }
 
+
     @Override
     public void onInit(@NonNull Activity activity) {
         if(mIapClient==null){
             mIapClient = Iap.getIapClient(activity);
+            mIapClient.enablePendingPurchase();
             isSandboxActivated();
         }
     }
@@ -171,8 +173,8 @@ public class HuaweiBillingHandler extends BillingHandler {
             for (ProductInfo productInfo : productInfoList) {
                 productInfoMap.put(productInfo.getCode(),productInfo);
             }
-            listener.onQueryProduct(easyResult,productInfoList);
-            mBillingEasyListener.onQueryProduct(easyResult,productInfoList);
+            listener.onQueryProduct(easyResult,type,productInfoList);
+            mBillingEasyListener.onQueryProduct(easyResult,type,productInfoList);
         });
         task.addOnFailureListener(e -> {
             BillingEasyResult easyResult = createResultFailure(e);
@@ -331,7 +333,6 @@ public class HuaweiBillingHandler extends BillingHandler {
         for (String data : list) {
             try {
                 InAppPurchaseData inAppPurchaseData = new InAppPurchaseData(data);
-                int state = inAppPurchaseData.getPurchaseState();
 
                 PurchaseHistoryInfo info = new PurchaseHistoryInfo();
                 info.setPurchaseToken(inAppPurchaseData.getPurchaseToken());
@@ -344,7 +345,7 @@ public class HuaweiBillingHandler extends BillingHandler {
 
                 PurchaseHistoryInfo.HuaweiBillingPurchaseHistory huaweiBillingPurchaseHistory = new PurchaseHistoryInfo.HuaweiBillingPurchaseHistory();
 
-                huaweiBillingPurchaseHistory.setApplicationId(""+inAppPurchaseData.getApplicationId());
+                huaweiBillingPurchaseHistory.setApplicationId(inAppPurchaseData.getApplicationId());
                 huaweiBillingPurchaseHistory.setAutoRenewing(inAppPurchaseData.isAutoRenewing());
                 huaweiBillingPurchaseHistory.setOrderId(inAppPurchaseData.getOrderID());
                 huaweiBillingPurchaseHistory.setPackageName(inAppPurchaseData.getPackageName());
@@ -402,8 +403,7 @@ public class HuaweiBillingHandler extends BillingHandler {
             info.setValid(state== InAppPurchaseData.PurchaseState.PURCHASED);
             info.setPurchaseTime(inAppPurchaseData.getPurchaseTime());
 
-            ProductConfig productConfig = getProductConfig(""+inAppPurchaseData.getPurchaseType(),
-                    inAppPurchaseData.getProductId());
+            ProductConfig productConfig = getProductConfig(""+inAppPurchaseData.getPurchaseType(),inAppPurchaseData.getProductId());
             info.addProduct(productConfig);
             if(productInfoMap.containsKey(productConfig.getCode())){
                 ProductInfo productInfo = productInfoMap.get(productConfig.getCode());
@@ -411,9 +411,10 @@ public class HuaweiBillingHandler extends BillingHandler {
                     info.putProductInfo(productConfig.getCode(),productInfo);
                 }
             }
+
             PurchaseInfo.HuaweiBillingPurchase huaweiBillingPurchase = new PurchaseInfo.HuaweiBillingPurchase();
 
-            huaweiBillingPurchase.setApplicationId(""+inAppPurchaseData.getApplicationId());
+            huaweiBillingPurchase.setApplicationId(inAppPurchaseData.getApplicationId());
             huaweiBillingPurchase.setAutoRenewing(inAppPurchaseData.isAutoRenewing());
             huaweiBillingPurchase.setOrderId(inAppPurchaseData.getOrderID());
             huaweiBillingPurchase.setPackageName(inAppPurchaseData.getPackageName());

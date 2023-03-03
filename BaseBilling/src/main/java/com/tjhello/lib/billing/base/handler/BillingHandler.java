@@ -85,7 +85,6 @@ public abstract class BillingHandler implements BillingHandlerImp {
         productConfigList.clear();
     }
 
-
     @Nullable
     protected static ProductConfig findProductInfo(@NonNull String productCode){
         for (ProductConfig config : productConfigList) {
@@ -99,6 +98,8 @@ public abstract class BillingHandler implements BillingHandlerImp {
     @NonNull
     public abstract String getProductType(@ProductType String type);
 
+    @NonNull
+    public abstract ProductConfig getProductConfig(@NonNull String productCode,String type);
 
     private static boolean containsClass(@NonNull String className){
         if(className.isEmpty()) return false;
