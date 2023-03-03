@@ -43,6 +43,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * BillingEasy
@@ -523,6 +524,16 @@ public class GoogleBillingHandler extends BillingHandler {
             case ProductType.TYPE_INAPP_NON_CONSUMABLE:
                 return BillingClient.SkuType.INAPP;
             default:return BillingClient.SkuType.SUBS;
+        }
+    }
+
+    @NonNull
+    @Override
+    public ProductConfig getProductConfig(@NonNull String productCode, String type) {
+        if(Objects.equals(type, BillingClient.SkuType.INAPP)){
+            return ProductConfig.build(ProductType.TYPE_INAPP_CONSUMABLE,productCode);
+        }else{
+            return ProductConfig.build(ProductType.TYPE_SUBS,productCode);
         }
     }
 
