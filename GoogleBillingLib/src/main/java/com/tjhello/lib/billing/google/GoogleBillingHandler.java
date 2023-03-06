@@ -318,13 +318,13 @@ public class GoogleBillingHandler extends BillingHandler {
         public void onPurchaseHistoryResponse(@NonNull BillingResult billingResult, @Nullable List<PurchaseHistoryRecord> list) {
             runMainThread(() -> {
                 BillingEasyResult result = buildResult(billingResult);
-                List<PurchaseHistoryInfo> tempList = toPurchaseHistoryInfo(list);
+                List<PurchaseHistoryInfo> tempList = toPurchaseHistoryInfo(type,list);
                 listener.onQueryOrderHistory(result,type, tempList);
                 mBillingEasyListener.onQueryOrderHistory(result,type, tempList);
             });
         }
 
-        private List<PurchaseHistoryInfo> toPurchaseHistoryInfo(@Nullable List<PurchaseHistoryRecord> list){
+        private List<PurchaseHistoryInfo> toPurchaseHistoryInfo(String type,@Nullable List<PurchaseHistoryRecord> list){
             if(list==null||list.isEmpty()) return new ArrayList<>();
             List<PurchaseHistoryInfo> infoList = new ArrayList<>();
             for(int i=0;i<list.size();i++) {
@@ -335,10 +335,8 @@ public class GoogleBillingHandler extends BillingHandler {
                 info.setBaseObj(purchase);
 
                 for (String sku : purchase.getSkus()) {
-                    ProductConfig productConfig = findProductInfo(sku);
-                    if(productConfig!=null){
-                        info.addProduct(productConfig);
-                    }
+                    ProductConfig productConfig = getProductConfig(type,sku);
+                    info.addProduct(productConfig);
                 }
 
 
@@ -358,7 +356,7 @@ public class GoogleBillingHandler extends BillingHandler {
         }
     }
 
-    private static List<ProductInfo> toProductInfo(@Nullable List<SkuDetails> list){
+    private List<ProductInfo> toProductInfo(@Nullable List<SkuDetails> list){
         if(list==null||list.isEmpty()) return new ArrayList<>();
         List<ProductInfo> infoList = new ArrayList<>();
         for(int i=0;i<list.size();i++){
@@ -369,14 +367,12 @@ public class GoogleBillingHandler extends BillingHandler {
         return infoList;
     }
 
-    private static ProductInfo toProductInfo(SkuDetails skuDetails){
+    private ProductInfo toProductInfo(SkuDetails skuDetails){
         ProductInfo info = new ProductInfo();
         info.setCode(skuDetails.getSku());
         info.setPrice(skuDetails.getPrice());
-        ProductConfig find = findProductInfo(skuDetails.getSku());
-        if(find!=null){
-            info.setType(find.getType());
-        }
+        ProductConfig find = addProductConfig(skuDetails.getType(),skuDetails.getSku());
+        info.setType(find.getType());
         info.setPriceMicros(skuDetails.getPriceAmountMicros());
         info.setPriceAmountMicros(skuDetails.getPriceAmountMicros());
         info.setPriceCurrencyCode(skuDetails.getPriceCurrencyCode());
@@ -407,26 +403,25 @@ public class GoogleBillingHandler extends BillingHandler {
         return info;
     }
 
-    private static List<PurchaseInfo> toPurchaseInfo(@Nullable List<Purchase> list){
+    private List<PurchaseInfo> toPurchaseInfo(@Nullable List<Purchase> list){
         if(list==null||list.isEmpty()) return new ArrayList<>();
         List<PurchaseInfo> infoList = new ArrayList<>();
         for(int i=0;i<list.size();i++){
             Purchase purchase = list.get(i);
             PurchaseInfo info = new PurchaseInfo();
-
             for (String sku : purchase.getSkus()) {
-                ProductConfig productConfig = findProductInfo(sku);
-                if(productConfig!=null){
-                    info.addProduct(productConfig);
-                }else{
-                    BillingEasyLog.e("未找到该商品配置，请检查:"+sku);
-                }
                 if(skuDetailsMap.containsKey(sku)){
                     SkuDetails skuDetails = skuDetailsMap.get(sku);
                     if(skuDetails!=null){
                         ProductInfo productInfo = toProductInfo(skuDetails);
                         info.putProductInfo(sku,productInfo);
                     }
+                }
+                ProductConfig productConfig = findProductInfo(sku);
+                if(productConfig!=null){
+                    info.addProduct(productConfig);
+                }else{
+                    BillingEasyLog.e("未找到该商品配置，请检查:"+sku);
                 }
             }
             info.setPurchaseTime(purchase.getPurchaseTime());
@@ -527,13 +522,12 @@ public class GoogleBillingHandler extends BillingHandler {
         }
     }
 
-    @NonNull
     @Override
-    public ProductConfig getProductConfig(@NonNull String productCode, String type) {
-        if(Objects.equals(type, BillingClient.SkuType.INAPP)){
-            return ProductConfig.build(ProductType.TYPE_INAPP_CONSUMABLE,productCode);
+    public String getTJProductType(String type) {
+        if(Objects.equals(type, ProductType.TYPE_INAPP_CONSUMABLE)){
+            return ProductType.TYPE_INAPP_CONSUMABLE;
         }else{
-            return ProductConfig.build(ProductType.TYPE_SUBS,productCode);
+            return ProductType.TYPE_SUBS;
         }
     }
 

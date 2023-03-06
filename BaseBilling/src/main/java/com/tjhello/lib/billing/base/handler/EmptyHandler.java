@@ -40,12 +40,10 @@ public class EmptyHandler extends  BillingHandler {
         return "";
     }
 
-    @NonNull
     @Override
-    public ProductConfig getProductConfig(@NonNull String productCode, String type) {
+    public String getTJProductType(String type) {
         return null;
     }
-
 
     @Override
     public void onInit(@NonNull Activity activity) {

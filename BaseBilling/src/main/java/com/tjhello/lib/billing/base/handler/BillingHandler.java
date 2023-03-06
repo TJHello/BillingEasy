@@ -95,11 +95,30 @@ public abstract class BillingHandler implements BillingHandlerImp {
         return null;
     }
 
+    protected ProductConfig addProductConfig(@ProductType String type,@NonNull String code){
+        String tjType = getTJProductType(type);
+        int size = productConfigList.size();
+        for(int i=size-1;i>=0;i--){
+            ProductConfig config = productConfigList.get(i);
+            if(config.getCode().equals(code)){
+                config.setType(tjType);
+                return config;
+            }
+        }
+        ProductConfig config = ProductConfig.build(tjType,code);
+        productConfigList.add(config);
+        return config;
+    }
+
     @NonNull
     public abstract String getProductType(@ProductType String type);
 
+    public abstract String getTJProductType(String type);
+
     @NonNull
-    public abstract ProductConfig getProductConfig(@NonNull String productCode,String type);
+    public ProductConfig getProductConfig(String type,String productCode){
+        return addProductConfig(type,productCode);
+    }
 
     private static boolean containsClass(@NonNull String className){
         if(className.isEmpty()) return false;

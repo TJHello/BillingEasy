@@ -357,13 +357,13 @@ public class GoogleBillingHandler extends BillingHandler {
         public void onPurchaseHistoryResponse(@NonNull BillingResult billingResult, @Nullable List<PurchaseHistoryRecord> list) {
             runMainThread(() -> {
                 BillingEasyResult result = buildResult(billingResult);
-                List<PurchaseHistoryInfo> tempList = toPurchaseHistoryInfo(list);
+                List<PurchaseHistoryInfo> tempList = toPurchaseHistoryInfo(type,list);
                 listener.onQueryOrderHistory(result,type, tempList);
                 mBillingEasyListener.onQueryOrderHistory(result,type, tempList);
             });
         }
 
-        private List<PurchaseHistoryInfo> toPurchaseHistoryInfo(@Nullable List<PurchaseHistoryRecord> list){
+        private List<PurchaseHistoryInfo> toPurchaseHistoryInfo(String type,@Nullable List<PurchaseHistoryRecord> list){
             if(list==null||list.isEmpty()) return new ArrayList<>();
             List<PurchaseHistoryInfo> infoList = new ArrayList<>();
             for(int i=0;i<list.size();i++) {
@@ -374,7 +374,7 @@ public class GoogleBillingHandler extends BillingHandler {
                 info.setBaseObj(purchase);
 
                 for (String sku : purchase.getSkus()) {
-                    ProductConfig productConfig = findProductInfo(sku);
+                    ProductConfig productConfig = addProductConfig(type,sku);
                     if(productConfig!=null){
                         info.addProduct(productConfig);
                     }
@@ -397,7 +397,7 @@ public class GoogleBillingHandler extends BillingHandler {
         }
     }
 
-    private static List<ProductInfo> toProductInfo(@Nullable List<ProductDetails> list){
+    private List<ProductInfo> toProductInfo(@Nullable List<ProductDetails> list){
         if(list==null||list.isEmpty()) return new ArrayList<>();
         List<ProductInfo> infoList = new ArrayList<>();
         for(int i=0;i<list.size();i++){
@@ -408,7 +408,7 @@ public class GoogleBillingHandler extends BillingHandler {
         return infoList;
     }
 
-    private static ProductInfo toProductInfo(ProductDetails productDetails){
+    private ProductInfo toProductInfo(ProductDetails productDetails){
         ProductInfo info = new ProductInfo();
         info.setCode(productDetails.getProductId());
         ProductDetails.OneTimePurchaseOfferDetails purchaseOfferDetails = productDetails.getOneTimePurchaseOfferDetails();
@@ -437,7 +437,7 @@ public class GoogleBillingHandler extends BillingHandler {
         info.setTitle(productDetails.getTitle());
         info.setDesc(productDetails.getDescription());
 
-        ProductConfig find = findProductInfo(productDetails.getProductId());
+        ProductConfig find = addProductConfig(productDetails.getProductType(),productDetails.getProductId());
         if(find!=null){
             info.setType(find.getType());
         }
@@ -458,7 +458,7 @@ public class GoogleBillingHandler extends BillingHandler {
         return info;
     }
 
-    private static List<PurchaseInfo> toPurchaseInfo(@Nullable List<Purchase> list){
+    private List<PurchaseInfo> toPurchaseInfo(@Nullable List<Purchase> list){
         if(list==null||list.isEmpty()) return new ArrayList<>();
         List<PurchaseInfo> infoList = new ArrayList<>();
         for(int i=0;i<list.size();i++){
@@ -517,7 +517,7 @@ public class GoogleBillingHandler extends BillingHandler {
         return infoList;
     }
 
-    private static List<ProductInfo> toProductInfoOld(@Nullable List<SkuDetails> list){
+    private List<ProductInfo> toProductInfoOld(@Nullable List<SkuDetails> list){
         if(list==null||list.isEmpty()) return new ArrayList<>();
         List<ProductInfo> infoList = new ArrayList<>();
         for(int i=0;i<list.size();i++){
@@ -528,11 +528,11 @@ public class GoogleBillingHandler extends BillingHandler {
         return infoList;
     }
 
-    private static ProductInfo toProductInfoOld(SkuDetails skuDetails){
+    private  ProductInfo toProductInfoOld(SkuDetails skuDetails){
         ProductInfo info = new ProductInfo();
         info.setCode(skuDetails.getSku());
         info.setPrice(skuDetails.getPrice());
-        ProductConfig find = findProductInfo(skuDetails.getSku());
+        ProductConfig find = addProductConfig(skuDetails.getType(),skuDetails.getSku());
         if(find!=null){
             info.setType(find.getType());
         }
@@ -626,6 +626,15 @@ public class GoogleBillingHandler extends BillingHandler {
             case ProductType.TYPE_INAPP_NON_CONSUMABLE:
                 return BillingClient.ProductType.INAPP;
             default:return BillingClient.ProductType.SUBS;
+        }
+    }
+
+    @Override
+    public String getTJProductType(String type) {
+        if(Objects.equals(type, BillingClient.ProductType.INAPP)){
+            return ProductType.TYPE_INAPP_CONSUMABLE;
+        }else{
+            return ProductType.TYPE_SUBS;
         }
     }
 

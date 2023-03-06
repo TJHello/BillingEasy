@@ -76,22 +76,20 @@ public class HuaweiBillingHandler extends BillingHandler {
         }
     }
 
-    @NonNull
     @Override
-    public ProductConfig getProductConfig(@NonNull String productCode, String type) {
-        switch (type){
-            case ""+IapClient.PriceType.IN_APP_CONSUMABLE:{
-                return ProductConfig.build(ProductType.TYPE_INAPP_CONSUMABLE,productCode);
-            }
-            case ""+IapClient.PriceType.IN_APP_NONCONSUMABLE:{
-                return ProductConfig.build(ProductType.TYPE_INAPP_NON_CONSUMABLE,productCode);
-            }
-            case ""+IapClient.PriceType.IN_APP_SUBSCRIPTION:{
-                return ProductConfig.build(ProductType.TYPE_SUBS,productCode);
-            }
+    public String getTJProductType(String type) {
+        switch (type) {
+            case "" + IapClient.PriceType.IN_APP_CONSUMABLE:
+                return ProductType.TYPE_INAPP_CONSUMABLE;
+            case "" + IapClient.PriceType.IN_APP_NONCONSUMABLE:
+                return ProductType.TYPE_INAPP_NON_CONSUMABLE;
+            case "" + IapClient.PriceType.IN_APP_SUBSCRIPTION:
+                return ProductType.TYPE_SUBS;
         }
-        return ProductConfig.build(ProductType.TYPE_INAPP_CONSUMABLE,productCode);
+        return ProductType.TYPE_INAPP_CONSUMABLE;
     }
+
+
 
     @Override
     public void onInit(@NonNull Activity activity) {
@@ -167,7 +165,7 @@ public class HuaweiBillingHandler extends BillingHandler {
         Task<ProductInfoResult> task = mIapClient.obtainProductInfo(createProductInfoReq(Integer.parseInt(type),productCodeList));
         task.addOnSuccessListener((result)->{
             BillingEasyResult easyResult = createResultSuccess(result);
-            List<ProductInfo> productInfoList = toProductInfo(result.getProductInfoList());
+            List<ProductInfo> productInfoList = toProductInfo(type,result.getProductInfoList());
             for (ProductInfo productInfo : productInfoList) {
                 productInfoMap.put(productInfo.getCode(),productInfo);
             }
@@ -314,12 +312,12 @@ public class HuaweiBillingHandler extends BillingHandler {
         return BillingName.HUAWEI;
     }
 
-    private static List<ProductInfo> toProductInfo(@Nullable List<com.huawei.hms.iap.entity.ProductInfo> list){
+    private List<ProductInfo> toProductInfo(String type,@Nullable List<com.huawei.hms.iap.entity.ProductInfo> list){
         if(list==null||list.isEmpty()) return new ArrayList<>();
         List<ProductInfo> infoList = new ArrayList<>();
         for(int i=0;i<list.size();i++){
             com.huawei.hms.iap.entity.ProductInfo skuDetails = list.get(i);
-            ProductInfo info = toProductInfo(skuDetails);
+            ProductInfo info = toProductInfo(type,skuDetails);
             infoList.add(info);
         }
         return infoList;
@@ -441,7 +439,7 @@ public class HuaweiBillingHandler extends BillingHandler {
     }
 
 
-    private static ProductInfo toProductInfo(com.huawei.hms.iap.entity.ProductInfo skuDetails){
+    private ProductInfo toProductInfo(String type,com.huawei.hms.iap.entity.ProductInfo skuDetails){
         ProductInfo info = new ProductInfo();
         info.setCode(skuDetails.getProductId());
         info.setPrice(skuDetails.getPrice());
@@ -450,10 +448,8 @@ public class HuaweiBillingHandler extends BillingHandler {
         info.setPriceCurrencyCode(skuDetails.getCurrency());
         info.setTitle(skuDetails.getProductName());
         info.setDesc(skuDetails.getProductDesc());
-        ProductConfig find = findProductInfo(skuDetails.getProductId());
-        if(find!=null){
-            info.setType(find.getType());
-        }
+        ProductConfig find = addProductConfig(type,skuDetails.getProductId());
+        info.setType(find.getType());
         ProductInfo.HuaweiProductInfo huaweiProductInfo = new ProductInfo.HuaweiProductInfo();
         huaweiProductInfo.setProductId(skuDetails.getProductId());
         huaweiProductInfo.setPriceType(skuDetails.getPriceType());

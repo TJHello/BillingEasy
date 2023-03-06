@@ -40,7 +40,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  */
 public class BillingManager implements BillingManagerImp {
 
-    private static final MyBillingEasyListener mBillingEasyListener = new MyBillingEasyListener();
+    private final MyBillingEasyListener mBillingEasyListener = new MyBillingEasyListener();
     private static BillingHandler billingHandler = null;
     private static final CopyOnWriteArrayList<BillingEasyListener> publicListenerList = new CopyOnWriteArrayList<>();
 
@@ -78,7 +78,6 @@ public class BillingManager implements BillingManagerImp {
         for(int i=size-1;i>=0;i--){
             ProductConfig config = productConfigList.get(i);
             if(config.getCode().equals(productConfig.getCode())){
-                BillingEasyLog.e("请勿重复添加商品配置:"+config.getCode());
                 return ;
             }
         }
@@ -271,7 +270,7 @@ public class BillingManager implements BillingManagerImp {
         }
 
         @Override
-        public void onQueryProduct(@NonNull BillingEasyResult result, @NonNull List<ProductInfo> productInfoList) {
+        public void onQueryProduct(@NonNull BillingEasyResult result, String type, @NonNull List<ProductInfo> productInfoList) {
             if(productCallback==null) return;
             productCallback.callback(result,productInfoList);
         }
