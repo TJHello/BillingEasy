@@ -77,12 +77,24 @@ public abstract class BillingHandler implements BillingHandlerImp {
         productConfigList.addAll(list);
     }
 
-    public void addProductConfigList(ProductConfig config){
-        productConfigList.add(config);
+    public void addProductConfig(ProductConfig productConfig){
+        int size = productConfigList.size();
+        for(int i=size-1;i>=0;i--){
+            ProductConfig tempConfig = productConfigList.get(i);
+            if(tempConfig.getCode().equals(productConfig.getCode())){
+                tempConfig.setType(productConfig.getType());
+                return ;
+            }
+        }
+        productConfigList.add(productConfig);
     }
 
-    public void cleanProductConfigList(){
+    public void cleanProductConfig(){
         productConfigList.clear();
+    }
+
+    public List<ProductConfig> getProductList(){
+        return productConfigList;
     }
 
     @Nullable

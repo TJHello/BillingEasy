@@ -183,8 +183,10 @@ public class HuaweiBillingHandler extends BillingHandler {
     private ProductInfoReq createProductInfoReq(int type, List<String> ids){
         ProductInfoReq productInfoReq = new ProductInfoReq();
         productInfoReq.setPriceType(type);
-        List<String> productIds = new ArrayList<>(ids);
-        productInfoReq.setProductIds(productIds);
+        if(!ids.isEmpty()){
+            List<String> productIds = new ArrayList<>(ids);
+            productInfoReq.setProductIds(productIds);
+        }
         return productInfoReq;
     }
 

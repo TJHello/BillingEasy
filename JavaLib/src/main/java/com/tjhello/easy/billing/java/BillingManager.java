@@ -45,7 +45,6 @@ public class BillingManager implements BillingManagerImp {
     private static final CopyOnWriteArrayList<BillingEasyListener> publicListenerList = new CopyOnWriteArrayList<>();
 
     private static final CopyOnWriteArrayList<EasyCallBack<List<PurchaseInfo>>> purchaseEasyCallBackList = new CopyOnWriteArrayList<>();
-    private static final CopyOnWriteArrayList<ProductConfig> productConfigList = new CopyOnWriteArrayList<>();
 
     private static final AtomicBoolean isInit = new AtomicBoolean(false);
 
@@ -57,9 +56,8 @@ public class BillingManager implements BillingManagerImp {
     @Override
     public void init(@NonNull Activity activity,@Nullable EasyCallBack<Boolean> callBack) {
         if(!isInit.getAndSet(true)){
-            getHandler().setProductConfigList(productConfigList);
             BillingEasyLog.setVersionName(BuildConfig.VERSION_NAME);
-            billingHandler.onInit(activity);
+            getHandler().onInit(activity);
             billingHandler.connection(new ConnectionBillingEasyListener(callBack));
         }
     }
@@ -74,21 +72,13 @@ public class BillingManager implements BillingManagerImp {
 
     @Override
     public void addProductConfig(@NonNull ProductConfig productConfig) {
-        int size = productConfigList.size();
-        for(int i=size-1;i>=0;i--){
-            ProductConfig config = productConfigList.get(i);
-            if(config.getCode().equals(productConfig.getCode())){
-                return ;
-            }
-        }
-        productConfigList.add(productConfig);
-        getHandler().addProductConfigList(productConfig);
+        BillingEasyLog.e("[addProductConfig]:code="+productConfig.getCode()+",type="+productConfig.getType());
+        getHandler().addProductConfig(productConfig);
     }
 
     @Override
     public void cleanProductConfig() {
-        productConfigList.clear();
-        getHandler().cleanProductConfigList();
+        getHandler().cleanProductConfig();
     }
 
     @Override
@@ -253,7 +243,7 @@ public class BillingManager implements BillingManagerImp {
 
     private static List<String> getProductCodeList(@ProductType String type){
         List<String> list = new ArrayList<>();
-        for (ProductConfig productConfig : productConfigList) {
+        for (ProductConfig productConfig : billingHandler.getProductList()) {
             if(productConfig.getType().equals(type)){
                 list.add(productConfig.getCode());
             }
@@ -474,6 +464,7 @@ public class BillingManager implements BillingManagerImp {
 
     @Nullable
     public static ProductConfig findProductConfig(@NonNull String productCode){
+        List<ProductConfig> productConfigList = billingHandler.getProductList();
         for(int i=0;i< productConfigList.size();i++){
             ProductConfig config = productConfigList.get(i);
             if(config.getCode().equals(productCode)){
