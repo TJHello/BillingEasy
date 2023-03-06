@@ -447,7 +447,7 @@ public class HuaweiBillingHandler extends BillingHandler {
         info.setPriceCurrencyCode(skuDetails.getCurrency());
         info.setTitle(skuDetails.getProductName());
         info.setDesc(skuDetails.getProductDesc());
-        ProductConfig find = addProductConfig(type,skuDetails.getProductId());
+        ProductConfig find = addProductConfig(""+skuDetails.getPriceType(),skuDetails.getProductId());
         info.setType(find.getType());
         ProductInfo.HuaweiProductInfo huaweiProductInfo = new ProductInfo.HuaweiProductInfo();
         huaweiProductInfo.setProductId(skuDetails.getProductId());
