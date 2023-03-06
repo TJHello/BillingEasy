@@ -192,6 +192,7 @@ public class HuaweiBillingHandler extends BillingHandler {
 
     @Override
     public void purchase(@NonNull Activity activity, @NonNull PurchaseParam param, @NonNull String type) {
+        BillingEasyLog.e("[purchase]type="+type+",code="+param.productCode);
         PurchaseIntentReq req = new PurchaseIntentReq();
         req.setProductId(param.productCode);
         req.setPriceType(Integer.parseInt(type));
@@ -337,7 +338,7 @@ public class HuaweiBillingHandler extends BillingHandler {
                 info.setPurchaseTime(inAppPurchaseData.getPurchaseTime());
                 info.setBaseObj(inAppPurchaseData);
 
-                ProductConfig productConfig = getProductConfig(""+inAppPurchaseData.getPurchaseType(),
+                ProductConfig productConfig = getProductConfig(""+inAppPurchaseData.getKind(),
                         inAppPurchaseData.getProductId());
                 info.addProduct(productConfig);
 
@@ -401,7 +402,7 @@ public class HuaweiBillingHandler extends BillingHandler {
             info.setValid(state== InAppPurchaseData.PurchaseState.PURCHASED);
             info.setPurchaseTime(inAppPurchaseData.getPurchaseTime());
 
-            ProductConfig productConfig = getProductConfig(""+inAppPurchaseData.getPurchaseType(),inAppPurchaseData.getProductId());
+            ProductConfig productConfig = getProductConfig(""+inAppPurchaseData.getKind(),inAppPurchaseData.getProductId());
             info.addProduct(productConfig);
             if(productInfoMap.containsKey(productConfig.getCode())){
                 ProductInfo productInfo = productInfoMap.get(productConfig.getCode());

@@ -109,6 +109,7 @@ public abstract class BillingHandler implements BillingHandlerImp {
 
     protected ProductConfig addProductConfig(@ProductType String type,@NonNull String code){
         String tjType = getTJProductType(type);
+        BillingEasyLog.e("[addProductConfig]code="+code+",type="+type+",tjType="+tjType);
         int size = productConfigList.size();
         for(int i=size-1;i>=0;i--){
             ProductConfig config = productConfigList.get(i);

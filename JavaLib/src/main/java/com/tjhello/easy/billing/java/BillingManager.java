@@ -152,6 +152,7 @@ public class BillingManager implements BillingManagerImp {
         if(billingHandler.connection(new ConnectionBillingEasyListener())){
             ProductConfig config = findProductConfig(param.productCode);
             if(config!=null){
+                BillingEasyLog.e("[findProductConfig]code="+config.getCode()+",type="+config.getType());
                 billingHandler.purchase(activity,param,billingHandler.getProductType(config.getType()));
             }
         }

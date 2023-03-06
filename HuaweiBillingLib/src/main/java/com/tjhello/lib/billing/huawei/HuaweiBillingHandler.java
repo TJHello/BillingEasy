@@ -336,7 +336,7 @@ public class HuaweiBillingHandler extends BillingHandler {
                 info.setPurchaseTime(inAppPurchaseData.getPurchaseTime());
                 info.setBaseObj(inAppPurchaseData);
 
-                ProductConfig productConfig = getProductConfig(""+inAppPurchaseData.getPurchaseType(),
+                ProductConfig productConfig = getProductConfig(""+inAppPurchaseData.getKind(),
                         inAppPurchaseData.getProductId());
                 info.addProduct(productConfig);
 
@@ -400,7 +400,7 @@ public class HuaweiBillingHandler extends BillingHandler {
             info.setValid(state== InAppPurchaseData.PurchaseState.PURCHASED);
             info.setPurchaseTime(inAppPurchaseData.getPurchaseTime());
 
-            ProductConfig productConfig = getProductConfig(""+inAppPurchaseData.getPurchaseType(),
+            ProductConfig productConfig = getProductConfig(""+inAppPurchaseData.getKind(),
                     inAppPurchaseData.getProductId());
             info.addProduct(productConfig);
             if(productInfoMap.containsKey(productConfig.getCode())){
