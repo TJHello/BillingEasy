@@ -72,7 +72,6 @@ public class BillingManager implements BillingManagerImp {
 
     @Override
     public void addProductConfig(@NonNull ProductConfig productConfig) {
-        BillingEasyLog.e("[addProductConfig]:code="+productConfig.getCode()+",type="+productConfig.getType());
         getHandler().addProductConfig(productConfig);
     }
 
@@ -152,7 +151,6 @@ public class BillingManager implements BillingManagerImp {
         if(billingHandler.connection(new ConnectionBillingEasyListener())){
             ProductConfig config = findProductConfig(param.productCode);
             if(config!=null){
-                BillingEasyLog.e("[findProductConfig]code="+config.getCode()+",type="+config.getType());
                 billingHandler.purchase(activity,param,billingHandler.getProductType(config.getType()));
             }
         }

@@ -92,7 +92,7 @@ public class GoogleBillingHandler extends BillingHandler {
                 .setSkusList(productCodeList)
                 .setType(type)
                 .build();
-        mBillingClient.querySkuDetailsAsync(params, new MySkuDetailsResponseListener(listener));
+        mBillingClient.querySkuDetailsAsync(params, new MySkuDetailsResponseListener(listener,type));
     }
 
     @Override
@@ -213,8 +213,10 @@ public class GoogleBillingHandler extends BillingHandler {
     private class MySkuDetailsResponseListener implements SkuDetailsResponseListener {
 
         private final BillingEasyListener mListener;
-        MySkuDetailsResponseListener(BillingEasyListener listener){
+        private final String type ;
+        MySkuDetailsResponseListener(BillingEasyListener listener,String type ){
             this.mListener = listener;
+            this.type = type;
         }
 
         @Override
@@ -228,8 +230,8 @@ public class GoogleBillingHandler extends BillingHandler {
                 }
                 BillingEasyResult result = buildResult(billingResult);
                 List<ProductInfo> tempList = toProductInfo(list);
-                mListener.onQueryProduct(result,tempList);
-                mBillingEasyListener.onQueryProduct(result,tempList);
+                mListener.onQueryProduct(result,getTJProductType(type),tempList);
+                mBillingEasyListener.onQueryProduct(result,getTJProductType(type),tempList);
             });
         }
     }

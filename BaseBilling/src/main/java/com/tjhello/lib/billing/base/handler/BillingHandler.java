@@ -82,7 +82,6 @@ public abstract class BillingHandler implements BillingHandlerImp {
         for(int i=size-1;i>=0;i--){
             ProductConfig tempConfig = productConfigList.get(i);
             if(tempConfig.getCode().equals(productConfig.getCode())){
-                tempConfig.setType(productConfig.getType());
                 return ;
             }
         }
@@ -109,12 +108,10 @@ public abstract class BillingHandler implements BillingHandlerImp {
 
     protected ProductConfig addProductConfig(@ProductType String type,@NonNull String code){
         String tjType = getTJProductType(type);
-        BillingEasyLog.e("[addProductConfig]code="+code+",type="+type+",tjType="+tjType);
         int size = productConfigList.size();
         for(int i=size-1;i>=0;i--){
             ProductConfig config = productConfigList.get(i);
             if(config.getCode().equals(code)){
-                config.setType(tjType);
                 return config;
             }
         }

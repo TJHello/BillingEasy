@@ -109,7 +109,7 @@ public class GoogleBillingHandler extends BillingHandler {
             QueryProductDetailsParams params = QueryProductDetailsParams.newBuilder()
                     .setProductList(productList)
                     .build();
-            mBillingClient.queryProductDetailsAsync(params, new MyProductDetailsResponseListener(listener));
+            mBillingClient.queryProductDetailsAsync(params, new MyProductDetailsResponseListener(listener,type));
         }else{
             BillingEasyLog.i("【queryProduct】客户端不支持PRODUCT_DETAILS:"+billingResult.getDebugMessage());
             SkuDetailsParams params = SkuDetailsParams.newBuilder()
@@ -253,8 +253,10 @@ public class GoogleBillingHandler extends BillingHandler {
     private class MyProductDetailsResponseListener implements ProductDetailsResponseListener {
 
         private final BillingEasyListener mListener;
-        MyProductDetailsResponseListener(BillingEasyListener listener){
+        private final String type ;
+        MyProductDetailsResponseListener(BillingEasyListener listener,String type){
             this.mListener = listener;
+            this.type = type;
         }
 
         @Override
@@ -268,8 +270,8 @@ public class GoogleBillingHandler extends BillingHandler {
                 }
                 BillingEasyResult result = buildResult(billingResult);
                 List<ProductInfo> tempList = toProductInfo(list);
-                mListener.onQueryProduct(result,tempList);
-                mBillingEasyListener.onQueryProduct(result,tempList);
+                mListener.onQueryProduct(result,getTJProductType(type),tempList);
+                mBillingEasyListener.onQueryProduct(result,getTJProductType(type),tempList);
             });
         }
     }

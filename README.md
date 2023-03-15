@@ -2,7 +2,7 @@
 
 **QQ交流群(425219113)**
 
-使用该库请遵循Apache License2.0协议，莫要寒了广大开源者的心。
+使用该库请遵循Apache License2.0协议
 
 ---
 
@@ -48,12 +48,13 @@ android{
 dependencies {
 
     //测试版
-    implementation 'com.TJHello.easy:BillingEasy:2.0.3-t06'//BillingEasy
-    implementation 'com.TJHello.publicLib.billing:google:4.0.0.203-t03'//Google内购(按需添加)
-    implementation 'com.TJHello.publicLib.billing:google:5.0.0.203-t03'//Google内购(按需添加)
+    implementation 'com.TJHello.easy:BillingEasy:2.0.3-t13'//BillingEasy
+    implementation 'com.TJHello.publicLib.billing:google:4.0.0.203-t07'//(推荐)Google内购(按需添加)
+    implementation 'com.TJHello.publicLib.billing:google:5.0.0.203-t07'//Google内购(按需添加)
     //谷歌和华为适配器不可同时接入
     //接入华为支付需要先接入HMS，详情看官方接入文档(https://developer.huawei.com/consumer/cn/doc/development/HMSCore-Guides/dev-process-0000001050033070)
-    implementation 'com.TJHello.publicLib.billing:huawei:5.1.0.300.203-t07'//Huawei内购(按需添加)
+    implementation 'com.TJHello.publicLib.billing:huawei:6.4.0.301.203-t09'//(推荐)Huawei内购(按需添加)(暂不支持多activity)
+    implementation 'com.TJHello.publicLib.billing:huawei:5.1.0.300.203--t13'//Huawei内购(按需添加)(暂不支持多activity)
 }
 
 ```
@@ -164,7 +165,7 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public void onQueryOrder(@NonNull BillingEasyResult result,@NonNull String type, @NonNull List<PurchaseInfo> purchaseInfoList) {
-            //查询有效订单
+            //查询有效订单(补单逻辑可以在此实现)
         }
 
         @Override
@@ -209,6 +210,13 @@ BillingEasy.acknowledge("purchaseToken");
 
 
 - ### 更新日志
+
+2.0.3-t13 2023/03/15 【测试版】
+```
+1、修复华为支付的若干问题
+2、修复谷歌支付若干问题
+```
+
 2.0.3-t06 2023/01/05 【测试版】
 ```
 1、修复华为支付的若干问题
