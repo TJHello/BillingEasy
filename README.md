@@ -23,8 +23,8 @@ allprojects {
          maven {url 'https://developer.huawei.com/repo/'}//华为用到
          maven {
              credentials {
-                 username '63eccc7ed1660910428ca696'
-                 password 'Te8Fh9dpLQme'
+                 username '64902788b97ac8ef224e6817'
+                 password '99F9lqriqO4R'
              }
              url 'https://packages.aliyun.com/maven/repository/2331792-release-aOp3og/'
          }

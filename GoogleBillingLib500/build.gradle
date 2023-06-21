@@ -22,14 +22,10 @@ afterEvaluate{
         }
         repositories {
             maven {
-                if (!uploadToOnline) {
-                    url = uri(LOCAL_REPO_PATH)
-                } else {
-                    url = ONLINE_REPO_URL
-                    credentials {
-                        username ONLINE_REPO_USERNAME
-                        password ONLINE_REPO_PASSWORD
-                    }
+                url = ONLINE_REPO_URL
+                credentials {
+                    username ONLINE_REPO_USERNAME
+                    password ONLINE_REPO_PASSWORD
                 }
             }
         }
