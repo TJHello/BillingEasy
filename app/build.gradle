@@ -53,5 +53,6 @@ dependencies {
 
 //    api project(':GoogleBillingLib')
     api project(':HuaweiBillingLib')
-    api project(':JavaLib')
+//    api project(':JavaLib')
+    implementation("com.TJHello.easy:BillingEasy:2.0.3-t13")
 }

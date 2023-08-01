@@ -26,7 +26,7 @@ allprojects {
                  username '64902788b97ac8ef224e6817'
                  password '99F9lqriqO4R'
              }
-             url 'https://packages.aliyun.com/maven/repository/2331792-release-aOp3og/'
+             url 'https://packages.aliyun.com/maven/repository/2254835-release-ZGwQoJ/'
          }
      }
 }
