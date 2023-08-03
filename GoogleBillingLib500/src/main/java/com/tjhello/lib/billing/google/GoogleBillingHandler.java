@@ -413,27 +413,21 @@ public class GoogleBillingHandler extends BillingHandler {
     private ProductInfo toProductInfo(ProductDetails productDetails){
         ProductInfo info = new ProductInfo();
         info.setCode(productDetails.getProductId());
+        //内购支持
         ProductDetails.OneTimePurchaseOfferDetails purchaseOfferDetails = productDetails.getOneTimePurchaseOfferDetails();
         if(purchaseOfferDetails!=null){
             info.setPrice(purchaseOfferDetails.getFormattedPrice());
             info.setPriceAmountMicros(purchaseOfferDetails.getPriceAmountMicros());
             info.setPriceCurrencyCode(purchaseOfferDetails.getPriceCurrencyCode());
         }
-        //订阅支持
-//        List<ProductDetails.SubscriptionOfferDetails> offerDetailsList = productDetails.getSubscriptionOfferDetails();
-//        if(offerDetailsList!=null&&!offerDetailsList.isEmpty()){
-//            for (ProductDetails.SubscriptionOfferDetails subscriptionOfferDetails : offerDetailsList) {
-//                for (String offerTag : subscriptionOfferDetails.getOfferTags()) {
-//
-//                }
-//
-//                for (ProductDetails.PricingPhase pricingPhase : subscriptionOfferDetails.getPricingPhases().getPricingPhaseList()) {
-//                    pricingPhase.getBillingPeriod();
-//                    pricingPhase.getFormattedPrice();
-//                    pricingPhase.getPriceCurrencyCode()
-//                }
-//            }
-//        }
+        //订阅支持(暂时不支持多商品捆绑以及打折的情况)
+        List<ProductDetails.SubscriptionOfferDetails> offerDetailsList = productDetails.getSubscriptionOfferDetails();
+        if(offerDetailsList!=null&&!offerDetailsList.isEmpty()){
+            ProductDetails.PricingPhase pricingPhase = offerDetailsList.get(0).getPricingPhases().getPricingPhaseList().get(0);
+            info.setPrice(pricingPhase.getFormattedPrice());
+            info.setPriceAmountMicros(pricingPhase.getPriceAmountMicros());
+            info.setPriceCurrencyCode(pricingPhase.getPriceCurrencyCode());
+        }
 
 
         info.setTitle(productDetails.getTitle());
@@ -449,11 +443,9 @@ public class GoogleBillingHandler extends BillingHandler {
         googleSkuDetails.setDescription(productDetails.getDescription());
 
         googleSkuDetails.setTitle(productDetails.getTitle());
-        if(purchaseOfferDetails!=null){
-            googleSkuDetails.setPrice(purchaseOfferDetails.getFormattedPrice());
-            googleSkuDetails.setPriceAmountMicros(purchaseOfferDetails.getPriceAmountMicros());
-            googleSkuDetails.setPriceCurrencyCode(purchaseOfferDetails.getPriceCurrencyCode());
-        }
+        googleSkuDetails.setPrice(info.getPrice());
+        googleSkuDetails.setPriceAmountMicros(info.getPriceAmountMicros());
+        googleSkuDetails.setPriceCurrencyCode(info.getPriceCurrencyCode());
 
         info.setGoogleSkuDetails(googleSkuDetails);
         info.setBaseObj(googleSkuDetails);
