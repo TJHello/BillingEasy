@@ -50,7 +50,7 @@ dependencies {
     //测试版
     implementation 'com.TJHello.easy:BillingEasy:2.0.3-t13'//BillingEasy
     implementation 'com.TJHello.publicLib.billing:google:4.0.0.203-t07'//(推荐)Google内购(按需添加)
-    implementation 'com.TJHello.publicLib.billing:google:5.0.0.203-t07'//Google内购(按需添加)
+    implementation 'com.TJHello.publicLib.billing:google:5.0.0.203-t08'//Google内购(按需添加)
     //谷歌和华为适配器不可同时接入
     //接入华为支付需要先接入HMS，详情看官方接入文档(https://developer.huawei.com/consumer/cn/doc/development/HMSCore-Guides/dev-process-0000001050033070)
     implementation 'com.TJHello.publicLib.billing:huawei:6.4.0.301.203-t09'//(推荐)Huawei内购(按需添加)(暂不支持多activity)
