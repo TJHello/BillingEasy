@@ -122,6 +122,22 @@ public class GoogleBillingHandler extends BillingHandler {
 
     @Override
     public void purchase(@NonNull Activity activity,@NonNull PurchaseParam param, @NonNull String type) {
+        if(!purchaseInner(activity,param,type)){
+            List<String> list = new ArrayList<>();
+            list.add(param.productCode);
+            queryProduct(list, type, new BillingEasyListener() {
+                @Override
+                public void onQueryProduct(@NonNull BillingEasyResult result, String type, @NonNull List<ProductInfo> productInfoList) {
+                    if(!purchaseInner(activity,param,type)){
+                        BillingEasyLog.e("获取商品信息失败，调起购买前，请先查询商品价格");
+                    }
+
+                }
+            });
+        }
+    }
+
+    private boolean purchaseInner(@NonNull Activity activity,@NonNull PurchaseParam param, @NonNull String type){
         if(productDetailsMap.containsKey(param.productCode)){
             //新的方式进行购买
             ProductDetails productDetails = productDetailsMap.get(param.productCode);
@@ -137,6 +153,7 @@ public class GoogleBillingHandler extends BillingHandler {
                         .setObfuscatedAccountId(param.obfuscatedAccountId)
                         .setIsOfferPersonalized(true);
                 mBillingClient.launchBillingFlow(activity,flowParams.build());
+                return true;
             }
         } else if(skuDetailsMap.containsKey(param.productCode)){
             SkuDetails skuDetails = skuDetailsMap.get(param.productCode);
@@ -147,11 +164,10 @@ public class GoogleBillingHandler extends BillingHandler {
                         .setObfuscatedProfileId(param.obfuscatedProfileId)
                         .build();
                 mBillingClient.launchBillingFlow(activity,flowParams);
+                return true;
             }
         }
-        else{
-            BillingEasyLog.e("获取商品信息失败，调起购买前，请先查询商品价格");
-        }
+        return false;
     }
 
     @Override
@@ -460,18 +476,20 @@ public class GoogleBillingHandler extends BillingHandler {
             PurchaseInfo info = new PurchaseInfo();
 
             for (String sku : purchase.getProducts()) {
-                ProductConfig productConfig = findProductInfo(sku);
-                if(productConfig!=null){
-                    info.addProduct(productConfig);
-                }else{
-                    BillingEasyLog.e("未找到该商品配置，请检查:"+sku);
-                }
+
                 if(productDetailsMap.containsKey(sku)){
                     ProductDetails productDetails = productDetailsMap.get(sku);
                     if(productDetails!=null){
                         ProductInfo productInfo = toProductInfo(productDetails);
                         info.putProductInfo(sku,productInfo);
                     }
+                }
+
+                ProductConfig productConfig = findProductInfo(sku);
+                if(productConfig!=null){
+                    info.addProduct(productConfig);
+                }else{
+                    BillingEasyLog.e("未找到该商品配置，请检查:"+sku);
                 }
             }
             info.setPurchaseTime(purchase.getPurchaseTime());

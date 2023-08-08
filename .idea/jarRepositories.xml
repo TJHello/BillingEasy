@@ -56,5 +56,10 @@
       <option name="name" value="maven3" />
       <option name="url" value="https://packages.aliyun.com/maven/repository/2046286-release-wbmgVx" />
     </remote-repository>
+    <remote-repository>
+      <option name="id" value="maven" />
+      <option name="name" value="maven" />
+      <option name="url" value="https://packages.aliyun.com/maven/repository/2254835-release-ZGwQoJ/" />
+    </remote-repository>
   </component>
 </project>
