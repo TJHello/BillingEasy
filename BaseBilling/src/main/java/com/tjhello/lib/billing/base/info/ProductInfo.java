@@ -4,6 +4,8 @@ import androidx.annotation.Nullable;
 
 import com.tjhello.lib.billing.base.anno.ProductType;
 
+import java.util.List;
+
 
 public class ProductInfo {
 
@@ -45,6 +47,7 @@ public class ProductInfo {
         String subscriptionPeriod ;
         String title ;
         String type ;
+        List<SubscriptionOfferDetails> subscriptionOfferDetails = null;
 
 
         public String getOriginalPrice() {
@@ -181,6 +184,84 @@ public class ProductInfo {
 
         public void setType(String type) {
             this.type = type;
+        }
+
+        public List<SubscriptionOfferDetails> getSubscriptionOfferDetails() {
+            return subscriptionOfferDetails;
+        }
+
+        public void setSubscriptionOfferDetails(List<SubscriptionOfferDetails> subscriptionOfferDetails) {
+            this.subscriptionOfferDetails = subscriptionOfferDetails;
+        }
+
+
+        /**
+         * 内购5.0之后新增的功能,4.0没有该功能
+         */
+        public static class SubscriptionOfferDetails{
+            private String offerToken ;
+            private String formattedPrice;
+            private long priceAmountMicros;
+            private String priceCurrencyCode;
+            private String billingPeriod;
+            private int billingCycleCount;
+            private int recurrenceMode;
+
+            public String getOfferToken() {
+                return offerToken;
+            }
+
+            public void setOfferToken(String offerToken) {
+                this.offerToken = offerToken;
+            }
+
+            public String getFormattedPrice() {
+                return formattedPrice;
+            }
+
+            public void setFormattedPrice(String formattedPrice) {
+                this.formattedPrice = formattedPrice;
+            }
+
+            public long getPriceAmountMicros() {
+                return priceAmountMicros;
+            }
+
+            public void setPriceAmountMicros(long priceAmountMicros) {
+                this.priceAmountMicros = priceAmountMicros;
+            }
+
+            public String getPriceCurrencyCode() {
+                return priceCurrencyCode;
+            }
+
+            public void setPriceCurrencyCode(String priceCurrencyCode) {
+                this.priceCurrencyCode = priceCurrencyCode;
+            }
+
+            public int getBillingCycleCount() {
+                return billingCycleCount;
+            }
+
+            public void setBillingCycleCount(int billingCycleCount) {
+                this.billingCycleCount = billingCycleCount;
+            }
+
+            public String getBillingPeriod() {
+                return billingPeriod;
+            }
+
+            public void setBillingPeriod(String billingPeriod) {
+                this.billingPeriod = billingPeriod;
+            }
+
+            public int getRecurrenceMode() {
+                return recurrenceMode;
+            }
+
+            public void setRecurrenceMode(int recurrenceMode) {
+                this.recurrenceMode = recurrenceMode;
+            }
         }
     }
 

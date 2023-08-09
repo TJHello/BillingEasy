@@ -447,12 +447,26 @@ public class GoogleBillingHandler extends BillingHandler {
             info.setPriceCurrencyCode(purchaseOfferDetails.getPriceCurrencyCode());
         }
         //订阅支持(暂时不支持多商品捆绑以及打折的情况)
+        List<ProductInfo.GoogleSkuDetails.SubscriptionOfferDetails> offerDetails = new ArrayList<>();
         List<ProductDetails.SubscriptionOfferDetails> offerDetailsList = productDetails.getSubscriptionOfferDetails();
         if(offerDetailsList!=null&&!offerDetailsList.isEmpty()){
+            for (ProductDetails.SubscriptionOfferDetails subscriptionOfferDetails : offerDetailsList) {
+                ProductDetails.PricingPhase phase = subscriptionOfferDetails.getPricingPhases().getPricingPhaseList().get(0);
+                ProductInfo.GoogleSkuDetails.SubscriptionOfferDetails details = new ProductInfo.GoogleSkuDetails.SubscriptionOfferDetails();
+                details.setOfferToken(subscriptionOfferDetails.getOfferToken());
+                details.setBillingCycleCount(phase.getBillingCycleCount());
+                details.setBillingPeriod(phase.getBillingPeriod());
+                details.setFormattedPrice(phase.getFormattedPrice());
+                details.setRecurrenceMode(phase.getRecurrenceMode());
+                details.setPriceAmountMicros(phase.getPriceAmountMicros());
+                details.setPriceCurrencyCode(phase.getPriceCurrencyCode());
+                offerDetails.add(details);
+            }
             ProductDetails.PricingPhase pricingPhase = offerDetailsList.get(0).getPricingPhases().getPricingPhaseList().get(0);
             info.setPrice(pricingPhase.getFormattedPrice());
             info.setPriceAmountMicros(pricingPhase.getPriceAmountMicros());
             info.setPriceCurrencyCode(pricingPhase.getPriceCurrencyCode());
+
         }
 
 
@@ -472,9 +486,11 @@ public class GoogleBillingHandler extends BillingHandler {
         googleSkuDetails.setPrice(info.getPrice());
         googleSkuDetails.setPriceAmountMicros(info.getPriceAmountMicros());
         googleSkuDetails.setPriceCurrencyCode(info.getPriceCurrencyCode());
-
+        if(!offerDetails.isEmpty()){
+            googleSkuDetails.setSubscriptionOfferDetails(offerDetails);
+        }
         info.setGoogleSkuDetails(googleSkuDetails);
-        info.setBaseObj(googleSkuDetails);
+        info.setBaseObj(productDetails);
         return info;
     }
 
