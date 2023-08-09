@@ -140,7 +140,6 @@ public class MainActivity extends AppCompatActivity {
             //判断购买成功
             if(billingEasyResult.isSuccess){
                 for (PurchaseInfo purchaseInfo : purchaseInfoList) {
-                    purchaseInfo.getHuaweiBillingPurchase().getPurchaseState();
                     //判断商品是否有效
                     if(purchaseInfo.isValid()){
                         for (ProductConfig productConfig : purchaseInfo.getProductList()) {

@@ -1,6 +1,6 @@
 rootProject.name = "BillingEasy"
 include ':app'
-include ':appTest'
+//include ':appTest'
 include ':GoogleBillingLib'
 include ':BaseBilling'
 include ':KotlinLib'
@@ -8,3 +8,4 @@ include ':JavaLib'
 include ':HuaweiBillingLib'
 include ':HuaweiBillingLib640'
 include ':GoogleBillingLib500'
+//include ':demoPublic'

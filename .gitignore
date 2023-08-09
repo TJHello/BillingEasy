@@ -16,3 +16,4 @@ local.properties
 app/keystore.jks
 /appTest
 password.gradle
+/demoPublic

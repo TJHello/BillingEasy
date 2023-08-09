@@ -1,5 +1,5 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
-apply from: 'password.gradle'
+apply from: 'password.gradle'//该用于存储重要密码不上传，可替换为maven.gradle来通过代码运行
 buildscript {
     ext {
         kotlin_version = '1.5.10'
@@ -35,9 +35,10 @@ allprojects {
             }
             url 'https://packages.aliyun.com/maven/repository/2254835-release-ZGwQoJ/'
         }
-        maven {url 'https://developer.huawei.com/repo/'}
         google()
         mavenCentral()
+        jcenter()
+        maven {url 'https://developer.huawei.com/repo/'}
     }
 }
 

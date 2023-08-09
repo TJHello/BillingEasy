@@ -53,6 +53,7 @@ public class NextActivity extends AppCompatActivity {
         btSubs = this.findViewById(R.id.btSubs);
         btSubs.setOnClickListener(view->{
             BillingEasy.purchase(this,"订阅商品code");
+//            BillingEasy.purchase(this,new PurchaseParam.GoogleBuilder("订阅商品code").setOfferToken("").build());
         });
     }
 

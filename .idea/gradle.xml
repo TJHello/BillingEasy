@@ -19,7 +19,7 @@
             <option value="$PROJECT_DIR$/JavaLib" />
             <option value="$PROJECT_DIR$/KotlinLib" />
             <option value="$PROJECT_DIR$/app" />
-            <option value="$PROJECT_DIR$/appTest" />
+            <option value="$PROJECT_DIR$/demoPublic" />
           </set>
         </option>
       </GradleProjectSettings>

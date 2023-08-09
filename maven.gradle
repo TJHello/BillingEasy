@@ -1,0 +1,4 @@
+ext.ONLINE_REPO_USERNAME='62c6b12b29d72730d9ed4a4b'
+ext.ONLINE_REPO_PASSWORD='BlrQLS-syR8]'
+ext.ONLINE_REPO_URL='https://packages.aliyun.com/maven/repository/2254835-release-ZGwQoJ/'
+ext.uploadToOnline = true

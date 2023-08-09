@@ -143,9 +143,19 @@ public class GoogleBillingHandler extends BillingHandler {
             ProductDetails productDetails = productDetailsMap.get(param.productCode);
             if(productDetails!=null){
                 List<BillingFlowParams.ProductDetailsParams> list = new ArrayList<>();
-                BillingFlowParams.ProductDetailsParams.Builder params = BillingFlowParams.ProductDetailsParams.newBuilder()
-                        .setOfferToken(param.offerToken)
-                        .setProductDetails(productDetails);
+                BillingFlowParams.ProductDetailsParams.Builder params = BillingFlowParams.ProductDetailsParams.newBuilder();
+                if(param.offerToken!=null){
+                    params.setOfferToken(param.offerToken);
+                }else{
+                    if(type.equals(BillingClient.ProductType.SUBS)){
+                        List<ProductDetails.SubscriptionOfferDetails> offerDetailsList = productDetails.getSubscriptionOfferDetails();
+                        if(offerDetailsList!=null&&!offerDetailsList.isEmpty()){
+                            params.setOfferToken(offerDetailsList.get(0).getOfferToken());
+                        }
+                    }
+                }
+
+                params.setProductDetails(productDetails);
                 list.add(params.build());
                 BillingFlowParams.Builder flowParams = BillingFlowParams.newBuilder()
                         .setProductDetailsParamsList(list)
