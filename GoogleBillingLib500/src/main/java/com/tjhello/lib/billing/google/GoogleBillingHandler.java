@@ -469,7 +469,6 @@ public class GoogleBillingHandler extends BillingHandler {
 
         }
 
-
         info.setTitle(productDetails.getTitle());
         info.setDesc(productDetails.getDescription());
 
@@ -481,7 +480,7 @@ public class GoogleBillingHandler extends BillingHandler {
         ProductInfo.GoogleSkuDetails googleSkuDetails = new ProductInfo.GoogleSkuDetails();
         googleSkuDetails.setType(productDetails.getProductType());
         googleSkuDetails.setDescription(productDetails.getDescription());
-
+        googleSkuDetails.setSku(productDetails.getProductId());
         googleSkuDetails.setTitle(productDetails.getTitle());
         googleSkuDetails.setPrice(info.getPrice());
         googleSkuDetails.setPriceAmountMicros(info.getPriceAmountMicros());
