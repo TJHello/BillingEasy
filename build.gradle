@@ -20,11 +20,11 @@ buildscript {
 
 
 //版本常量
-ext.BASE_VERSION_NAME = "2.0.3-t10"
-ext.BASE_VERSION_CODE = 203
+ext.BASE_VERSION_NAME = "2.0.4-t01"
+ext.BASE_VERSION_CODE = 204
 
-ext.BILLING_EASY_VERSION_NAME = "2.0.3-t13"
-ext.BILLING_EASY_VERSION_CODE = 203
+ext.BILLING_EASY_VERSION_NAME = "2.0.4-t01"
+ext.BILLING_EASY_VERSION_CODE = 204
 
 allprojects {
     repositories {
