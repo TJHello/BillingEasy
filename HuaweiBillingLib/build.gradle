@@ -3,8 +3,8 @@ plugins {
     id 'maven-publish'
 }
 
-ext.verName = "5.1.0.300.203-t13"
-ext.verCode = 510300203
+ext.verName = "5.1.0.300.204-t13"
+ext.verCode = 510300204
 ext.GROUP_ID = 'com.TJHello.publicLib.billing'
 ext.POM_ARTIFACT_ID = 'huawei'
 
