@@ -2,7 +2,17 @@
 
 **QQ交流群(425219113)**
 
-使用该库请遵循Apache License2.0协议
+
+
+---
+免责声明
+在使用BillingEasy前，请您务必仔细阅读并透彻理解本声明。您可以选择不使用本程序，但如果您使用了本程序或任何本程序未来的更新，您的使用行为将被视为对以下全部内容的认可。
+您可享有法律规定下本程序不得排除或限制的担保、条件和条款。 除了这些不可排除的担保、条件和条款，本程序不作出任何担保、条件、陈述、保证或条款（无论是明示的还是暗示的，也无论是依据成文法、普通法、惯例、常例，还是其他任何原因）， 包括但不限于性能、结果、安全、不侵权、适销性、完整性、可不受干扰使用、质量满意以及适用于任何特殊用途。
+1. 该库免费开源，使用该库请遵循Apache License2.0协议。
+2. 该库可能存在一定的bug风险以及网络服务中的风险，请在使用过程中经过严格测试，您需要了解并同意，因使用本程序而导致的任何损失，本程序不承担任何责任。
+3. 禁止将该库用于法律不允许的场景，该库不对任何使用行为负任务法律责任。
+4. 如该协议有更新，我们将直接更新此文本，您可以定期来看。但我们没有义务和责任确保您一定了解到更新的内容，但只要您继续使用该程序，就视为您同意本协议的所有内容。
+---
 
 ---
 
@@ -14,20 +24,29 @@
 
 ---
 
+---
+谷歌内购提醒([官方文档地址](https://developer.android.com/google/play/billing/billing_reference?hl=zh-cn))
+1. 从 2023 年 8 月 2 日起，所有新应用都必须使用结算库版本 5 或更高版本。自 2023 年 11 月 1 日起，现有应用的所有新版本都必须使用结算库版本 5 或更高版本。了解详情。
+2. 如果您的应用以 Android 14 或更高版本为目标平台，您必须更新到 PBL 5.2.1 或 PBL 6.0.1 或更高版本。
+---
+
 ### 使用步骤
 - ### Step1 添加远程仓库地址-build.gradle(project)
 ```groovy
 
 allprojects {
      repositories {
-         maven {url 'https://developer.huawei.com/repo/'}//华为用到
-         maven {
+         google()
+         mavenCentral()
+         jcenter()
+         maven {//私人仓库
              credentials {
                  username '64902788b97ac8ef224e6817'
                  password '99F9lqriqO4R'
              }
              url 'https://packages.aliyun.com/maven/repository/2254835-release-ZGwQoJ/'
          }
+         maven {url 'https://developer.huawei.com/repo/'}//华为用到
      }
 }
 
@@ -49,8 +68,8 @@ dependencies {
 
     //测试版
     implementation 'com.TJHello.easy:BillingEasy:2.0.4-t01'//BillingEasy
-    implementation 'com.TJHello.publicLib.billing:google:4.0.0.204-t07'//(推荐)Google内购(按需添加)
-    implementation 'com.TJHello.publicLib.billing:google:5.0.0.204-t12'//Google内购(按需添加)
+    implementation 'com.TJHello.publicLib.billing:google:4.0.0.204-t07'//(谷歌方面即将强制报废)Google内购(按需添加)
+    implementation 'com.TJHello.publicLib.billing:google:5.0.0.204-t12'//(推荐)Google内购(按需添加)
     //谷歌和华为适配器不可同时接入
     //接入华为支付需要先接入HMS，详情看官方接入文档(https://developer.huawei.com/consumer/cn/doc/development/HMSCore-Guides/dev-process-0000001050033070)
     implementation 'com.TJHello.publicLib.billing:huawei:6.4.0.301.204-t09'//(推荐)Huawei内购(按需添加)(暂不支持多activity)
@@ -169,7 +188,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         @Override
-        public void onQueryOrderHistory(@NonNull BillingEasyResult result,@NonNull String type,, @NonNull List<PurchaseHistoryInfo> purchaseInfoList) {
+        public void onQueryOrderHistory(@NonNull BillingEasyResult result,@NonNull String type, @NonNull List<PurchaseHistoryInfo> purchaseInfoList) {
             //查询历史订单
         }
     }
@@ -208,6 +227,7 @@ BillingEasy.acknowledge("purchaseToken");
 
 1. 谷歌内购3.0.2以及以上版本要求谷歌商店的版本在:25.8.21以上，已知21.24.18无法购买，升级谷歌商店可到apkpure。
 
+2. reqCode:4,reqMsg:，请检查游戏状态是否正常，检查是否已经添加了测试账号与检查是否加入内测。
 
 - ### 更新日志
 
