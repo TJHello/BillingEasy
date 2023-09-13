@@ -65,15 +65,18 @@ android{
 }
 
 dependencies {
-
-    //测试版
+    //主SDK
     implementation 'com.TJHello.easy:BillingEasy:2.0.4-t01'//BillingEasy
+    
+    //谷歌内购适配器(按需选择版本)
+    implementation 'com.TJHello.publicLib.billing:google:5.1.0.204'//(推荐)Google内购(按需添加)
+    implementation 'com.TJHello.publicLib.billing:google:6.0.1.204-t01'//(最新)Google内购(按需添加)
     implementation 'com.TJHello.publicLib.billing:google:4.0.0.204-t07'//(谷歌方面即将强制报废)Google内购(按需添加)
-    implementation 'com.TJHello.publicLib.billing:google:5.0.0.204-t12'//(推荐)Google内购(按需添加)
+    
     //谷歌和华为适配器不可同时接入
     //接入华为支付需要先接入HMS，详情看官方接入文档(https://developer.huawei.com/consumer/cn/doc/development/HMSCore-Guides/dev-process-0000001050033070)
     implementation 'com.TJHello.publicLib.billing:huawei:6.4.0.301.204-t09'//(推荐)Huawei内购(按需添加)(暂不支持多activity)
-    implementation 'com.TJHello.publicLib.billing:huawei:5.1.0.300.204--t13'//Huawei内购(按需添加)(暂不支持多activity)
+    implementation 'com.TJHello.publicLib.billing:huawei:5.1.0.300.204-t13'//Huawei内购(按需添加)(暂不支持多activity)
 }
 
 ```
