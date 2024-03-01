@@ -3,8 +3,8 @@ plugins {
     id 'maven-publish'
 }
 
-ext.verName = "5.1.0.204"
-ext.verCode = 510204
+ext.verName = "5.1.0.205"
+ext.verCode = 510205
 ext.GROUP_ID = 'com.TJHello.publicLib.billing'
 ext.POM_ARTIFACT_ID = 'google'
 println("${GROUP_ID}:${POM_ARTIFACT_ID}:${verName}")

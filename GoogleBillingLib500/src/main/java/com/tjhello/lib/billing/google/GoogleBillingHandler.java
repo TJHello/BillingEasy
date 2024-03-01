@@ -129,7 +129,8 @@ public class GoogleBillingHandler extends BillingHandler {
                 @Override
                 public void onQueryProduct(@NonNull BillingEasyResult result, String type, @NonNull List<ProductInfo> productInfoList) {
                     if(!purchaseInner(activity,param,type)){
-                        BillingEasyLog.e("获取商品信息失败，调起购买前，请先查询商品价格");
+                        BillingEasyLog.e("获取商品信息失败，无法发起购买");
+                        mBillingEasyListener.onPurchases(BillingEasyResult.build(false,result.responseCode,"获取商品信息失败，无法发起购买:"+result.responseMsg,null),new ArrayList<>());
                     }
 
                 }
