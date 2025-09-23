@@ -26,8 +26,8 @@
 
 ---
 谷歌内购提醒([官方文档地址](https://developer.android.com/google/play/billing/billing_reference?hl=zh-cn))
-1. 从 2023 年 8 月 2 日起，所有新应用都必须使用结算库版本 5 或更高版本。自 2023 年 11 月 1 日起，现有应用的所有新版本都必须使用结算库版本 5 或更高版本。了解详情。
-2. 如果您的应用以 Android 14 或更高版本为目标平台，您必须更新到 PBL 5.2.1 或 PBL 6.0.1 或更高版本。
+
+截至 2025 年 8 月 31 日，所有新应用和现有应用的更新都必须使用结算库版本 7 或更高版本。如果您需要更多时间来更新应用，可以申请延期至 2025 年 11 月 1 日
 ---
 
 ### 使用步骤
@@ -66,12 +66,10 @@ android{
 
 dependencies {
     //主SDK
-    implementation 'com.TJHello.easy:BillingEasy:2.0.4-t01'//BillingEasy
+    implementation 'com.TJHello.easy:BillingEasy:2.0.4'//BillingEasy
     
     //谷歌内购适配器(按需选择版本)
-    implementation 'com.TJHello.publicLib.billing:google:5.1.0.204'//(推荐)Google内购(按需添加)
-    implementation 'com.TJHello.publicLib.billing:google:6.0.1.204-t01'//(最新)Google内购(按需添加)
-    implementation 'com.TJHello.publicLib.billing:google:4.0.0.204-t07'//(谷歌方面即将强制报废)Google内购(按需添加)
+    implementation 'com.TJHello.publicLib.billing:google:7.1.1.204'//(推荐)Google内购(按需添加)
     
     //谷歌和华为适配器不可同时接入
     //接入华为支付需要先接入HMS，详情看官方接入文档(https://developer.huawei.com/consumer/cn/doc/development/HMSCore-Guides/dev-process-0000001050033070)
@@ -233,6 +231,11 @@ BillingEasy.acknowledge("purchaseToken");
 2. reqCode:4,reqMsg:，请检查游戏状态是否正常，检查是否已经添加了测试账号与检查是否加入内测。
 
 - ### 更新日志
+
+2.0.4 2023/08/15
+```
+1、支持谷歌订阅折扣功能
+```
 
 2.0.3-t13 2023/03/15 【测试版】
 ```
