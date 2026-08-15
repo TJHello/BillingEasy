@@ -27,7 +27,7 @@
 ---
 谷歌内购提醒([官方文档地址](https://developer.android.com/google/play/billing/billing_reference?hl=zh-cn))
 
-截至 2025 年 8 月 31 日，所有新应用和现有应用的更新都必须使用结算库版本 7 或更高版本。如果您需要更多时间来更新应用，可以申请延期至 2025 年 11 月 1 日
+截至 2026 年 8 月 31 日，所有新应用和现有应用的更新都必须使用结算库版本 8 或更高版本。
 ---
 
 ### 使用步骤
@@ -69,7 +69,7 @@ dependencies {
     implementation 'com.TJHello.easy:BillingEasy:2.0.4'//BillingEasy
     
     //谷歌内购适配器(按需选择版本)
-    implementation 'com.TJHello.publicLib.billing:google:7.1.1.204'//(推荐)Google内购(按需添加)
+    implementation 'com.TJHello.publicLib.billing:google:8.0.0.204'//(推荐)Google内购(按需添加)
     
     //谷歌和华为适配器不可同时接入
     //接入华为支付需要先接入HMS，详情看官方接入文档(https://developer.huawei.com/consumer/cn/doc/development/HMSCore-Guides/dev-process-0000001050033070)

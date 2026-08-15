@@ -1,3 +1,4 @@
+// 华为 IAP 6.4.x 适配库模块。
 plugins {
     id 'com.android.library'
     id 'maven-publish'
@@ -11,13 +12,12 @@ ext.POM_ARTIFACT_ID = 'huawei'
 println("${GROUP_ID}:${POM_ARTIFACT_ID}:${verName}")
 
 android {
+    namespace 'com.tjhello.lib.billing.huawei'
     compileSdkVersion 30
 
     defaultConfig {
         minSdkVersion 16
         targetSdkVersion 30
-        versionCode verCode
-        versionName "${verName}"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles "consumer-rules.pro"
@@ -32,6 +32,9 @@ android {
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
+    }
+    publishing {
+        singleVariant("release")
     }
 }
 

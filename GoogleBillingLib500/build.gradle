@@ -1,3 +1,4 @@
+// Google Play Billing 5.x 适配库模块。
 plugins {
     id 'com.android.library'
     id 'maven-publish'
@@ -40,6 +41,7 @@ task sourcesJar(type: Jar) {
 }
 
 android {
+    namespace 'com.tjhello.lib.billing.google'
     compileSdkVersion 30
 
     defaultConfig {
@@ -59,6 +61,9 @@ android {
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
+    }
+    publishing {
+        singleVariant("release")
     }
 }
 

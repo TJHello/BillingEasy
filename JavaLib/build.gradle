@@ -1,3 +1,4 @@
+// Java 版 BillingEasy 聚合库，对外提供统一的内购调用入口。
 plugins {
     id 'com.android.library'
     id 'maven-publish'
@@ -41,20 +42,18 @@ task sourcesJar(type: Jar) {
 }
 
 android {
+    namespace 'com.tjhello.easy.billing.java'
     compileSdkVersion 30
-    buildToolsVersion "30.0.3"
 
     defaultConfig {
         minSdkVersion 16
         targetSdkVersion 30
-        versionCode verCode
-        versionName "${verName}"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles "consumer-rules.pro"
 
-        buildConfigField("int","VERSION_CODE","${versionCode}")
-        buildConfigField("String","VERSION_NAME","\"${versionName}\"")
+        buildConfigField("int","VERSION_CODE","${verCode}")
+        buildConfigField("String","VERSION_NAME","\"${verName}\"")
     }
 
     buildTypes {
@@ -66,6 +65,12 @@ android {
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
+    }
+    buildFeatures {
+        buildConfig = true
+    }
+    publishing {
+        singleVariant("release")
     }
 }
 

@@ -1,3 +1,4 @@
+// Google Play Billing 4.x 适配库模块。
 plugins {
     id 'com.android.library'
     id 'maven-publish'
@@ -42,14 +43,12 @@ afterEvaluate{
 
 
 android {
+    namespace 'com.tjhello.lib.billing.google'
     compileSdkVersion 30
-    buildToolsVersion "30.0.3"
 
     defaultConfig {
         minSdkVersion 16
         targetSdkVersion 30
-        versionCode verCode
-        versionName "${verName}"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles "consumer-rules.pro"
@@ -64,6 +63,9 @@ android {
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
+    }
+    publishing {
+        singleVariant("release")
     }
 }
 

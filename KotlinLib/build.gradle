@@ -1,17 +1,16 @@
+// Kotlin 版 BillingEasy 示例库模块。
 plugins {
     id 'com.android.library'
     id 'kotlin-android'
 }
 
 android {
+    namespace 'com.tjhello.easy.billing.klt'
     compileSdkVersion 30
-    buildToolsVersion "30.0.3"
 
     defaultConfig {
         minSdkVersion 16
         targetSdkVersion 30
-        versionCode 1
-        versionName "1.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles "consumer-rules.pro"

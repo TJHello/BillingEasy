@@ -1,3 +1,4 @@
+// 基础内购库模块，提供跨平台共用的模型、回调和处理接口。
 plugins {
     id 'com.android.library'
     id 'maven-publish'
@@ -46,14 +47,12 @@ task sourcesJar(type: Jar) {
 }
 
 android {
+    namespace 'com.tjhello.lib.billing.base'
     compileSdkVersion 30
-    buildToolsVersion "30.0.3"
 
     defaultConfig {
         minSdkVersion 16
         targetSdkVersion 30
-        versionCode verCode
-        versionName "${verName}"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles "consumer-rules.pro"
@@ -68,6 +67,9 @@ android {
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
+    }
+    publishing {
+        singleVariant("release")
     }
 }
 

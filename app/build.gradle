@@ -1,11 +1,12 @@
+// 示例应用模块，用于演示 BillingEasy 的集成和调用方式。
 plugins {
     id 'com.android.application'
 }
 
 android {
+    namespace 'com.tjhello.app.easy.billing'
 
     compileSdkVersion 30
-    buildToolsVersion "30.0.3"
 
     defaultConfig {
         //这里记得改成自己的包名

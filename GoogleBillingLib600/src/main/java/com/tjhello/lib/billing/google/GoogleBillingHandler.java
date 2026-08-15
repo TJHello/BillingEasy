@@ -1,3 +1,4 @@
+// Google Play Billing 8 内购处理器，负责连接、商品查询、购买和订单处理。
 package com.tjhello.lib.billing.google;
 
 import android.app.Activity;
@@ -18,34 +19,28 @@ import com.android.billingclient.api.BillingFlowParams;
 import com.android.billingclient.api.BillingResult;
 import com.android.billingclient.api.ConsumeParams;
 import com.android.billingclient.api.ConsumeResponseListener;
+import com.android.billingclient.api.PendingPurchasesParams;
 import com.android.billingclient.api.ProductDetails;
 import com.android.billingclient.api.ProductDetailsResponseListener;
 import com.android.billingclient.api.Purchase;
-import com.android.billingclient.api.PurchaseHistoryRecord;
-import com.android.billingclient.api.PurchaseHistoryResponseListener;
 import com.android.billingclient.api.PurchasesResponseListener;
 import com.android.billingclient.api.PurchasesUpdatedListener;
 import com.android.billingclient.api.QueryProductDetailsParams;
-import com.android.billingclient.api.QueryPurchaseHistoryParams;
+import com.android.billingclient.api.QueryProductDetailsResult;
 import com.android.billingclient.api.QueryPurchasesParams;
-import com.android.billingclient.api.SkuDetails;
-import com.android.billingclient.api.SkuDetailsParams;
-import com.android.billingclient.api.SkuDetailsResponseListener;
+import com.android.billingclient.api.UnfetchedProduct;
 import com.tjhello.lib.billing.base.anno.BillingName;
 import com.tjhello.lib.billing.base.anno.ProductType;
 import com.tjhello.lib.billing.base.handler.BillingHandler;
 import com.tjhello.lib.billing.base.info.BillingEasyResult;
 import com.tjhello.lib.billing.base.info.ProductConfig;
 import com.tjhello.lib.billing.base.info.ProductInfo;
-import com.tjhello.lib.billing.base.info.PurchaseHistoryInfo;
 import com.tjhello.lib.billing.base.info.PurchaseInfo;
 import com.tjhello.lib.billing.base.info.PurchaseParam;
 import com.tjhello.lib.billing.base.listener.BillingEasyListener;
 import com.tjhello.lib.billing.base.utils.BillingEasyLog;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -67,9 +62,8 @@ public class GoogleBillingHandler extends BillingHandler {
 
     private BillingClient mBillingClient ;
     private final PurchasesUpdatedListener mPurchasesListener = new MyPurchasesUpdatedListener();
-    private final static Map<String, ProductDetails> productDetailsMap = new HashMap<>();
+    private final Map<String, ProductDetails> productDetailsMap = new HashMap<>();
     private final static Handler handler = new Handler(Looper.getMainLooper());
-    private final static Map<String, SkuDetails> skuDetailsMap = new HashMap<>();
 
     public GoogleBillingHandler(BillingEasyListener mBillingEasyListener) {
         super(mBillingEasyListener);
@@ -78,7 +72,10 @@ public class GoogleBillingHandler extends BillingHandler {
     @Override
     public void onInit(@NonNull Activity activity) {
         BillingClient.Builder mBuilder = BillingClient.newBuilder(activity)
-                .enablePendingPurchases()
+                .enablePendingPurchases(PendingPurchasesParams.newBuilder()
+                        .enableOneTimeProducts()
+                        .build())
+                .enableAutoServiceReconnection()
                 .setListener(mPurchasesListener);
         mBillingClient = mBuilder.build();
     }
@@ -95,29 +92,18 @@ public class GoogleBillingHandler extends BillingHandler {
     @Override
     public void queryProduct(@NonNull List<String> productCodeList,@NonNull String type,@NonNull BillingEasyListener listener) {
         if(productCodeList.isEmpty()) return;
-        BillingResult billingResult = mBillingClient.isFeatureSupported( BillingClient.FeatureType.PRODUCT_DETAILS );
-        if ( billingResult.getResponseCode() == BillingClient.BillingResponseCode.OK ) {
-            BillingEasyLog.i("【queryProduct】客户端支持PRODUCT_DETAILS");
-            List<QueryProductDetailsParams.Product> productList = new ArrayList<>();
-            for (String s : productCodeList) {
-                QueryProductDetailsParams.Product product = QueryProductDetailsParams.Product.newBuilder()
-                        .setProductId(s)
-                        .setProductType(type)
-                        .build();
-                productList.add(product);
-            }
-            QueryProductDetailsParams params = QueryProductDetailsParams.newBuilder()
-                    .setProductList(productList)
+        List<QueryProductDetailsParams.Product> productList = new ArrayList<>();
+        for (String productCode : productCodeList) {
+            QueryProductDetailsParams.Product product = QueryProductDetailsParams.Product.newBuilder()
+                    .setProductId(productCode)
+                    .setProductType(type)
                     .build();
-            mBillingClient.queryProductDetailsAsync(params, new MyProductDetailsResponseListener(listener,type));
-        }else{
-            BillingEasyLog.i("【queryProduct】客户端不支持PRODUCT_DETAILS:"+billingResult.getDebugMessage());
-            SkuDetailsParams params = SkuDetailsParams.newBuilder()
-                    .setSkusList(productCodeList)
-                    .setType(type)
-                    .build();
-            mBillingClient.querySkuDetailsAsync(params, new MySkuDetailsResponseListener(listener));
+            productList.add(product);
         }
+        QueryProductDetailsParams params = QueryProductDetailsParams.newBuilder()
+                .setProductList(productList)
+                .build();
+        mBillingClient.queryProductDetailsAsync(params, new MyProductDetailsResponseListener(listener,type));
     }
 
     @Override
@@ -163,18 +149,12 @@ public class GoogleBillingHandler extends BillingHandler {
                         .setObfuscatedProfileId(param.obfuscatedProfileId)
                         .setObfuscatedAccountId(param.obfuscatedAccountId)
                         .setIsOfferPersonalized(true);
-                mBillingClient.launchBillingFlow(activity,flowParams.build());
-                return true;
-            }
-        } else if(skuDetailsMap.containsKey(param.productCode)){
-            SkuDetails skuDetails = skuDetailsMap.get(param.productCode);
-            if(skuDetails!=null){
-                BillingFlowParams flowParams = BillingFlowParams.newBuilder()
-                        .setSkuDetails(skuDetails)
-                        .setObfuscatedAccountId(param.obfuscatedAccountId)
-                        .setObfuscatedProfileId(param.obfuscatedProfileId)
-                        .build();
-                mBillingClient.launchBillingFlow(activity,flowParams);
+                BillingResult launchResult = mBillingClient.launchBillingFlow(activity,flowParams.build());
+                if(launchResult.getResponseCode()!=BillingClient.BillingResponseCode.OK){
+                    runMainThread(() -> mBillingEasyListener.onPurchases(
+                            buildResult(launchResult),
+                            new ArrayList<>()));
+                }
                 return true;
             }
         }
@@ -211,8 +191,17 @@ public class GoogleBillingHandler extends BillingHandler {
 
     @Override
     public void queryOrderHistory(@ProductType @NonNull String type,@NonNull BillingEasyListener listener) {
-        QueryPurchaseHistoryParams params = QueryPurchaseHistoryParams.newBuilder().setProductType(getProductType(type)).build();
-        mBillingClient.queryPurchaseHistoryAsync(params,new MyPurchaseHistoryResponseListener(type,listener));
+        BillingEasyResult result = BillingEasyResult.build(
+                false,
+                BillingClient.BillingResponseCode.FEATURE_NOT_SUPPORTED,
+                "Google Play Billing 8 不再支持客户端查询历史订单，请改由服务端保存和查询",
+                null);
+        result.isError = true;
+        result.state = BillingEasyResult.State.ERROR_OTHER;
+        runMainThread(() -> {
+            listener.onQueryOrderHistory(result,type,new ArrayList<>());
+            mBillingEasyListener.onQueryOrderHistory(result,type,new ArrayList<>());
+        });
     }
 
     @Override
@@ -226,30 +215,6 @@ public class GoogleBillingHandler extends BillingHandler {
         return BillingName.GOOGLE;
     }
 
-
-    private class MySkuDetailsResponseListener implements SkuDetailsResponseListener {
-
-        private final BillingEasyListener mListener;
-        MySkuDetailsResponseListener(BillingEasyListener listener){
-            this.mListener = listener;
-        }
-
-        @Override
-        public void onSkuDetailsResponse(@NonNull BillingResult billingResult, @Nullable List<SkuDetails> list) {
-            runMainThread(() -> {
-                //存储SkuDetails缓存，用于发起购买的时候
-                if(list!=null&&!list.isEmpty()){
-                    for (SkuDetails skuDetails : list) {
-                        skuDetailsMap.put(skuDetails.getSku(),skuDetails);
-                    }
-                }
-                BillingEasyResult result = buildResult(billingResult);
-                List<ProductInfo> tempList = toProductInfoOld(list);
-                mListener.onQueryProduct(result,tempList);
-                mBillingEasyListener.onQueryProduct(result,tempList);
-            });
-        }
-    }
 
     private class MyBillingClientStateListener implements BillingClientStateListener {
 
@@ -287,13 +252,22 @@ public class GoogleBillingHandler extends BillingHandler {
         }
 
         @Override
-        public void onProductDetailsResponse(@NonNull BillingResult billingResult, @NonNull List<ProductDetails> list) {
+        public void onProductDetailsResponse(@NonNull BillingResult billingResult,
+                                             @NonNull QueryProductDetailsResult productDetailsResult) {
             runMainThread(() -> {
-                //存储SkuDetails缓存，用于发起购买的时候
+                List<ProductDetails> list = productDetailsResult.getProductDetailsList();
                 if(!list.isEmpty()){
                     for (ProductDetails productDetails : list) {
                         productDetailsMap.put(productDetails.getProductId(),productDetails);
                     }
+                }
+                for (UnfetchedProduct unfetchedProduct : productDetailsResult.getUnfetchedProductList()) {
+                    BillingEasyLog.e("商品信息获取失败，商品ID:"
+                            +unfetchedProduct.getProductId()
+                            +"，商品类型:"
+                            +unfetchedProduct.getProductType()
+                            +"，状态码:"
+                            +unfetchedProduct.getStatusCode());
                 }
                 BillingEasyResult result = buildResult(billingResult);
                 List<ProductInfo> tempList = toProductInfo(list);
@@ -370,59 +344,6 @@ public class GoogleBillingHandler extends BillingHandler {
                 listener.onQueryOrder(result,type,tempList);
                 mBillingEasyListener.onQueryOrder(result, type,tempList);
             });
-        }
-    }
-
-    private class MyPurchaseHistoryResponseListener implements PurchaseHistoryResponseListener {
-
-        private final BillingEasyListener listener;
-        private final String type;
-        public MyPurchaseHistoryResponseListener(@ProductType String type,BillingEasyListener listener) {
-            this.listener = listener;
-            this.type = type;
-        }
-
-        @Override
-        public void onPurchaseHistoryResponse(@NonNull BillingResult billingResult, @Nullable List<PurchaseHistoryRecord> list) {
-            runMainThread(() -> {
-                BillingEasyResult result = buildResult(billingResult);
-                List<PurchaseHistoryInfo> tempList = toPurchaseHistoryInfo(type,list);
-                listener.onQueryOrderHistory(result,type, tempList);
-                mBillingEasyListener.onQueryOrderHistory(result,type, tempList);
-            });
-        }
-
-        private List<PurchaseHistoryInfo> toPurchaseHistoryInfo(String type,@Nullable List<PurchaseHistoryRecord> list){
-            if(list==null||list.isEmpty()) return new ArrayList<>();
-            List<PurchaseHistoryInfo> infoList = new ArrayList<>();
-            for(int i=0;i<list.size();i++) {
-                PurchaseHistoryRecord purchase = list.get(i);
-                PurchaseHistoryInfo info = new PurchaseHistoryInfo();
-                info.setPurchaseToken(purchase.getPurchaseToken());
-                info.setPurchaseTime(purchase.getPurchaseTime());
-                info.setBaseObj(purchase);
-
-                for (String sku : purchase.getSkus()) {
-                    ProductConfig productConfig = addProductConfig(type,sku);
-                    if(productConfig!=null){
-                        info.addProduct(productConfig);
-                    }
-                }
-
-
-                PurchaseHistoryInfo.GoogleBillingPurchaseHistory googleBillingPurchaseHistory = new PurchaseHistoryInfo.GoogleBillingPurchaseHistory();
-                googleBillingPurchaseHistory.setDeveloperPayload(purchase.getDeveloperPayload());
-                googleBillingPurchaseHistory.setOriginalJson(purchase.getOriginalJson());
-                googleBillingPurchaseHistory.setPurchaseTime(purchase.getPurchaseTime());
-                googleBillingPurchaseHistory.setPurchaseToken(purchase.getPurchaseToken());
-                googleBillingPurchaseHistory.setQuantity(purchase.getQuantity());
-                googleBillingPurchaseHistory.setSignature(purchase.getSignature());
-                googleBillingPurchaseHistory.setSkus(purchase.getSkus());
-
-                info.setGoogleBillingPurchaseHistory(googleBillingPurchaseHistory);
-                infoList.add(info);
-            }
-            return infoList;
         }
     }
 
@@ -553,55 +474,6 @@ public class GoogleBillingHandler extends BillingHandler {
             infoList.add(info);
         }
         return infoList;
-    }
-
-    private List<ProductInfo> toProductInfoOld(@Nullable List<SkuDetails> list){
-        if(list==null||list.isEmpty()) return new ArrayList<>();
-        List<ProductInfo> infoList = new ArrayList<>();
-        for(int i=0;i<list.size();i++){
-            SkuDetails skuDetails = list.get(i);
-            ProductInfo info = toProductInfoOld(skuDetails);
-            infoList.add(info);
-        }
-        return infoList;
-    }
-
-    private  ProductInfo toProductInfoOld(SkuDetails skuDetails){
-        ProductInfo info = new ProductInfo();
-        info.setCode(skuDetails.getSku());
-        info.setPrice(skuDetails.getPrice());
-        ProductConfig find = addProductConfig(skuDetails.getType(),skuDetails.getSku());
-        if(find!=null){
-            info.setType(find.getType());
-        }
-        info.setPriceMicros(skuDetails.getPriceAmountMicros());
-        info.setPriceAmountMicros(skuDetails.getPriceAmountMicros());
-        info.setPriceCurrencyCode(skuDetails.getPriceCurrencyCode());
-        info.setTitle(skuDetails.getTitle());
-        info.setDesc(skuDetails.getDescription());
-
-        ProductInfo.GoogleSkuDetails googleSkuDetails = new ProductInfo.GoogleSkuDetails();
-        googleSkuDetails.setType(skuDetails.getType());
-        googleSkuDetails.setDescription(skuDetails.getDescription());
-        googleSkuDetails.setFreeTrialPeriod(skuDetails.getFreeTrialPeriod());
-        googleSkuDetails.setIconUrl(skuDetails.getIconUrl());
-        googleSkuDetails.setIntroductoryPrice(skuDetails.getIntroductoryPrice());
-        googleSkuDetails.setIntroductoryPriceAmountMicros(skuDetails.getIntroductoryPriceAmountMicros());
-        googleSkuDetails.setIntroductoryPriceCycles(skuDetails.getIntroductoryPriceCycles());
-        googleSkuDetails.setIntroductoryPricePeriod(skuDetails.getIntroductoryPricePeriod());
-        googleSkuDetails.setOriginalJson(skuDetails.getOriginalJson());
-        googleSkuDetails.setOriginalPrice(skuDetails.getOriginalPrice());
-        googleSkuDetails.setOriginalPriceAmountMicros(skuDetails.getPriceAmountMicros());
-        googleSkuDetails.setPrice(skuDetails.getPrice());
-        googleSkuDetails.setPriceAmountMicros(skuDetails.getPriceAmountMicros());
-        googleSkuDetails.setPriceCurrencyCode(skuDetails.getPriceCurrencyCode());
-        googleSkuDetails.setSku(skuDetails.getSku());
-        googleSkuDetails.setSubscriptionPeriod(skuDetails.getSubscriptionPeriod());
-        googleSkuDetails.setTitle(skuDetails.getTitle());
-        info.setGoogleSkuDetails(googleSkuDetails);
-        info.setJson(skuDetails.getOriginalJson());
-        info.setBaseObj(skuDetails);
-        return info;
     }
 
     private void runMainThread(Runnable runnable){
